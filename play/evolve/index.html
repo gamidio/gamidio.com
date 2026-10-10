@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script>window.dataLayer=[];function gtag(){}function ga(){}</script>
+    <title>Evolve</title>
+    <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="evolved-light.ico" type="images/x-icon" media="(prefers-color-scheme:dark)">
+    <link rel="icon" href="evolved.ico" type="images/x-icon" media="(prefers-color-scheme:light)">
+    <link rel="icon" href="evolved.ico" type="images/x-icon" media="(prefers-color-scheme:no-preference)">
+    <link rel="stylesheet" href="vendor/fonts/fonts.css">
+    <link rel="stylesheet" href="lib/buefy.min.0.9.22.css">
+    <link rel="stylesheet" type="text/css" href="lib/weather-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="evolve/evolve.css">
+    <script src="lib/vendor/jquery@3.6.3-jquery.min.js"></script>
+    <script src="lib/vendor/vue@2.7.14-vue.min.js"></script>
+    <script src="lib/vendor/buefy@0.9.22-buefy.min.js"></script>
+    <script src="lib/vendor/popperjs-popper.min.js"></script>
+    <script src="lib/vendor/sortablejs@1.10.2-Sortable.min.js"></script>
+    <script src="lib/vendor/chart.js@3.8.2-chart.min.js"></script>
+    <script src="lib/lz-string.min.js"></script>
+    <script src="evolve/main.js" type="module"></script>
+</head>
+<body>
+    <style>
+        .loading {
+            text-align: center;
+            margin-top: 10rem;
+        }
+        .lds-dual-ring {
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+        }
+        .lds-dual-ring:after {
+            content: " ";
+            display: block;
+            width: 5rem;
+            height: 5rem;
+            margin: 1px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            animation: lds-dual-ring 1.2s linear infinite;
+            }
+            @keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <div class="loading"><div class="lds-dual-ring"></div></div>
+</body>
+</html>

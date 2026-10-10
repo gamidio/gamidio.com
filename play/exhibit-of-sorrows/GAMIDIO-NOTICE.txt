@@ -1,0 +1,10 @@
+Exhibit of Sorrows — hosted by Gamidio (gamidio.com)
+
+Original game: Maxim Tsai (adayofjoy)
+Upstream source: https://github.com/maximtsai/exhibit1
+Upstream commit: 5a64454b9fb0d8d51e10621f6b08b52ef0c198c3
+License: Code: The Unlicense; art and audio: Creative Commons Attribution 4.0 (as declared by the author on itch.io) (https://adayofjoy.itch.io/exhibit-of-sorrows)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:

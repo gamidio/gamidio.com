@@ -1,0 +1,13 @@
+A Dark Room — hosted by Gamidio (gamidio.com)
+
+Original game: Doublespeak Games (Michael Townsend)
+Upstream source: https://github.com/doublespeakgames/adarkroom
+Upstream commit: 1fada4620b6c66bd07bf15a3f1eb8223df8bc1d7
+License: Mozilla Public License 2.0 (https://github.com/doublespeakgames/adarkroom/blob/master/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: removed Google Analytics (gtag)
+  - index.html: analytics stub
+  - index.html: jQuery from the bundled copy instead of Google's CDN

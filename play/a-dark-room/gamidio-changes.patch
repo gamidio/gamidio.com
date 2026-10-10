@@ -1,0 +1,35 @@
+--- a/index.html
++++ b/index.html
+@@ -1,6 +1,7 @@
+ <!DOCTYPE html>
+ <html itemscope itemtype="https://schema.org/CreativeWork">
+ <head>
++	<script>window.dataLayer=[];function gtag(){}function ga(){}</script>
+ 	<meta charset="UTF-8"/>
+ 	<!--  
+ 		A Dark Room (v1.4)
+@@ -16,7 +17,7 @@
+ 	<meta itemprop="name" property="og:title" content="A Dark Room" />
+ 	<link rel="shortcut icon" href="favicon.ico" />
+ 	<link rel="image_src" href="img/adr.png" />
+-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
++	<script src="lib/jquery.min.js"></script>
+ 	<script>
+ 		if(!window.jQuery) {
+ 			document.write('<script src="lib/jquery.min.js"><\/script>')
+@@ -89,15 +90,6 @@
+   <link rel="stylesheet" type="text/css" href="css/fabricator.css" />
+ 	
+ 	<script src="script/localization.js"></script>
+-	<!-- Google tag (gtag.js) -->
+-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-606P6J79WH"></script>
+-	<script>
+-		window.dataLayer = window.dataLayer || [];
+-		function gtag(){dataLayer.push(arguments);}
+-		gtag('js', new Date());
+-
+-		gtag('config', 'G-606P6J79WH');
+-	</script>
+ 	
+ </head>
+ <body>

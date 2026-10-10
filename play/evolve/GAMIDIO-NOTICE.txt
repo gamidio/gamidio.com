@@ -1,0 +1,30 @@
+Evolve — hosted by Gamidio (gamidio.com)
+
+Original game: Demagorddon (pmotschmann)
+Upstream source: https://github.com/pmotschmann/Evolve
+Upstream commit: 3436358dcd03d9f9e071d51ea071e0a78c0322e4
+License: Mozilla Public License 2.0 (https://github.com/pmotschmann/Evolve/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: removed Google Analytics (gtag)
+  - index.html: analytics stub (game code calls gtag())
+  - index.html: https://unpkg.com/jquery@3.6.3/dist/jquery.min.js served locally as lib/vendor/jquery@3.6.3-jquery.min.js
+  - index.html: https://unpkg.com/vue@2.7.14/dist/vue.min.js served locally as lib/vendor/vue@2.7.14-vue.min.js
+  - index.html: https://unpkg.com/buefy@0.9.22/dist/buefy.min.js served locally as lib/vendor/buefy@0.9.22-buefy.min.js
+  - index.html: https://unpkg.com/@popperjs/core@2.9.2/dist/umd/popper.min.js served locally as lib/vendor/popperjs-popper.min.js
+  - index.html: https://unpkg.com/sortablejs@1.10.2/Sortable.min.js served locally as lib/vendor/sortablejs@1.10.2-Sortable.min.js
+  - index.html: https://unpkg.com/chart.js@3.8.2/dist/chart.min.js served locally as lib/vendor/chart.js@3.8.2-chart.min.js
+  - index.html: dropped CDN integrity/crossorigin attributes
+  - index.html: Google Font https://fonts.googleapis.com/css?family=Lato&display=swap served locally from vendor/fonts/
+  - wiki.html: removed Google Analytics (gtag)
+  - wiki.html: analytics stub (game code calls gtag())
+  - wiki.html: https://unpkg.com/jquery@3.6.3/dist/jquery.min.js served locally as lib/vendor/jquery@3.6.3-jquery.min.js
+  - wiki.html: https://unpkg.com/vue@2.7.14/dist/vue.min.js served locally as lib/vendor/vue@2.7.14-vue.min.js
+  - wiki.html: https://unpkg.com/buefy@0.9.22/dist/buefy.min.js served locally as lib/vendor/buefy@0.9.22-buefy.min.js
+  - wiki.html: https://unpkg.com/@popperjs/core@2.9.2/dist/umd/popper.min.js served locally as lib/vendor/popperjs-popper.min.js
+  - wiki.html: dropped CDN integrity/crossorigin attributes
+  - wiki.html: Google Font https://fonts.googleapis.com/css?family=Lato&display=swap served locally from vendor/fonts/
+  - save.html: removed Google Analytics (gtag)
+  - save.html: analytics stub (game code calls gtag())

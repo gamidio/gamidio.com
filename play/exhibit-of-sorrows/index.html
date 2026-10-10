@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<link href=data:, rel=icon>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <title>Exhibit of Sorrows</title>
+    <link rel="icon" type="image/x-icon" href="raw/standalone/favicon.png">
+
+    <script src="phaser.min.js"></script>
+    <script src="scripts/config.js"></script>
+    <!-- Game scripts, load order matters. build.js concatenates these (plus
+         helpermain.js and main.js) into dist/game.js in exactly
+         this order and checks the two lists still agree. -->
+    <script src="scripts/messageBus.js"></script>
+    <script src="scripts/button.js"></script>
+    <script src="scripts/hint.js"></script>
+    <script src="scripts/hand.js"></script>
+    <script src="scripts/exhibit.js"></script>
+    <script src="scripts/pointer.js"></script>
+    <script src="scripts/guidearrow.js"></script>
+    <script src="scripts/roomentrance.js"></script>
+    <script src="scripts/roompump.js"></script>
+    <script src="scripts/roomfaucet.js"></script>
+    <script src="scripts/roomhandy.js"></script>
+    <script src="scripts/roomflower.js"></script>
+    <script src="scripts/roomstretch.js"></script>
+    <script src="scripts/roomjack.js"></script>
+    <script src="scripts/roomclown.js"></script>
+    <script src="scripts/roomfinal.js"></script>
+    <script src="scripts/save.js"></script>
+    <script src="scripts/spritemanifest.js"></script>
+    <script src="scripts/spritesheets.js"></script>
+    <script src="helpermain.js"></script>
+
+    <noscript>Enable JavaScript to play this game.</noscript>
+    <style type="text/css">
+        #background {
+            margin: 0;
+            opacity: 0;
+            background-image: url("raw/standalone/bg_broad.png");
+            background-position: center;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            position: absolute;
+        }
+
+        /* Border sizes and positions below are placeholders: handleBorders() in main.js
+           recomputes them from DISPLAY in scripts/config.js before the borders fade in. */
+        #leftborder {
+            margin: 0;
+            opacity: 0;
+            background-image: url("raw/standalone/handshield_back.png");
+            background-size: cover;
+            height: 100%;
+            width: 86px;
+            max-height: 100%;
+            left: calc(50% - 453px);
+            position: fixed;
+        }
+
+        #rightborder {
+            margin: 0;
+            opacity: 0;
+            background-image: url("raw/standalone/handshield_back.png");
+            background-size: cover;
+            height: 100%;
+            width: 86px;
+            max-height: 100%;
+            right: calc(50% - 453px);
+            position: fixed;
+            -moz-transform: scaleX(-1);
+            -o-transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+            filter: FlipH;
+            -ms-filter: "FlipH";
+        }
+
+        #topborder {
+            margin: 0;
+            opacity: 0;
+            background-image: url("raw/standalone/handshield_back.png");
+            background-size: cover;
+            height: 100vw;
+            width: 86px;
+            top: calc(50% - 493px);
+            left: 50%;
+            position: fixed;
+            transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        #bottomborder {
+            margin: 0;
+            opacity: 0;
+            background-image: url("raw/standalone/handshield_back.png");
+            background-size: cover;
+            height: 100vw;
+            width: 86px;
+            top: calc(50% + 493px);
+            left: 50%;
+            position: fixed;
+            transform: translate(-50%, -50%) rotate(-90deg);
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #020202;
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            overflow-x: hidden;
+        }
+
+        canvas {
+            display: block;
+            margin: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: none;
+        }
+
+        #preload-notice {
+            color: grey;
+            text-align: center;
+            vertical-align: middle;
+            white-space: pre-line;
+            z-index: 10000;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0%);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="background"></div>
+    <div id="leftborder"></div>
+    <div id="rightborder"></div>
+    <div id="topborder"></div>
+    <div id="bottomborder"></div>
+    <script src="main.js"></script>
+    <!-- Dev-only: debug/self-test tools, inert unless the URL has ?debug. Left out of dist by build.js. -->
+    <script src="scripts/debug.js"></script>
+    <div id="preload-notice">Loading Preloader ...</div>
+
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+/*
+ * Design tokens (D-012): every color, font, radius and spacing lives here, so a rebrand
+ * is a change to this file only. Colors are placeholders until the owner's brand files arrive.
+ */
+
+@font-face {
+	font-family: "Outfit";
+	src: url("/wp-content/themes/gamidio-games/assets/fonts/outfit-latin-wght.woff2") format("woff2");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: "Outfit";
+	src: url("/wp-content/themes/gamidio-games/assets/fonts/outfit-latin-ext-wght.woff2") format("woff2");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+	/* Brand (placeholder) */
+	--color-bg: #14172b;
+	--color-brand-bg: #000000; /* logo background, as on the YouTube channel (D-012) */
+	--color-bg-glow: #2a2466;
+	--color-accent: #7c5cff;
+	--color-accent-strong: #6a47ff;
+	--color-accent-2: #25d7a8;
+
+	/* Surfaces and text */
+	--color-surface: #ffffff;
+	--color-surface-muted: #eef0f8;
+	--color-on-surface: #14172b;
+	--color-on-surface-muted: #555b78;
+	--color-text: #f3f4fb;
+	--color-text-muted: #b3b8d4;
+	--color-card: #1b1f3b;
+	--color-panel: #1f2447;
+	--color-player-bg: #07080f;
+	--color-ad-bg: rgba(255, 255, 255, 0.06);
+	--color-ad-border: rgba(255, 255, 255, 0.24);
+	--color-link: #b7a6ff;
+
+	/* Type */
+	--font-sans: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--text-xs: 0.75rem;
+	--text-sm: 0.875rem;
+	--text-md: 1rem;
+	--text-lg: 1.25rem;
+	--text-xl: 1.75rem;
+
+	/* Grid (D-024, D-027): one square cell, a gap, a page gutter.
+	   108 + 15: five cells are exactly 600 px, the height of 160×600 / 300×600 ads
+	   placed beside the game (D-029). */
+	--grid-cell: 108px;
+	--grid-gap: 15px;
+	--page-pad: 16px;
+	--toolbar-h: 72px;
+
+	/* Shape and depth */
+	--radius-tile: 16px;
+	--radius-card: 20px;
+	--radius-pill: 999px;
+	--shadow-tile: 0 6px 16px rgba(0, 0, 0, 0.35);
+	--shadow-tile-hover: 0 10px 26px rgba(0, 0, 0, 0.45);
+	--focus-ring: 0 0 0 3px var(--color-bg), 0 0 0 6px var(--color-accent-2);
+
+	--speed: 160ms;
+}

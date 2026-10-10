@@ -1,0 +1,12 @@
+The Lost Night — hosted by Gamidio (gamidio.com)
+
+Original game: Mario Carballo and Joven Paul (Amano Games)
+Upstream source: https://afk-mario.itch.io/the-lost-night
+Upstream commit: itch.io web build 2903106-364296 (downloaded 2026-10-09)
+License: Code: MIT; art and audio: Creative Commons Attribution 4.0 (as declared by the authors on itch.io); PICO-8 web player by Lexaloffle (HTML shell CC0) (https://afk-mario.itch.io/the-lost-night)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: removed itch.io htmlgame.js
+  - index.html: defined the missing p8_document() helper

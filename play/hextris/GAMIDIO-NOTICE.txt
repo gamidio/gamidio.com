@@ -1,0 +1,16 @@
+Hextris — hosted by Gamidio (gamidio.com)
+
+Original game: Logan Engstrom, Garrett Finucane, Noah Moroze, Michael Yang
+Upstream source: https://github.com/Hextris/hextris
+Upstream commit: 3f4847dc8fd7dab3d1c87e6324b9159d92fbd396
+License: GNU GPL v3 (https://github.com/Hextris/hextris/blob/gh-pages/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - js/main.js: removed loading of a remote script from hextris.io
+  - index.html: removed the author's AdSense script
+  - index.html: removed Google Analytics
+  - index.html: analytics stub (game code calls ga())
+  - js/initialization.js: removed Google Analytics
+  - index.html: Google Font http://fonts.googleapis.com/css?family=Exo+2 served locally from vendor/fonts/

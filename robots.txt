@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /play/
+Disallow: /assets/data/
+
+Sitemap: https://gamidio.com/sitemap.xml

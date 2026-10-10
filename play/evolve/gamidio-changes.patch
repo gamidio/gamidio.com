@@ -1,0 +1,109 @@
+--- a/index.html
++++ b/index.html
+@@ -1,22 +1,23 @@
+ <!DOCTYPE HTML>
+ <html>
+ <head>
++    <script>window.dataLayer=[];function gtag(){}function ga(){}</script>
+     <title>Evolve</title>
+     <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
+     <link rel="icon" href="evolved-light.ico" type="images/x-icon" media="(prefers-color-scheme:dark)">
+     <link rel="icon" href="evolved.ico" type="images/x-icon" media="(prefers-color-scheme:light)">
+     <link rel="icon" href="evolved.ico" type="images/x-icon" media="(prefers-color-scheme:no-preference)">
+-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
++    <link rel="stylesheet" href="vendor/fonts/fonts.css">
+     <link rel="stylesheet" href="lib/buefy.min.0.9.22.css">
+     <link rel="stylesheet" type="text/css" href="lib/weather-icons.min.css">
+     <link rel="stylesheet" type="text/css" href="evolve/evolve.css">
+-    <script src="https://unpkg.com/jquery@3.6.3/dist/jquery.min.js" integrity="sha384-Ft/vb48LwsAEtgltj7o+6vtS2esTU9PCpDqcXs4OCVQFZu5BqprHtUCZ4kjK+bpE" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/vue@2.7.14/dist/vue.min.js" integrity="sha384-05dHfbm/L0COkFLQ5ghEDllrtj0kD1/46h3bAPxuPjWq9/IDglEo6RtZefYkYfpk" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/buefy@0.9.22/dist/buefy.min.js" integrity="sha384-SsYfCnxxJJlTFm+xZU2q9KLeF0LureHv8EYGBhKyFNiAGP5ufOhhryh1fKVdq6N7" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/sortablejs@1.10.2/Sortable.min.js" integrity="sha384-6qM1TfKo1alBw3Uw9AWXnaY5h0G3ScEjxtUm4TwRJm7HRmDX8UfiDleTAEEg5vIe" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/chart.js@3.8.2/dist/chart.min.js" integrity="sha384-z7c1KnSCkMpfoib43Lq1v2pokQC8cdqBWmH2qiyH2KkmNv60hACtZUjoCEkp1Y08" crossorigin="anonymous"></script>
++    <script src="lib/vendor/jquery@3.6.3-jquery.min.js"></script>
++    <script src="lib/vendor/vue@2.7.14-vue.min.js"></script>
++    <script src="lib/vendor/buefy@0.9.22-buefy.min.js"></script>
++    <script src="lib/vendor/popperjs-popper.min.js"></script>
++    <script src="lib/vendor/sortablejs@1.10.2-Sortable.min.js"></script>
++    <script src="lib/vendor/chart.js@3.8.2-chart.min.js"></script>
+     <script src="lib/lz-string.min.js"></script>
+     <script src="evolve/main.js" type="module"></script>
+ </head>
+@@ -52,13 +53,5 @@
+         }
+     </style>
+     <div class="loading"><div class="lds-dual-ring"></div></div>
+-
+-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CPC46V71CB"></script>
+-    <script>
+-        window.dataLayer = window.dataLayer || [];
+-        function gtag(){dataLayer.push(arguments);}
+-        gtag('js', new Date());
+-        gtag('config', 'G-CPC46V71CB');
+-    </script>
+ </body>
+ </html>
+--- a/save.html
++++ b/save.html
+@@ -1,6 +1,7 @@
+ <!DOCTYPE HTML>
+ <html>
+ <head>
++    <script>window.dataLayer=[];function gtag(){}function ga(){}</script>
+     <title>Evolve Save String</title>
+     <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+     <link rel="icon" href="evolved.ico" type="images/x-icon">
+@@ -29,12 +30,5 @@
+             document.getElementById('save').innerHTML = 'No Save data detected';
+         }
+     </script>
+-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CPC46V71CB"></script>
+-    <script>
+-        window.dataLayer = window.dataLayer || [];
+-        function gtag(){dataLayer.push(arguments);}
+-        gtag('js', new Date());
+-        gtag('config', 'G-CPC46V71CB');
+-    </script>
+ </body>
+ </html>
+--- a/wiki.html
++++ b/wiki.html
+@@ -1,17 +1,18 @@
+ <!DOCTYPE HTML>
+ <html>
+ <head>
++    <script>window.dataLayer=[];function gtag(){}function ga(){}</script>
+     <title>Evolve Wiki</title>
+     <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+     <link rel="icon" href="evolved.ico" type="images/x-icon">
+-    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
++    <link href="vendor/fonts/fonts.css" rel="stylesheet">
+     <link rel="stylesheet" href="lib/buefy.min.0.9.22.css">
+     <link rel="stylesheet" type="text/css" href="evolve/evolve.css">
+     <link rel="stylesheet" type="text/css" href="wiki/wiki.css">
+-    <script src="https://unpkg.com/jquery@3.6.3/dist/jquery.min.js" integrity="sha384-Ft/vb48LwsAEtgltj7o+6vtS2esTU9PCpDqcXs4OCVQFZu5BqprHtUCZ4kjK+bpE" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/vue@2.7.14/dist/vue.min.js" integrity="sha384-05dHfbm/L0COkFLQ5ghEDllrtj0kD1/46h3bAPxuPjWq9/IDglEo6RtZefYkYfpk" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/buefy@0.9.22/dist/buefy.min.js" integrity="sha384-SsYfCnxxJJlTFm+xZU2q9KLeF0LureHv8EYGBhKyFNiAGP5ufOhhryh1fKVdq6N7" crossorigin="anonymous"></script>
+-    <script src="https://unpkg.com/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
++    <script src="lib/vendor/jquery@3.6.3-jquery.min.js"></script>
++    <script src="lib/vendor/vue@2.7.14-vue.min.js"></script>
++    <script src="lib/vendor/buefy@0.9.22-buefy.min.js"></script>
++    <script src="lib/vendor/popperjs-popper.min.js"></script>
+     <script src="lib/cryptojs.min.js"></script>
+     <script src="lib/lz-string.min.js"></script>
+     <script src="wiki/wiki.js" type="module"></script>
+@@ -48,12 +49,5 @@
+         }
+     </style>
+     <div class="loading"><div class="lds-dual-ring"></div></div>
+-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CPC46V71CB"></script>
+-    <script>
+-        window.dataLayer = window.dataLayer || [];
+-        function gtag(){dataLayer.push(arguments);}
+-        gtag('js', new Date());
+-        gtag('config', 'G-CPC46V71CB');
+-    </script>
+ </body>
+ </html>

@@ -1,0 +1,12 @@
+HexGL — hosted by Gamidio (gamidio.com)
+
+Original game: Thibaut Despoulain (BKcore)
+Upstream source: https://github.com/BKcore/HexGL
+Upstream commit: 6addc95a2fce3bf05f4d751823cc054c61a16d68
+License: MIT License; sounds CC BY 3.0 / public domain (audio/LICENSE) (https://github.com/BKcore/HexGL/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: removed Google Analytics
+  - index.html: favicon from this folder
