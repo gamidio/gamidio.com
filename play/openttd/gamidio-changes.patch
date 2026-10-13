@@ -1,0 +1,47 @@
+--- a/os/emscripten/shell.html
++++ b/os/emscripten/shell.html
+@@ -1,6 +1,13 @@
+ <!doctype html>
+ <html lang="en-us">
+   <head>
++<script>/* Gamidio: no requests to third-party servers from this game */(function(){
++var dead=new URL('gamidio-offline-blocked',location.href).href;
++var foreign=function(u){try{return new URL(u,location.href).origin!==location.origin}catch(e){return false}};
++var f=window.fetch;if(f){window.fetch=function(i,o){var u=typeof i==='string'?i:(i&&i.url);if(u&&foreign(u)){return f.call(window,dead,o&&{method:'GET'})}return f.apply(window,arguments)}}
++var op=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){var a=[].slice.call(arguments);if(u&&foreign(u)){a[0]='GET';a[1]=dead}return op.apply(this,a)};
++var W=window.WebSocket;if(W){window.WebSocket=function(u,p){if(foreign(String(u).replace(/^ws/,'http')))throw new DOMException('blocked by Gamidio','SecurityError');return new W(u,p)};window.WebSocket.prototype=W.prototype}
++})();</script>
+     <meta charset="utf-8">
+     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+     <title>OpenTTD</title>
+--- a/src/intro_gui.cpp
++++ b/src/intro_gui.cpp
+@@ -256,6 +256,7 @@
+ 
+ 	void OnInit() override
+ 	{
++		this->SetWidgetsDisabledState(!_network_available, WID_SGI_PLAY_NETWORK, WID_SGI_CONTENT_DOWNLOAD); // Gamidio
+ 		bool missing_sprites = _missing_extra_graphics > 0 && !IsReleasedVersion();
+ 		this->GetWidget<NWidgetStacked>(WID_SGI_BASESET_SELECTION)->SetDisplayedPlane(missing_sprites ? 0 : SZSP_NONE);
+ 
+--- a/src/network/network.cpp
++++ b/src/network/network.cpp
+@@ -1289,6 +1289,7 @@
+ 
+ 	/* Network is available */
+ 	_network_available = NetworkCoreInitialize();
++	_network_available = false; // Gamidio: offline web copy, no connections to openttd.org
+ 	_network_dedicated = false;
+ 
+ 	_network_game_info = {};
+--- a/src/table/settings/network_private_settings.ini
++++ b/src/table/settings/network_private_settings.ini
+@@ -94,7 +94,7 @@
+ var      = network.participate_survey
+ type     = SLE_UINT8
+ flags    = SettingFlag::NotInSave, SettingFlag::NoNetworkSync
+-def      = PS_ASK
++def      = PS_NO
+ min      = PS_ASK
+ max      = PS_YES
+ full     = _participate_survey

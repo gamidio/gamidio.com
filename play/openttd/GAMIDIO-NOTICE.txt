@@ -1,0 +1,17 @@
+OpenTTD — hosted by Gamidio (gamidio.com)
+
+Original game: OpenTTD team (based on Transport Tycoon Deluxe by Chris Sawyer); OpenGFX graphics by the OpenGFX team
+Upstream source: https://github.com/OpenTTD/OpenTTD
+Upstream commit: 14ec60f248547d4d062a1160f0fc26d742319888
+License: GNU GPL v2 (game and OpenGFX graphics) (https://github.com/OpenTTD/OpenTTD/blob/master/COPYING.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/network/network.cpp: network marked as not available (offline copy: no survey, online content or multiplayer)
+  - src/table/settings/network_private_settings.ini: automated survey off by default (no 'Participate in automated survey?' prompt on the first start)
+  - src/intro_gui.cpp: main menu: Multiplayer and Online Content greyed out when the network is not available
+  - os/emscripten/shell.html: offline guard: no connections to openttd.org content/game servers
+  - built with the project's Emscripten Dockerfile recipe (emsdk 3.1.57, as upstream), Release, English only (upstream choice)
+  - OpenGFX baseset preloaded from https://cdn.openttd.org/opengfx-releases/8.0/opengfx-8.0-all.zip (GPL v2): no graphics download from openttd.org on first start
+  - openttd.html served as index.html
