@@ -15,6 +15,14 @@
      <meta charset="utf-8">
      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
      <title>OpenTTD</title>
+@@ -209,6 +217,7 @@
+         },
+ 
+         onWarningFs: function() {
++          if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); // Gamidio
+           document.getElementById("filesystem").style.display = "inline-block";
+           document.getElementById("overlay").style.opacity = 1;
+           setTimeout(function() {
 --- a/src/intro_gui.cpp
 +++ b/src/intro_gui.cpp
 @@ -256,6 +256,7 @@

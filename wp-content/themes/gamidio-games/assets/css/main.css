@@ -571,6 +571,15 @@ button {
 	.grid--game .ad--left { grid-row: 12 / span 3; }
 }
 
+/* Games that fit any window size and play well upright (field "Mobile orientation: Portrait"): on a phone held
+   upright the window is tall instead of a thin 16:9 strip. Inline variables need !important to be replaced. */
+@media (max-width: 1143px) and (orientation: portrait) {
+	.grid--game .player[data-orientation="portrait"] {
+		--game-ratio: 9 / 16 !important;
+		--game-ar: 0.5625 !important;
+	}
+}
+
 /* Tablets: a leaderboard fits right under the game. */
 @media (min-width: 898px) and (max-width: 1143px) {
 	.grid--game .ad--below { --ad-w: 728px; --ad-h: 90px; grid-row: 2 / span 1; }
