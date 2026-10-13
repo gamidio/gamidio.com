@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Billiards</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<style>
+html,body{height:100%;margin:0}
+body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,#1d6b3c,#0b2f1b 70%);color:#fff;font-family:Exo,system-ui,sans-serif}
+main{width:min(92vw,520px);text-align:center}
+h1{margin:0 0 6px;font-size:clamp(28px,6vw,44px);letter-spacing:.04em}
+p{margin:0 0 22px;opacity:.8}
+nav{display:grid;gap:10px}
+a{display:block;padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:700;font-size:18px;border:1px solid rgba(255,255,255,.18)}
+a:hover,a:focus-visible{background:#f5c542;color:#1b1b1b;outline:none}
+small{display:block;font-weight:400;font-size:14px;opacity:.8}
+</style>
+</head>
+<body>
+<main>
+<h1>Billiards</h1>
+<p>Pool, snooker and carom with real 3D physics.</p>
+<nav>
+<a href="game.html?ruletype=nineball&amp;bot=ClawBreak">9-Ball vs computer<small>Pot the balls in order, finish on the 9</small></a>
+<a href="game.html?ruletype=eightball">8-Ball<small>Solids and stripes, break and clear the table</small></a>
+<a href="game.html?ruletype=snooker">Snooker<small>Full 12-foot table with 15 reds</small></a>
+<a href="game.html?ruletype=threecushion&amp;practice=true">Three-cushion billiards<small>Beginner mode for the carom classic</small></a>
+<a href="game.html?ruletype=nineball&amp;practice=true">Practice<small>Free play on the 9-ball table</small></a>
+</nav>
+</main>
+</body>
+</html>

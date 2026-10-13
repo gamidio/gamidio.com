@@ -1,0 +1,13 @@
+Underrun — hosted by Gamidio (gamidio.com)
+
+Original game: Dominic Szablewski (phoboslab)
+Upstream source: https://github.com/phoboslab/underrun
+Upstream commit: f933e29152d7fc1ca61d4b3eaa8b29551d7d7a62
+License: MIT License; audio library Sonant-X (zlib) (https://github.com/phoboslab/underrun/blob/master/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: copy of index-debug.html (unpacked sources, same game as the js13k build)
+  - index.html: canvas fits the frame without a scrollbar
+  - source/game.js: keyboard focus on click when embedded

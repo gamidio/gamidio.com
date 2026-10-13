@@ -1,0 +1,48 @@
+--- a/index.html
++++ b/index.html
+@@ -1,6 +1,9 @@
+ <!DOCTYPE html>
+ <html>
+ <head>
++	<meta charset="utf-8">
++	<meta name="viewport" content="width=device-width, initial-scale=1">
++	<style>html body{display:grid;grid-template-columns:repeat(3,auto);grid-template-rows:1fr auto;justify-content:center;height:100vh;overflow:hidden}html body #g{grid-column:1/-1;margin:0;min-height:0}html body #g{width:100vw}html body #c{width:100%;height:100%;max-height:none}html body #x{display:none;position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;pointer-events:none;border-radius:50%;background:#fff;box-shadow:0 0 2px rgba(0,0,0,.8)}html body #ts[style*=none]~#x{display:block}html body>p{margin:0;padding:4px 10px;font-size:12px;color:#aaa}</style>
+ 	<title>Q1K3</title>
+ </head>
+ <body>
+--- a/source/document.js
++++ b/source/document.js
+@@ -14,6 +14,7 @@
+ 	'<div id="g">'+
+ 		'<canvas id=c width=320 height=180></canvas>'+
+ 		'<div id="ts"><h1>Q1K3</h1>CLICK TO START</div>'+
++		'<div id="x"></div>'+
+ 		'<div id="h"></div><div id="a"></div>'+
+ 		'<div id="msg"></div>'+
+ 	'</div>'+
+--- a/source/entity_player.js
++++ b/source/entity_player.js
+@@ -105,7 +105,7 @@
+ 		);
+ 
+ 		h.textContent = this._health|0;
+-		a.textContent = weapon._needs_ammo ? weapon._ammo : '∞';
++		a.textContent = weapon._needs_ammo ? weapon._ammo : '\u221e';
+ 
+ 		// Debug: a light around the player
+ 		// r_push_light(vec3_add(this.p, vec3(0,64,0)), 10, 255, 192, 32);
+--- a/source/main.js
++++ b/source/main.js
+@@ -160,11 +160,7 @@
+ run_frame = (time_now) => {
+ 	r_prepare_frame();
+ 
+-	r_draw(
+-		vec3(0,0,0), 0, 0, 1, 
+-		model_q.f[0], model_q.f[0], 0,
+-		model_q.nv
+-	);
++	// Gamidio: no Quake-style emblem on the title screen (trademark).
+ 	r_push_light(
+ 		vec3(Math.sin(time_now*0.00033)*200, 100, -100),
+ 		10, 255,192,32

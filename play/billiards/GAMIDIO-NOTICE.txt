@@ -1,0 +1,22 @@
+Billiards — hosted by Gamidio (gamidio.com)
+
+Original game: tailuge and contributors
+Upstream source: https://github.com/tailuge/billiards
+Upstream commit: c004f80a5921fb6675a2e5b2b22ea9287fa571e2
+License: GNU GPL v3 (https://github.com/tailuge/billiards/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/index.ts: no usage ping to billiards-network.onrender.com on start
+  - src/view/lobbyindicator.ts: no connection to the online lobby
+  - built with: yarn install && yarn build (webpack)
+  - (build output) index.html: Gamidio start menu linking the offline game modes (9-ball vs bot, 8-ball, snooker, three-cushion, practice)
+  - (build output) index.html: Google Font https://fonts.googleapis.com/css2?family=Exo:wght@400;700&display=swap served locally from vendor/fonts/
+  - (build output) game.html: removed the author's About panel (links to their site)
+  - (build output) game.html: https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf served locally as vendor/fonts/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf
+  - (build output) game.html: https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf served locally as vendor/fonts/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf
+  - (build output) game.html: online lobby pill and the help screen's 'Visit Lobby' button hidden
+  - (build output) help.html: Google Font https://fonts.googleapis.com/css2?family=Exo:wght@200;700&display=swap served locally from vendor/fonts/
+  - (build output) help.html: removed preconnect hints to Google Fonts
+  - (build output) removed the author's site pages, embed widget, online lobby/arena scripts, service worker, SEO files and .blend sources

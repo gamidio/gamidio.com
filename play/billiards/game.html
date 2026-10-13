@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Billiards + Pool Free Physics Simulator</title>
+    <style>
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("vendor/fonts/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf")
+          format("truetype");
+      }
+
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("vendor/fonts/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf")
+          format("truetype");
+      }
+
+      /* A tiny "About" chip pinned to the bottom centre of the screen. It is
+         a <details> in the served HTML, not something the script injects, so a
+         crawler that runs no JS still reads the prose inside it when opened
+         (native disclosure content stays in the DOM and in view-source).
+
+         The panel is centred over the table and kept out of flow, so opening it
+         never resizes the canvas or the 70px control bar.
+
+         While open the chip stretches into a full-screen scrim, so a click
+         anywhere outside the panel closes the disclosure. The chip, the close
+         label and the click-outside target are all the one <summary> — clicking
+         a summary toggles it — which is why closing needs no script and no
+         element beyond the ones already here. */
+      .about-more {
+        /* A full-viewport, click-through layer, so the chip and the panel can
+           be positioned against the viewport rather than against each other.
+           inset:0 and no transform keep them out of the game's layout. */
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+
+        /* Out of the game's way: only the chip (which becomes the scrim while
+           open) and the panel take clicks, everything else passes through to
+           the table. */
+        pointer-events: none;
+      }
+
+      /* A tiny "About" button: 8px type inside a 1px border, so it reads as a
+         small control rather than a caption. The background is a light,
+         mostly transparent wash rather than a dark fill, so it stays quiet
+         over the table without reading as a black slab. */
+      .about-more summary {
+        position: absolute;
+        left: 50%;
+
+        /* 1px clear of the very bottom edge. */
+        bottom: 1px;
+        display: block;
+        padding: 1px 5px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background: rgb(255 255 255 / 10%);
+        color: #b0b0b0;
+        font-size: 8px;
+        line-height: 1;
+        list-style: none;
+        cursor: pointer;
+        transform: translateX(-50%);
+        pointer-events: auto;
+      }
+
+      .about-more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .about-more summary:hover {
+        border-color: #888;
+        color: #fff;
+      }
+
+      /* Open: the chip stretches to cover the viewport, turning itself into a
+         click-outside target. Dimming the table is the usual hint that a click
+         dismisses. font-size:0 drops the chip's own label, which the ::after
+         below replaces. */
+      .about-more[open] summary {
+        inset: 0;
+        width: auto;
+        font-size: 0;
+        background: rgb(0 0 0 / 40%);
+        border: 0;
+        border-radius: 0;
+        transform: none;
+        cursor: default;
+      }
+
+      /* The close label sits where the chip was, and is part of the same
+         summary, so a click on it closes the panel as well. */
+      .about-more[open] summary::after {
+        content: "✕ close";
+        position: absolute;
+        left: 50%;
+        bottom: 1px;
+        padding: 1px 5px;
+        border: 1px solid #888;
+        border-radius: 4px;
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+        font-size: 8px;
+        line-height: 1;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      /* Chromeless mode (L key toggles body.chromeless) hides the lower control
+         panel; the chip goes with it so the screen is just the table. */
+      body.chromeless .about-more {
+        display: none;
+      }
+
+      /* Centred over the table. Capped in height and scrollable, with the
+         scrollbar hidden (the page's own convention — see index.css), so a
+         long panel never swallows the whole screen. */
+      .about-more .about-panel {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(38rem, calc(100vw - 1rem));
+        max-height: min(72vh, 42rem);
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 10px 12px;
+        border: 1px solid #444;
+        border-radius: 6px;
+        background: rgb(26 26 26 / 97%);
+        color: #e0e0e0;
+        font-size: 0.78rem;
+        line-height: 1.5;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
+      }
+
+      .about-more .about-panel::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* A real heading hierarchy for search engines: one h1 for the page, then
+         h2 sections. The headings carry the terms a crawler reads. */
+      .about-more .about-panel h1 {
+        margin: 0 0 6px;
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      .about-more .about-panel h2 {
+        margin: 12px 0 4px;
+        color: #8ab6f8;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .about-more .about-panel p {
+        margin: 0 0 6px;
+      }
+
+      .about-more .about-panel ul {
+        margin: 0 0 6px;
+        padding-left: 1.1em;
+      }
+
+      .about-more .about-panel li {
+        margin: 0 0 3px;
+      }
+
+      /* Underlined, because a link inside prose must not rely on colour alone. */
+      .about-more .about-panel a {
+        color: #8ab6f8;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+    </style>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="UTF-8" />
+    <meta
+      name="description"
+      content="A free online billiard and pool simulator with realistic physics. Play 8-ball, 9-ball, snooker and three-cushion in your browser — open source, no download."
+    />
+    <meta
+      name="keywords"
+      content="billiards, snooker, 9-ball, 8-ball, pool, carom, three-cushion, free, open source, driebanden, ビリヤード, 9ボール, 3クッション, 無料, 당구, 스누커, 3쿠션, Bida 3 băng, Biliar 3 bantalan, Üç bant, Carom3D, ShootersPool"
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://billiards.tailuge.workers.dev/" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <meta
+      property="og:title"
+      content="Billiards + Pool Free Physics Simulator"
+    />
+    <meta
+      property="og:description"
+      content="A free online billiard and pool simulator with realistic physics. Play 8-ball, 9-ball, snooker and three-cushion in your browser — open source, no download."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://billiards.tailuge.workers.dev/" />
+    <meta
+      property="og:image"
+      content="https://tailuge.github.io/billiards/dist/images/billiards.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
+    <meta property="og:video:type" content="text/html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="ocs-site-verification"
+      content="7e2c8724a132bd19fa2cac60ae730ba5"
+    />
+    <meta
+      name="twitter:title"
+      content="Billiards + Pool Free Physics Simulator"
+    />
+    <meta
+      name="twitter:description"
+      content="A free online billiard and pool simulator with realistic physics. Play 8-ball, 9-ball, snooker and three-cushion in your browser — open source, no download."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/billiards.png"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Snooker, Pool and Billiards",
+        "url": "https://tailuge.github.io/billiards/dist/",
+        "image": "https://tailuge.github.io/billiards/dist/images/billiards.png",
+        "description": "Open source pool and billiards simulation game with realistic physics",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Break Builder",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://tailuge.github.io/billiards/dist/favicon.png"
+          }
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "tailuge"
+        },
+        "subjectOf": {
+          "@type": "VideoObject",
+          "name": "Billiards Pool Game Gameplay",
+          "description": "Realistic physics simulation and gameplay of Break Builder pool game.",
+          "thumbnailUrl": "https://tailuge.github.io/billiards/dist/images/billiards.png",
+          "contentUrl": "https://youtu.be/bAeiRQcQuyg",
+          "embedUrl": "https://www.youtube.com/embed/bAeiRQcQuyg",
+          "uploadDate": "2026-04-30T00:00:00+00:00"
+        }
+      }
+    </script>
+    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/aiminputs.css" />
+    <link rel="stylesheet" type="text/css" href="css/powerinput.css" />
+    <link rel="stylesheet" type="text/css" href="css/notification.css" />
+    <link rel="stylesheet" type="text/css" href="css/tray.css" />
+    <link rel="stylesheet" type="text/css" href="css/chat.css" />
+    <link rel="stylesheet" type="text/css" href="css/lobby.css" />
+    <link rel="stylesheet" type="text/css" href="css/menu.css" />
+    <link rel="stylesheet" type="text/css" href="css/wood.css" />
+  <style>#lobbyContainer,#helpOverlay .lobby-btn,#helpOverlay .help-text{display:none!important}</style>
+  </head>
+
+  <body>
+    <!-- The page's single h1 and its supporting prose live here, high in the
+         source where a crawler expects to find them, rather than in the canvas
+         the script draws. The <details> keeps the copy in the served HTML (a
+         crawler that runs no JS still reads it); CSS pins the tiny "About"
+         chip to the bottom centre (see .about-more above) and centres the panel
+         on open. Content compresses about.html. -->
+
+    <main>
+      <div id="viewP1" class="view3d">
+        <div id="snookerScoreOverlay">
+          <div id="snookerScore" aria-live="polite">
+            <div id="breakScore" class="breakScore"></div>
+          </div>
+        </div>
+        <div id="notificationOverlay">
+          <div id="notification" aria-live="assertive" role="alert"></div>
+        </div>
+        <div id="helpOverlay" hidden>
+          <iframe title="Help"></iframe>
+          <div class="help-footer">
+            <button
+              class="lobby-btn"
+              type="button"
+              onclick="
+                window.location.href =
+                  'https://billiards.tailuge.workers.dev/lobby'
+              "
+            >
+              Visit Lobby
+            </button>
+            <span class="help-text">to set graphics mode and player name </span>
+            <button id="helpClose" type="button">close</button>
+          </div>
+        </div>
+        <div id="botDebugOverlay">
+          <header>
+            <span id="botDebugToggle">🦞</span>
+            <div>
+              <button
+                id="botDebugClear"
+                type="button"
+                aria-label="Clear debug log"
+              >
+                Clear
+              </button>
+            </div>
+          </header>
+          <pre id="botDebugLog" aria-live="polite">
+          <!-- loading="lazy" avoids downloading this 143KB image on initial paint since botDebugOverlay starts hidden/closed -->
+          <img
+            src="images/billiards.png"
+            loading="lazy"
+            alt="Billiards Pool Game Promo - Realistic Physics Simulation"
+          />
+          Play free realistic pool online with accurate physics. Open source billiards simulation in your browser.
+          billiards, snooker, 9-ball, pool, carom, three-cushion, online game, free, open source, ビリヤード, スヌーカー, 9ボール, 3クッション, オンラインゲーム, 無料, 당구, 스누커, 9볼, 3쿠션, 온라인 게임, 무료
+          Find it on <a href="https://github.com/tailuge/billiards">github</a>
+        </pre>
+        </div>
+        <div class="chatarea">
+          <div id="chatoutput" class="chatoutput"></div>
+        </div>
+        <dialog id="inputTextDiv" contenteditable="false">
+          <div id="inputTextDivInner">
+            <input
+              id="inputText"
+              type="text"
+              placeholder="Enter text here..."
+              maxlength="64"
+              autofocus
+              autocomplete="off"
+              aria-label="Chat message input"
+            />
+            <div
+              id="chatEmojiList"
+              role="group"
+              aria-label="Emoji messages"
+            ></div>
+            <button id="inputSend" type="button" aria-label="Send chat message">
+              ➤
+            </button>
+            <button
+              id="toggleChatMode"
+              type="button"
+              aria-label="Switch to emoji mode"
+            >
+              <span class="chat-text-mode-icon">👾</span>
+              <span class="chat-emoji-mode-icon">⌨️</span>
+            </button>
+            <button id="inputClose" type="button" aria-label="Close chat input">
+              ✖
+            </button>
+          </div>
+        </dialog>
+      </div>
+      <div id="panel" class="panel wood-texture">
+        <div class="aimControlColumn">
+          <div class="aimingArea">
+            <button
+              class="hitButton timeout-btn"
+              id="cueHit"
+              type="button"
+              aria-label="Hit cue ball"
+            >
+              hit
+            </button>
+          </div>
+          <div id="tiltSliderContainer" class="tiltSliderContainer" hidden>
+            <angle-input
+              id="cueTilt"
+              role="slider"
+              aria-label="tilt angle"
+              aria-valuemin="0"
+              aria-valuemax="72"
+              aria-valuenow="0"
+            ></angle-input>
+          </div>
+          <template id="angle-input-template">
+            <div class="area" id="area">
+              <div class="ball"></div>
+              <div class="rotator" id="rot">
+                <div class="stick">
+                  <div class="tip"></div>
+                  <div class="ferrule"></div>
+                  <div class="shaft"></div>
+                  <div class="butt"></div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <div id="ballContainerWrapper" class="ballContainerWrapper">
+            <button id="openElevation" type="button" class="openElevation">
+              +
+            </button>
+            <div id="ballContainer" class="ballContainer">
+              <div id="objectBall" class="objectBall"></div>
+              <div id="cueBall" class="cueBall">
+                <div id="cueTip" class="cueTip"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="powerSliderContainer" class="powerSliderContainer">
+          <div class="power-track"></div>
+          <input
+            class="powerSlider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.65"
+            id="cuePower"
+            aria-label="power slider"
+          />
+          <span id="powerPercent" class="powerPercent">65%</span>
+        </div>
+        <div class="outerMenu">
+          <details id="menuDropdown" class="menuDropdown">
+            <summary
+              class="menuButton half-height"
+              title="menu"
+              id="menu"
+              aria-label="Menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#000"
+                stroke-width="2"
+              >
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </summary>
+            <div id="menuItems" class="menuItems">
+              <button
+                class="menuButton half-height"
+                title="comment"
+                id="comment"
+                type="button"
+                aria-label="Comment"
+                hidden
+              >
+                🗨
+              </button>
+              <button
+                class="menuButton half-height"
+                title="diagram"
+                id="diagram"
+                type="button"
+                aria-label="Diagram"
+                hidden
+              >
+                📸
+              </button>
+              <button
+                class="menuButton half-height"
+                title="fullscreen"
+                id="fullscreen"
+                type="button"
+                aria-label="Fullscreen"
+              >
+                ⛶
+              </button>
+              <button
+                class="menuButton half-height"
+                title="fast forward"
+                id="ffwd"
+                type="button"
+                aria-label="Fast forward"
+                hidden
+              >
+                ⏩︎
+              </button>
+              <button
+                class="menuButton half-height"
+                title="share"
+                id="share"
+                type="button"
+                aria-label="Share replay link"
+                hidden
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+              </button>
+              <button
+                class="menuButton half-height"
+                title="concede"
+                id="concede"
+                type="button"
+                aria-label="Concede"
+                hidden
+              >
+                🏳️
+              </button>
+              <button
+                class="menuButton half-height"
+                title="shot analysis"
+                id="analysis"
+                type="button"
+                aria-label="Shot analysis"
+                hidden
+              >
+                🔍
+              </button>
+              <button
+                class="menuButton half-height"
+                title="chromeless (L)"
+                id="chromeless"
+                type="button"
+                aria-label="Toggle chromeless mode"
+              >
+                👁︎
+              </button>
+              <button
+                class="menuButton half-height"
+                title="help"
+                id="help"
+                type="button"
+                aria-label="Help"
+              >
+                𝑖
+              </button>
+            </div>
+          </details>
+          <canvas id="minimap" width="252" height="136" hidden>
+            Table minimap
+          </canvas>
+          <button
+            class="menuButton aim"
+            title="view"
+            id="camera"
+            type="button"
+            aria-label="Toggle camera view"
+          >
+            🎥
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="ballTray"
+        class="tray-container"
+        aria-live="polite"
+        role="log"
+        hidden
+      >
+        <div class="nav-btn btn-left" id="trayLeft">❮</div>
+        <div class="ball-tray-list" id="ballTrayList"></div>
+        <div class="nav-btn btn-right" id="trayRight">❯</div>
+      </div>
+      <div id="trayTimer" class="tray-timer" hidden></div>
+      <div class="tray-score-container">
+        <div id="p1Score" class="p1Score"></div>
+        <div id="p2Score" class="p2Score"></div>
+      </div>
+      <div id="lobbyContainer">
+        <div class="challenge-row">
+          <span id="challengePill" class="challenge-pill" hidden>
+            <button
+              id="challengeAccept"
+              type="button"
+              aria-label="Accept challenge"
+            >
+              ✅
+            </button>
+            <button
+              id="challengeDecline"
+              type="button"
+              aria-label="Decline challenge"
+            >
+              ❌
+            </button>
+          </span>
+        </div>
+        <a
+          href="https://billiards.tailuge.workers.dev/lobby.html"
+          class="pill"
+          title="Lobby"
+          id="lobbyOverlay"
+          aria-label="Multiplayer Lobby"
+          ><span class="lobby-count"></span
+        ></a>
+      </div>
+    </main>
+    <script defer src="three_core.js"></script>
+    <script defer src="three_module.js"></script>
+    <script defer src="three_examples.js"></script>
+    <script defer src="messaging.js"></script>
+    <script defer src="index.js"></script>
+  </body>
+</html>

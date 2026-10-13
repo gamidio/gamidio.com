@@ -1,0 +1,17 @@
+Q1K3 — hosted by Gamidio (gamidio.com)
+
+Original game: Dominic Szablewski (phoboslab); music by Andy Lösch (no-fate)
+Upstream source: https://github.com/phoboslab/q1k3
+Upstream commit: 8ee934856c3f5de3c584724b9dd554314a911694
+License: MIT License; audio library Sonant-X (zlib) (https://github.com/phoboslab/q1k3/blob/master/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - maps and models compiled with the author's pack_map.c / pack_model.php (build.sh up to the JS packing step)
+  - index.html: UTF-8, and a layout that fits the canvas plus one settings/credits row into the player
+  - index.html: canvas fills the frame (aspect kept by object-fit)
+  - source/document.js: crosshair element
+  - index.html: crosshair while playing
+  - source/entity_player.js: infinity sign as a JS escape (encoding-independent)
+  - source/main.js: title screen without the Quake-like emblem
