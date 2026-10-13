@@ -11,3 +11,5 @@ Changes made by Gamidio:
   - index.html: copy of index-debug.html (unpacked sources, same game as the js13k build)
   - index.html: canvas fits the frame without a scrollbar
   - source/game.js: keyboard focus on click when embedded
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - gamidio-gamepad.js: Gamidio's on-screen gamepad (written by Gamidio, part of these changes), included in full in this folder

@@ -1,6 +1,6 @@
 --- a/index.html
 +++ b/index.html
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,39 @@
 +<!DOCTYPE html>
 +<html>
 +<head>
@@ -38,6 +38,7 @@
 +
 +	<script type="text/javascript" src="source/terminal.js"></script>
 +	<script type="text/javascript" src="source/main.js"></script>
++<script>window.GAMIDIO_GAMEPAD={"buttons": [], "pointer": true, "target": "#c"}</script><script src="gamidio-gamepad.js"></script>
 +</body></html>
 --- a/source/game.js
 +++ b/source/game.js

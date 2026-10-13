@@ -1,12 +1,13 @@
 --- a/index.html
 +++ b/index.html
-@@ -1,4 +1,5 @@
+@@ -1,4 +1,6 @@
  ﻿<html><head>
++<style>html,body{overflow:hidden}</style>
 +<script>function p8_document(){return document;}</script>
  <title>PICO-8 Cartridge</title>
  <meta name="viewport" content="width=device-width, user-scalable=no">
  <script type="text/javascript">
-@@ -1102,4 +1103,3 @@
+@@ -1102,4 +1104,3 @@
  </div> <!-- body_0 -->
  </body></html>
  

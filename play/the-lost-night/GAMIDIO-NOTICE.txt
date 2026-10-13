@@ -10,3 +10,4 @@ Corresponding source of this copy = the upstream commit above + gamidio-changes.
 Changes made by Gamidio:
   - index.html: removed itch.io htmlgame.js
   - index.html: defined the missing p8_document() helper
+  - index.html: no scrollbars around the touch layout

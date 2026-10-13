@@ -13,7 +13,10 @@
  *     stick: {up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight'},  // default
  *     buttons: [{label: 'A', keys: [' ']}, {label: 'B', keys: ['Control']}],                // 1 to 4 buttons
  *     menu: {label: '☰', keys: ['Escape']},                                                  // optional
- *     target: 'canvas'                                                                       // element that gets the keys
+ *     target: 'canvas',                                                                      // element that gets the keys
+ *     pointer: true,  // optional: a finger outside the gamepad works as the mouse (move, hold = button down), e.g. aim and shoot
+ *     fullscreen: 'landscape'  // optional, games on their own page: the first touch goes fullscreen (no browser bars) and
+ *                              // locks the orientation where the browser allows it (Android); a ⛶ button goes back in
  *   };
  * Keys are KeyboardEvent.key values; code and keyCode are filled in for engines that read them (SDL/Emscripten).
  */
@@ -23,6 +26,7 @@
 	var cfg = window.GAMIDIO_GAMEPAD || {};
 	var stickKeys = cfg.stick || {up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight'};
 	var buttons = cfg.buttons || [{label: 'A', keys: [' ']}, {label: 'B', keys: ['Control']}];
+	var stickOn = cfg.stick !== false;
 
 	var KEYS = {
 		'ArrowUp': ['ArrowUp', 38], 'ArrowDown': ['ArrowDown', 40], 'ArrowLeft': ['ArrowLeft', 37], 'ArrowRight': ['ArrowRight', 39],
@@ -64,20 +68,61 @@
 		'#gp.off .gp-pad{display:none}#gp.idle{display:none}' +
 		'#gp-zone{position:absolute;left:0;bottom:0;width:45%;height:60%;pointer-events:auto;touch-action:none}' +
 		'#gp-base,#gp-knob{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%)}' +
-		'#gp-base{width:min(120px,30vh);height:min(120px,30vh);background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35)}' +
-		'#gp-knob{width:54px;height:54px;background:rgba(255,255,255,.45)}' +
+		'#gp-base{width:min(120px,30vh);height:min(120px,30vh);background:rgba(0,0,0,.28);border:3px solid rgba(255,255,255,.7);box-shadow:0 0 0 1px rgba(0,0,0,.45)}' +
+		'#gp-knob{width:54px;height:54px;background:rgba(255,255,255,.7);box-shadow:0 0 0 2px rgba(0,0,0,.45)}' +
 		'.gp-btn{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:50%;pointer-events:auto;touch-action:none;' +
-		'width:min(72px,17vh);height:min(72px,17vh);background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);color:rgba(255,255,255,.9)}' +
-		'.gp-btn.on{background:rgba(255,255,255,.45)}' +
+		'width:min(72px,17vh);height:min(72px,17vh);background:rgba(0,0,0,.35);border:3px solid var(--c,rgba(255,255,255,.8));color:var(--c,#fff);' +
+		'font-weight:800;font-size:22px;text-shadow:0 1px 2px rgba(0,0,0,.8);box-shadow:0 0 0 1px rgba(0,0,0,.45)}' +
+		'.gp-btn.on{background:var(--c,rgba(255,255,255,.8));color:#111;text-shadow:none}' +
 		'.gp-small{width:44px;height:44px;font-size:16px}' +
-		'@media (orientation:portrait){#gp-zone{height:45%}}';
+		'@media (orientation:portrait){#gp-zone{height:45%}}' +
+		'#gp-hint{position:fixed;left:50%;bottom:18%;transform:translateX(-50%);z-index:2147483001;pointer-events:none;padding:12px 22px;border-radius:999px;' +
+		'background:rgba(0,0,0,.72);color:#fff;font:600 17px system-ui,sans-serif;border:1px solid rgba(255,255,255,.35);animation:gp-pulse 1.6s ease-in-out infinite}' +
+		'@keyframes gp-pulse{50%{opacity:.55}}';
 	(document.head || document.documentElement).appendChild(css);
 
 	var root = document.createElement('div');
 	root.id = 'gp';
 	root.className = 'idle';
 	addEventListener('touchstart', function () { root.classList.remove('idle'); }, {capture: true, passive: true, once: true});
-	root.innerHTML = '<div id="gp-zone" class="gp-pad"></div>';
+
+	// Fullscreen (only on the game's own page; inside our player the page's fullscreen button does this). Browsers allow
+	// it only from a user gesture, so it starts with the first touch. iPhone Safari has no fullscreen for pages.
+	var el = document.documentElement;
+	var canFull = cfg.fullscreen && window.top === window && (el.requestFullscreen || el.webkitRequestFullscreen);
+	function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+	function goFull() {
+		if (!canFull || isFull()) return;
+		try {
+			var r = (el.requestFullscreen || el.webkitRequestFullscreen).call(el, {navigationUI: 'hide'});
+			var lock = function () { try { if (typeof cfg.fullscreen === 'string' && screen.orientation && screen.orientation.lock) screen.orientation.lock(cfg.fullscreen).catch(function () {}); } catch (e) {} };
+			if (r && r.then) r.then(lock, function () {}); else lock();
+		} catch (e) {}
+	}
+	if (canFull) {
+		// A new tab cannot open in fullscreen by itself (browsers require a tap in the page), so ask for that tap at once.
+		var hint = document.createElement('div');
+		hint.id = 'gp-hint';
+		hint.textContent = 'Tap to play fullscreen';
+		var shownAt = 0;
+		var hideHint = function () { if (hint.parentNode) hint.parentNode.removeChild(hint); };
+		// The first tap only switches to fullscreen; it must not also press whatever menu item is under the finger.
+		var first = true;
+		var swallow = function (e) { if (!first) return; e.preventDefault(); e.stopImmediatePropagation(); };
+		addEventListener('touchstart', function (e) { if (first && !e.target.closest('.gp-btn,#gp-zone')) swallow(e); else first = false; }, {capture: true, passive: false});
+		addEventListener('touchend', function (e) {
+			if (!first) return;
+			first = false; swallow(e); goFull(); hideHint(); shownAt = Date.now();
+		}, {capture: true, passive: false});
+		['mousedown', 'mouseup', 'click'].forEach(function (type) {  // mouse events the browser derives from that tap
+			addEventListener(type, function (e) { if (e.isTrusted && Date.now() - shownAt < 700) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+		});
+		var addHint = function () { document.body.appendChild(hint); };
+		addEventListener('mousedown', hideHint, true);  // touch-screen laptops played with a mouse or keyboard
+		addEventListener('keydown', hideHint, true);
+		if (document.body) addHint(); else document.addEventListener('DOMContentLoaded', addHint);
+	}
+	root.innerHTML = stickOn ? '<div id="gp-zone" class="gp-pad"></div>' : '<div></div>';
 	var zone = root.firstChild;
 	var base = document.createElement('div'), knob = document.createElement('div');
 	base.id = 'gp-base'; knob.id = 'gp-knob';
@@ -90,6 +135,8 @@
 	buttons.slice(0, 4).forEach(function (b, n) {
 		var el = document.createElement('div');
 		el.className = 'gp-btn gp-pad';
+		// Colours as on common controllers: A green, B red, X blue, Y yellow (b.color overrides).
+		el.style.setProperty('--c', b.color || {A: '#4ade80', B: '#f87171', X: '#60a5fa', Y: '#facc15'}[b.label] || '#fff');
 		el.textContent = b.label;
 		el.style.right = spots[n][0] + 'px';
 		el.style.bottom = 'calc(' + (spots[n][1] + 24) + 'px + env(safe-area-inset-bottom))';
@@ -114,6 +161,19 @@
 		root.classList.toggle('off');
 	}, {passive: false});
 	root.appendChild(toggle);
+	if (canFull) {
+		var fs = document.createElement('div');
+		fs.className = 'gp-btn gp-small';
+		fs.textContent = '⛶';
+		fs.title = 'Fullscreen';
+		fs.style.left = '68px'; fs.style.top = '12px';
+		fs.addEventListener('touchend', function (e) { e.preventDefault(); e.stopPropagation(); goFull(); }, {passive: false});
+		fs.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); }, {passive: false});
+		var showFs = function () { fs.style.display = isFull() ? 'none' : 'flex'; };
+		document.addEventListener('fullscreenchange', showFs);
+		document.addEventListener('webkitfullscreenchange', showFs);
+		root.appendChild(fs);
+	}
 
 	function hold(el, keys) {
 		var ids = {};
@@ -174,6 +234,33 @@
 	}
 	zone.addEventListener('touchend', stickEnd, {passive: false});
 	zone.addEventListener('touchcancel', stickEnd, {passive: false});
+
+	// Pointer mode: a finger on the game (outside the gamepad) is the mouse; the browser alone would only send a click
+	// at the end of a tap, so holding (continuous fire) and dragging (aiming) would not work.
+	if (cfg.pointer) {
+		var pid = null, last = null;
+		var mouse = function (type, t) {
+			last = {x: t.clientX, y: t.clientY};
+			var el = document.elementFromPoint(last.x, last.y) || document.body;
+			el.dispatchEvent(new MouseEvent(type, {bubbles: true, cancelable: true, view: window, clientX: last.x, clientY: last.y, screenX: last.x, screenY: last.y, button: 0, buttons: type === 'mousedown' || type === 'mousemove' ? 1 : 0}));
+		};
+		var mine = function (e) { return root.contains(e.target); };
+		addEventListener('touchstart', function (e) {
+			if (mine(e) || pid !== null) return;
+			var t = e.changedTouches[0];
+			pid = t.identifier;
+			e.preventDefault();
+			mouse('mousemove', t); mouse('mousedown', t);
+		}, {passive: false});
+		addEventListener('touchmove', function (e) {
+			for (var i = 0; i < e.changedTouches.length; i++) if (e.changedTouches[i].identifier === pid) { e.preventDefault(); mouse('mousemove', e.changedTouches[i]); }
+		}, {passive: false});
+		var up = function (e) {
+			for (var i = 0; i < e.changedTouches.length; i++) if (e.changedTouches[i].identifier === pid) { e.preventDefault(); pid = null; mouse('mouseup', e.changedTouches[i]); mouse('click', e.changedTouches[i]); }
+		};
+		addEventListener('touchend', up, {passive: false});
+		addEventListener('touchcancel', up, {passive: false});
+	}
 
 	function mount() { document.body.appendChild(root); }
 	if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
