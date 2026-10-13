@@ -12,6 +12,8 @@ Changes made by Gamidio:
   - src/table/settings/network_private_settings.ini: automated survey off by default (no 'Participate in automated survey?' prompt on the first start)
   - src/intro_gui.cpp: main menu: Multiplayer and Online Content greyed out when the network is not available
   - os/emscripten/shell.html: offline guard: no connections to openttd.org content/game servers
+  - os/emscripten/shell.html: touch controls (gamidio-touch.js): hold = right click, two fingers = scroll the map, pinch = zoom
   - built with the project's Emscripten Dockerfile recipe (emsdk 3.1.57, as upstream), Release, English only (upstream choice)
   - OpenGFX baseset preloaded from https://cdn.openttd.org/opengfx-releases/8.0/opengfx-8.0-all.zip (GPL v2): no graphics download from openttd.org on first start
   - openttd.html served as index.html
+  - gamidio-touch.js: Gamidio's touch controls, included in full in this folder

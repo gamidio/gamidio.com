@@ -1,9 +1,10 @@
 --- a/os/emscripten/shell.html
 +++ b/os/emscripten/shell.html
-@@ -1,6 +1,13 @@
+@@ -1,6 +1,14 @@
  <!doctype html>
  <html lang="en-us">
    <head>
++<script src="gamidio-touch.js"></script>
 +<script>/* Gamidio: no requests to third-party servers from this game */(function(){
 +var dead=new URL('gamidio-offline-blocked',location.href).href;
 +var foreign=function(u){try{return new URL(u,location.href).origin!==location.origin}catch(e){return false}};
