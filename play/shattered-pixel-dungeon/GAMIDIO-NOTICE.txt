@@ -8,6 +8,7 @@ License: GNU GPL v3 (code and assets) (https://github.com/00-Evan/shattered-pixe
 Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
 
 Changes made by Gamidio:
+  - SPD-classes/src/main/java/com/watabou/glwrap/Vertexbuffer.java: web: vertex buffers always uploaded in full (partial uploads corrupted the map on some phones)
   - built with: ./gradlew :web:webBuild (TeaVM), JDK 17
   - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
   - (build output) removed WEB-INF/ (Jetty dev-server config, unused on a static host)
