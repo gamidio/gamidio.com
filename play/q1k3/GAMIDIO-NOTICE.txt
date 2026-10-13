@@ -15,3 +15,5 @@ Changes made by Gamidio:
   - index.html: crosshair while playing
   - source/entity_player.js: infinity sign as a JS escape (encoding-independent)
   - source/main.js: title screen without the Quake-like emblem
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - gamidio-gamepad.js: Gamidio's on-screen gamepad (written by Gamidio, part of these changes), included in full in this folder

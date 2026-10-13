@@ -12,9 +12,12 @@
  *   window.GAMIDIO_GAMEPAD = {
  *     stick: {up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight'},  // default
  *     buttons: [{label: 'A', keys: [' ']}, {label: 'B', keys: ['Control']}],                // 1 to 4 buttons
+ *              // a button may press a mouse button instead: {label: 'A', mouse: 0} (0 left, 2 right)
  *     menu: {label: '☰', keys: ['Escape']},                                                  // optional
  *     target: 'canvas',                                                                      // element that gets the keys
  *     pointer: true,  // optional: a finger outside the gamepad works as the mouse (move, hold = button down), e.g. aim and shoot
+ *     look: 2.5,      // optional, first-person games: dragging a finger outside the gamepad turns the view (mouse
+ *                     // movementX/Y times this factor); a short tap is a click (menus, 'click to start')
  *     fullscreen: 'landscape'  // optional, games on their own page: the first touch goes fullscreen (no browser bars) and
  *                              // locks the orientation where the browser allows it (Android); a ⛶ button goes back in
  *   };
@@ -140,7 +143,7 @@
 		el.textContent = b.label;
 		el.style.right = spots[n][0] + 'px';
 		el.style.bottom = 'calc(' + (spots[n][1] + 24) + 'px + env(safe-area-inset-bottom))';
-		hold(el, b.keys);
+		if (b.mouse !== undefined) holdMouse(el, b.mouse); else hold(el, b.keys);
 		root.appendChild(el);
 	});
 	if (cfg.menu) {
@@ -173,6 +176,27 @@
 		document.addEventListener('fullscreenchange', showFs);
 		document.addEventListener('webkitfullscreenchange', showFs);
 		root.appendChild(fs);
+	}
+
+	function mouseButton(type, button) {
+		var t = document.querySelector(cfg.target || 'canvas') || document.body;
+		var r = t.getBoundingClientRect();
+		t.dispatchEvent(new MouseEvent(type, {bubbles: true, cancelable: true, view: window, button: button,
+			buttons: type === 'mousedown' ? (button === 2 ? 2 : 1) : 0, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2}));
+	}
+	function holdMouse(el, button) {
+		var n = 0;
+		el.addEventListener('touchstart', function (e) {
+			e.preventDefault(); e.stopPropagation();
+			if (n++ === 0) { el.classList.add('on'); mouseButton('mousedown', button); if (navigator.vibrate) navigator.vibrate(10); }
+		}, {passive: false});
+		var end = function (e) {
+			e.preventDefault(); e.stopPropagation();
+			n = Math.max(0, n - e.changedTouches.length);
+			if (n === 0 && el.classList.contains('on')) { el.classList.remove('on'); mouseButton('mouseup', button); }
+		};
+		el.addEventListener('touchend', end, {passive: false});
+		el.addEventListener('touchcancel', end, {passive: false});
 	}
 
 	function hold(el, keys) {
@@ -260,6 +284,42 @@
 		};
 		addEventListener('touchend', up, {passive: false});
 		addEventListener('touchcancel', up, {passive: false});
+	}
+
+	// Look mode: a finger outside the gamepad turns the view like a mouse with pointer lock (movementX/Y).
+	if (cfg.look) {
+		var lid = null, lp = null, l0 = null, lt = 0;
+		var lookTarget = function () { return document.querySelector(cfg.target || 'canvas') || document.body; };
+		var inPad = function (e) { return root.contains(e.target); };
+		addEventListener('touchstart', function (e) {
+			if (inPad(e) || lid !== null) return;
+			var t = e.changedTouches[0];
+			lid = t.identifier; lp = l0 = {x: t.clientX, y: t.clientY}; lt = Date.now();
+			e.preventDefault();
+		}, {passive: false});
+		addEventListener('touchmove', function (e) {
+			for (var i = 0; i < e.changedTouches.length; i++) {
+				var t = e.changedTouches[i];
+				if (t.identifier !== lid) continue;
+				e.preventDefault();
+				var dx = (t.clientX - lp.x) * cfg.look, dy = (t.clientY - lp.y) * cfg.look;
+				lp = {x: t.clientX, y: t.clientY};
+				lookTarget().dispatchEvent(new MouseEvent('mousemove', {bubbles: true, cancelable: true, view: window, movementX: dx, movementY: dy, clientX: lp.x, clientY: lp.y}));
+			}
+		}, {passive: false});
+		var lookEnd = function (e) {
+			for (var i = 0; i < e.changedTouches.length; i++) {
+				var t = e.changedTouches[i];
+				if (t.identifier !== lid) continue;
+				e.preventDefault(); lid = null;
+				if (Math.hypot(t.clientX - l0.x, t.clientY - l0.y) < 12 && Date.now() - lt < 350) {
+					var el = document.elementFromPoint(t.clientX, t.clientY) || document.body;
+					el.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window, clientX: t.clientX, clientY: t.clientY}));
+				}
+			}
+		};
+		addEventListener('touchend', lookEnd, {passive: false});
+		addEventListener('touchcancel', lookEnd, {passive: false});
 	}
 
 	function mount() { document.body.appendChild(root); }
