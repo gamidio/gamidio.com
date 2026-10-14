@@ -1,0 +1,212 @@
+Simon Tatham's Puzzle Collection — hosted by Gamidio (gamidio.com)
+
+Original game: Simon Tatham and contributors
+Upstream source: https://www.chiark.greenend.org.uk/~sgtatham/puzzles/
+Upstream commit: release 20260923.616da16 (source tarball)
+License: MIT License (https://www.chiark.greenend.org.uk/~sgtatham/puzzles/doc/licence.html)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built with: emcmake cmake + make (emsdk 3.1.57), Release; pages with html/jspage.pl; 40 finished puzzles
+  - (build output) blackbox.html: no link to the offline manual
+  - (build output) blackbox.html: back link to our collection page
+  - (build output) blackbox.html: compact header in the player frame
+  - (build output) blackbox.html: puzzle sized to fit the frame
+  - (build output) blackbox.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) bridges.html: no link to the offline manual
+  - (build output) bridges.html: back link to our collection page
+  - (build output) bridges.html: compact header in the player frame
+  - (build output) bridges.html: puzzle sized to fit the frame
+  - (build output) bridges.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) cube.html: no link to the offline manual
+  - (build output) cube.html: back link to our collection page
+  - (build output) cube.html: compact header in the player frame
+  - (build output) cube.html: puzzle sized to fit the frame
+  - (build output) cube.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) dominosa.html: no link to the offline manual
+  - (build output) dominosa.html: back link to our collection page
+  - (build output) dominosa.html: compact header in the player frame
+  - (build output) dominosa.html: puzzle sized to fit the frame
+  - (build output) dominosa.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) fifteen.html: no link to the offline manual
+  - (build output) fifteen.html: back link to our collection page
+  - (build output) fifteen.html: compact header in the player frame
+  - (build output) fifteen.html: puzzle sized to fit the frame
+  - (build output) fifteen.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) filling.html: no link to the offline manual
+  - (build output) filling.html: back link to our collection page
+  - (build output) filling.html: compact header in the player frame
+  - (build output) filling.html: puzzle sized to fit the frame
+  - (build output) filling.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) flip.html: no link to the offline manual
+  - (build output) flip.html: back link to our collection page
+  - (build output) flip.html: compact header in the player frame
+  - (build output) flip.html: puzzle sized to fit the frame
+  - (build output) flip.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) flood.html: no link to the offline manual
+  - (build output) flood.html: back link to our collection page
+  - (build output) flood.html: compact header in the player frame
+  - (build output) flood.html: puzzle sized to fit the frame
+  - (build output) flood.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) galaxies.html: no link to the offline manual
+  - (build output) galaxies.html: back link to our collection page
+  - (build output) galaxies.html: compact header in the player frame
+  - (build output) galaxies.html: puzzle sized to fit the frame
+  - (build output) galaxies.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) guess.html: no link to the offline manual
+  - (build output) guess.html: back link to our collection page
+  - (build output) guess.html: compact header in the player frame
+  - (build output) guess.html: puzzle sized to fit the frame
+  - (build output) guess.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) inertia.html: no link to the offline manual
+  - (build output) inertia.html: back link to our collection page
+  - (build output) inertia.html: compact header in the player frame
+  - (build output) inertia.html: puzzle sized to fit the frame
+  - (build output) inertia.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) keen.html: no link to the offline manual
+  - (build output) keen.html: back link to our collection page
+  - (build output) keen.html: compact header in the player frame
+  - (build output) keen.html: puzzle sized to fit the frame
+  - (build output) keen.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) lightup.html: no link to the offline manual
+  - (build output) lightup.html: back link to our collection page
+  - (build output) lightup.html: compact header in the player frame
+  - (build output) lightup.html: puzzle sized to fit the frame
+  - (build output) lightup.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) loopy.html: no link to the offline manual
+  - (build output) loopy.html: back link to our collection page
+  - (build output) loopy.html: compact header in the player frame
+  - (build output) loopy.html: puzzle sized to fit the frame
+  - (build output) loopy.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) magnets.html: no link to the offline manual
+  - (build output) magnets.html: back link to our collection page
+  - (build output) magnets.html: compact header in the player frame
+  - (build output) magnets.html: puzzle sized to fit the frame
+  - (build output) magnets.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) map.html: no link to the offline manual
+  - (build output) map.html: back link to our collection page
+  - (build output) map.html: compact header in the player frame
+  - (build output) map.html: puzzle sized to fit the frame
+  - (build output) map.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) mines.html: no link to the offline manual
+  - (build output) mines.html: back link to our collection page
+  - (build output) mines.html: compact header in the player frame
+  - (build output) mines.html: puzzle sized to fit the frame
+  - (build output) mines.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) mosaic.html: no link to the offline manual
+  - (build output) mosaic.html: back link to our collection page
+  - (build output) mosaic.html: compact header in the player frame
+  - (build output) mosaic.html: puzzle sized to fit the frame
+  - (build output) mosaic.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) net.html: no link to the offline manual
+  - (build output) net.html: back link to our collection page
+  - (build output) net.html: compact header in the player frame
+  - (build output) net.html: puzzle sized to fit the frame
+  - (build output) net.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) netslide.html: no link to the offline manual
+  - (build output) netslide.html: back link to our collection page
+  - (build output) netslide.html: compact header in the player frame
+  - (build output) netslide.html: puzzle sized to fit the frame
+  - (build output) netslide.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) palisade.html: no link to the offline manual
+  - (build output) palisade.html: back link to our collection page
+  - (build output) palisade.html: compact header in the player frame
+  - (build output) palisade.html: puzzle sized to fit the frame
+  - (build output) palisade.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) pattern.html: no link to the offline manual
+  - (build output) pattern.html: back link to our collection page
+  - (build output) pattern.html: compact header in the player frame
+  - (build output) pattern.html: puzzle sized to fit the frame
+  - (build output) pattern.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) pearl.html: no link to the offline manual
+  - (build output) pearl.html: back link to our collection page
+  - (build output) pearl.html: compact header in the player frame
+  - (build output) pearl.html: puzzle sized to fit the frame
+  - (build output) pearl.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) pegs.html: no link to the offline manual
+  - (build output) pegs.html: back link to our collection page
+  - (build output) pegs.html: compact header in the player frame
+  - (build output) pegs.html: puzzle sized to fit the frame
+  - (build output) pegs.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) range.html: no link to the offline manual
+  - (build output) range.html: back link to our collection page
+  - (build output) range.html: compact header in the player frame
+  - (build output) range.html: puzzle sized to fit the frame
+  - (build output) range.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) rect.html: no link to the offline manual
+  - (build output) rect.html: back link to our collection page
+  - (build output) rect.html: compact header in the player frame
+  - (build output) rect.html: puzzle sized to fit the frame
+  - (build output) rect.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) samegame.html: no link to the offline manual
+  - (build output) samegame.html: back link to our collection page
+  - (build output) samegame.html: compact header in the player frame
+  - (build output) samegame.html: puzzle sized to fit the frame
+  - (build output) samegame.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) signpost.html: no link to the offline manual
+  - (build output) signpost.html: back link to our collection page
+  - (build output) signpost.html: compact header in the player frame
+  - (build output) signpost.html: puzzle sized to fit the frame
+  - (build output) signpost.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) singles.html: no link to the offline manual
+  - (build output) singles.html: back link to our collection page
+  - (build output) singles.html: compact header in the player frame
+  - (build output) singles.html: puzzle sized to fit the frame
+  - (build output) singles.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) sixteen.html: no link to the offline manual
+  - (build output) sixteen.html: back link to our collection page
+  - (build output) sixteen.html: compact header in the player frame
+  - (build output) sixteen.html: puzzle sized to fit the frame
+  - (build output) sixteen.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) slant.html: no link to the offline manual
+  - (build output) slant.html: back link to our collection page
+  - (build output) slant.html: compact header in the player frame
+  - (build output) slant.html: puzzle sized to fit the frame
+  - (build output) slant.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) solo.html: no link to the offline manual
+  - (build output) solo.html: back link to our collection page
+  - (build output) solo.html: compact header in the player frame
+  - (build output) solo.html: puzzle sized to fit the frame
+  - (build output) solo.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) tents.html: no link to the offline manual
+  - (build output) tents.html: back link to our collection page
+  - (build output) tents.html: compact header in the player frame
+  - (build output) tents.html: puzzle sized to fit the frame
+  - (build output) tents.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) towers.html: no link to the offline manual
+  - (build output) towers.html: back link to our collection page
+  - (build output) towers.html: compact header in the player frame
+  - (build output) towers.html: puzzle sized to fit the frame
+  - (build output) towers.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) tracks.html: no link to the offline manual
+  - (build output) tracks.html: back link to our collection page
+  - (build output) tracks.html: compact header in the player frame
+  - (build output) tracks.html: puzzle sized to fit the frame
+  - (build output) tracks.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) twiddle.html: no link to the offline manual
+  - (build output) twiddle.html: back link to our collection page
+  - (build output) twiddle.html: compact header in the player frame
+  - (build output) twiddle.html: puzzle sized to fit the frame
+  - (build output) twiddle.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) undead.html: no link to the offline manual
+  - (build output) undead.html: back link to our collection page
+  - (build output) undead.html: compact header in the player frame
+  - (build output) undead.html: puzzle sized to fit the frame
+  - (build output) undead.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) unequal.html: no link to the offline manual
+  - (build output) unequal.html: back link to our collection page
+  - (build output) unequal.html: compact header in the player frame
+  - (build output) unequal.html: puzzle sized to fit the frame
+  - (build output) unequal.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) unruly.html: no link to the offline manual
+  - (build output) unruly.html: back link to our collection page
+  - (build output) unruly.html: compact header in the player frame
+  - (build output) unruly.html: puzzle sized to fit the frame
+  - (build output) unruly.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) untangle.html: no link to the offline manual
+  - (build output) untangle.html: back link to our collection page
+  - (build output) untangle.html: compact header in the player frame
+  - (build output) untangle.html: puzzle sized to fit the frame
+  - (build output) untangle.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) index.html: Gamidio collection page listing the puzzles

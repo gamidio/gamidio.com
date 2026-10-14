@@ -1,0 +1,4 @@
+--- a/gamidio-footer.html
++++ b/gamidio-footer.html
+@@ -0,0 +1 @@
++<p align="center" style="font-size:12px;color:#777">Simon Tatham's Portable Puzzle Collection, &copy; Simon Tatham and contributors, MIT licence.</p>
