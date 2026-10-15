@@ -429,7 +429,7 @@
       if(typeof Storage != 'undefined' && localStorage) {
         var prestige = Prestige.get();
         window.State = {};
-        localStorage.clear();
+        localStorage.removeItem('gameState'); // Gamidio: not clear(), other games share this origin
         Prestige.set(prestige);
       }
       if(!noReload) {

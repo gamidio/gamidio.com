@@ -11,3 +11,4 @@ Changes made by Gamidio:
   - index.html: removed Google Analytics (gtag)
   - index.html: analytics stub
   - index.html: jQuery from the bundled copy instead of Google's CDN
+  - script/engine.js: restart removes only this game's save, not the whole localStorage

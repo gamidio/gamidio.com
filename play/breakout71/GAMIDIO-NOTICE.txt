@@ -1,0 +1,14 @@
+Breakout 71 — hosted by Gamidio (gamidio.com)
+
+Original game: Renan Le Caro and contributors
+Upstream source: https://gitlab.com/lecarore/breakout71.git
+Upstream commit: 9ec4df9bfac31c36b17d2f292ae657d68bd4883d
+License: GNU AGPL v3 (https://gitlab.com/lecarore/breakout71/-/blob/main/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built with: npm ci && parcel build src/index.html (as the author's build.sh); only the single-file index.html is used
+  - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) index.html: own localStorage namespace (the game clears storage; other games share the origin)
+  - (build output) index.html: no link to the author's PWA manifest
