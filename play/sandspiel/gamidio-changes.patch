@@ -1,0 +1,340 @@
+--- a/index.html
++++ b/index.html
+@@ -1,120 +1,16 @@
+ <!DOCTYPE html>
+ <html>
+-  <meta http-equiv="cache-control" content="max-age=3600" />
+-  <meta http-equiv="cache-control" content="stale-while-revalidate=864000" />
+-
+-  <meta
+-    name="viewport"
+-    content="width=device-width, initial-scale=1, user-scalable=no"
+-  />
+-  <meta
+-    name="Description"
+-    content="Sandspiel is a falling sand game that provides a relaxing and creative place to play with elements like sand, water, plant, and fire. Enjoy on your phone, tablet or computer, and share your creations with your friends!"
+-  />
+-  <meta name="mobile-web-app-capable" content="yes" />
+-  <meta name="apple-mobile-web-app-capable" content="yes" />
+-  <meta name="apple-itunes-app" content="app-id=6757886943" />
+-  <meta name="msapplication-starturl" content="/" />
+-
+-  <link
+-    rel="apple-touch-icon"
+-    sizes="180x180"
+-    href="/assets/apple-touch-icon.png"
+-  />
+-  <link
+-    rel="icon"
+-    type="image/png"
+-    sizes="32x32"
+-    href="/assets/favicon-32x32.png"
+-  />
+-  <link
+-    rel="icon"
+-    type="image/png"
+-    sizes="16x16"
+-    href="/assets/favicon-16x16.png"
+-  />
+-  <link rel="manifest" href="/assets/site.webmanifest" />
+-  <link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#ccbcbc" />
+-  <meta name="msapplication-TileColor" content="#da532c" />
+-  <meta name="theme-color" content="#ccbcbc" />
+-
+-  <head>
+-    <meta charset="utf-8" />
+-    <title>sandspiel</title>
+-    <link rel="manifest" href="/manifest.json" />
+-
+-    <link
+-      href="https://fonts.googleapis.com/css?family=Inconsolata"
+-      rel="stylesheet"
+-    />
+-    <link rel="stylesheet" type="text/css" href="/styles.css" />
+-    <script
+-      async
+-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+-    ></script>
+-    <script>
+-      (adsbygoogle = window.adsbygoogle || []).push({
+-        google_ad_client: "ca-pub-9933377295988485",
+-        enable_page_level_ads: true,
+-      });
+-    </script>
+-    <!-- Global site tag (gtag.js) - Google Analytics -->
+-    <script
+-      async
+-      src="https://www.googletagmanager.com/gtag/js?id=UA-54922012-3"
+-    ></script>
+-    <script>
+-      window.dataLayer = window.dataLayer || [];
+-      function gtag() {
+-        dataLayer.push(arguments);
+-      }
+-      gtag("js", new Date());
+-
+-      gtag("config", "UA-54922012-3");
+-    </script>
+-  </head>
+-
+-  <body>
+-    <style type="text/css">
+-      .adslot_1 {
+-        display: block;
+-        z-index: 99;
+-        position: absolute;
+-        /* width: 320px; */
+-        height: 100%;
+-        pointer-events: none;
+-        /* background-color: rebeccapurple; */
+-      }
+-      .adslot_1 * {
+-        pointer-events: all;
+-      }
+-      /*   @media screen and (max-width: 1000px) {
+-        .adslot_1 {
+-          display: none !important;
+-        }
+-      } */
+-    </style>
+-    <!-- left-sidebar -->
+-    <ins
+-      class="adsbygoogle adslot_1"
+-      style="display: block"
+-      data-ad-client="ca-pub-9933377295988485"
+-      data-ad-slot="2593942396"
+-      data-ad-format="vertical"
+-      data-full-width-responsive="false"
+-    ></ins>
+-    <script
+-      async
+-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+-    ></script>
+-
+-    <div id="background">
+-      <div id="ui"></div>
+-      <div id="fps"></div>
+-      <canvas id="sand-canvas"></canvas> <canvas id="fluid-canvas"></canvas>
+-    </div>
+-  </body>
+-
+-  <script async defer src="https://a.sandspiel.club/app.js"></script>
+-  <noscript><img src="https://a.sandspiel.club/image.gif" alt="" /></noscript>
++<head>
++<meta charset="utf-8" />
++<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
++<title>sandspiel</title>
++<link rel="stylesheet" type="text/css" href="styles.css" />
++</head>
++<body>
++<div id="background">
++<div id="ui"></div>
++<div id="fps"></div>
++<canvas id="sand-canvas"></canvas> <canvas id="fluid-canvas"></canvas>
++</div>
++</body>
+ </html>
+--- a/js/api.js
++++ b/js/api.js
+@@ -1,25 +1,6 @@
+-// Firebase App (the core Firebase SDK) is always required and must be listed first
+-import firebase from "firebase/app";
+-
+-// Add the Firebase products that you want to use
+-import "firebase/auth";
+-import "firebase/storage";
+-import "firebase/functions";
+-
+-window.firebase = firebase;
+-
+-firebase.initializeApp({
+-  apiKey: "AIzaSyD2APPEyxCi9vB2olvUgzSsbgH1Pyz-as0",
+-  storageBucket: "sandtable-8d0f7.appspot.com",
+-  authDomain: "sandspiel.club",
+-  projectId: "sandtable-8d0f7",
+-  appId: "1:239719651525:web:80d3674408670521",
+-  messagingSenderId: "239719651525",
+-});
+-
+-const storage = firebase.storage();
+-const functions = firebase.functions();
+-
+-// functions.useEmulator("localhost", 5001);
+-
++// Gamidio: offline copy without Firebase. Sharing, browsing and sign-in are online features of sandspiel.club.
++const auth = { currentUser: null, onAuthStateChanged(cb) { cb(null); return () => {}; } };
++window.firebase = { auth: () => auth };
++const functions = { _url: (path) => "data:application/json,null#" + path };
++const storage = { refFromURL: () => ({ getDownloadURL: () => Promise.reject(new Error("offline")) }) };
+ export { functions, storage };
+--- a/js/app.js
++++ b/js/app.js
+@@ -4,10 +4,7 @@
+ 
+ import Info from "./components/info";
+ import { Index } from "./components/ui";
+-import Browse from "./components/browse";
+-import Admin from "./components/admin";
+ import Menu from "./components/menu";
+-import SignInScreen from "./components/signin";
+ import BenchmarkRunner from "./components/benchmarkRunner";
+ 
+ let sizeMap = [2, 5, 10, 18, 30, 45];
+@@ -38,7 +35,7 @@
+ 
+ function AppRouter() {
+   return (
+-    <Router>
++    <Router basename={window.location.pathname.replace(/[/](index[.]html)?$/, "")}>
+       <Route path="/" component={Index} />
+       <Route
+         exact
+@@ -50,10 +47,6 @@
+         )}
+       />
+       <Route exact path="/bench" component={BenchmarkRunner} />
+-      <Route path="/browse" component={BrowseRouter} />
+-      <Route path="/admin" component={AdminRouter} />
+-      <Route path="/login" component={SigninRouter} />
+-      <Route path="/__/auth/handler" component={SigninRouter} />
+     </Router>
+   );
+ }
+--- a/js/components/info.js
++++ b/js/components/info.js
+@@ -11,11 +11,7 @@
+       <br />
+       <p>
+         <a href="https://apps.apple.com/app/id6757886943" target="_blank">
+-          <img
+-            src="/assets/App_Store_Badge.svg.png"
+-            alt="Download on the App Store"
+-            className="app-store-badge"
+-          />
++          Download on the App Store
+         </a>
+       </p>
+       <p>
+@@ -27,7 +23,6 @@
+         <a href="https://orb.farm" target="_blank">
+           orb.farm
+         </a>
+-        <img src="https://orb.farm/assets/favicon.ico" className="link-icon" />
+       </p>
+       <br />
+       <p>
+--- a/js/components/ui.js
++++ b/js/components/ui.js
+@@ -9,7 +9,7 @@
+ import { height, universe, width, reset } from "../index.js";
+ import { snapshot, pallette } from "../render.js";
+ import { functions, storage } from "../api.js";
+-import SignInButton from "./signinButton.js";
++const SignInButton = () => null; // Gamidio: no sign-in
+ import { svgToImageData, rgbaToSpecies } from "../convertSVG";
+ import { fetchVotedIds } from "../votes.js";
+ 
+@@ -326,7 +326,7 @@
+   load() {
+     let { location } = this.props;
+     let id = location.hash.replace(/#/, "");
+-    if (id === "") {
++    if (true) {
+       return;
+     }
+ 
+@@ -485,7 +485,7 @@
+           )}
+         </button>
+ 
+-        {!window.location.pathname.includes("school") && (
++        {false && (
+           <>
+             <button onClick={() => this.upload()}>Upload</button>
+             <Link
+--- a/js/fps.js
++++ b/js/fps.js
+@@ -3,7 +3,7 @@
+ window.dataLayer = window.dataLayer || [];
+ 
+ function gtag() {
+-  dataLayer.push(arguments);
++  // Gamidio: no analytics
+ }
+ 
+ const fps = new (class {
+--- a/js/gamidio-sentry.js
++++ b/js/gamidio-sentry.js
+@@ -0,0 +1,6 @@
++// Gamidio: no error reporting to Sentry.
++export function init() {}
++export function captureMessage() {}
++export function captureException() {}
++export const Integrations = { BrowserTracing: class {} };
++export class Wasm {}
+--- a/js/index.js
++++ b/js/index.js
+@@ -51,13 +51,13 @@
+   return check;
+ }
+ 
+-if (mobileAndTabletcheck()) {
++if (false) {
+   window.onbeforeunload = function () {
+     return true;
+   };
+ }
+ 
+-if ("serviceWorker" in navigator) {
++if (false) {
+   window.addEventListener("load", () => {
+     navigator.serviceWorker
+       .register("/service-worker.js")
+@@ -140,5 +140,4 @@
+   }
+ });
+ 
+-(adsbygoogle = window.adsbygoogle || []).push({});
+ export { canvas, width, height, universe, reset };
+--- a/webpack.config.js
++++ b/webpack.config.js
+@@ -20,15 +20,14 @@
+     new CopyWebpackPlugin({
+       patterns: [
+         "js/styles.css",
+-        "manifest.json",
+-        { from: "assets/*" },
++        
+       ],
+     }),
+     new HtmlWebpackPlugin({ template: "index.html" }),
+   ];
+ 
+   // Only add service worker in production to avoid watch mode warnings
+-  if (isProduction) {
++  if (false) {
+     plugins.push(
+       new GenerateSW({
+         navigateFallback: "index.html",
+@@ -57,18 +56,19 @@
+     output: {
+       path: dist,
+       filename: "[name].[contenthash].js",
+-      publicPath: "/",
++      publicPath: "./",
+     },
+     devServer: {
+       static: dist,
+       allowedHosts: "all",
+       historyApiFallback: true,
+     },
++    resolve: { alias: { "@sentry/browser": path.resolve(__dirname, "js/gamidio-sentry.js"), "@sentry/tracing": path.resolve(__dirname, "js/gamidio-sentry.js"), "@sentry/wasm": path.resolve(__dirname, "js/gamidio-sentry.js") } },
+     experiments: {
+       asyncWebAssembly: true,
+     },
+     mode: isProduction ? "production" : "development",
+-    devtool: "source-map",
++    devtool: false,
+     plugins,
+   module: {
+     rules: [

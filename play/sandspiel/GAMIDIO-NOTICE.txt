@@ -1,0 +1,31 @@
+Sandspiel — hosted by Gamidio (gamidio.com)
+
+Original game: Max Bittker
+Upstream source: https://github.com/MaxBittker/sandspiel
+Upstream commit: 9936e06b07a583aedfba9589c0cead2917f405fb
+License: MIT License (https://github.com/MaxBittker/sandspiel/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: author's AdSense, Google Analytics, Google Fonts (falls back to monospace), manifests and tracking pixel removed
+  - js/api.js: Firebase replaced by inert stand-ins (no sign-in, sharing or browsing)
+  - webpack.config.js: relative asset paths (the game lives in a sub-folder)
+  - webpack.config.js: no source maps
+  - webpack.config.js: no service worker
+  - webpack.config.js: no app manifest and icons (the page uses no image assets)
+  - webpack.config.js: Sentry imports resolve to a no-op module
+  - js/index.js: no 'leave site?' prompt on phones (it would fire when the player leaves the Gamidio page)
+  - js/index.js: no service worker registration
+  - js/index.js: no AdSense slot of the author
+  - js/app.js: no browse/admin screens (online)
+  - js/app.js: no sign-in screen (online)
+  - js/app.js: router works in a sub-folder
+  - js/app.js: no browse, admin and sign-in routes
+  - js/components/ui.js: no sign-in button
+  - js/components/ui.js: Upload and Browse buttons hidden (online features)
+  - js/components/ui.js: no loading of shared creations from sandspiel.club
+  - js/components/info.js: no image from orb.farm
+  - js/components/info.js: App Store badge image replaced by its text
+  - js/fps.js: frame-rate statistics are not collected for analytics
+  - built with: Rust 1.99.1 + wasm-pack 0.13.1, pnpm 9 install --frozen-lockfile --shamefully-hoist, webpack --mode=production
