@@ -1,0 +1,12 @@
+Librerama — hosted by Gamidio (gamidio.com)
+
+Original game: Yeldham and contributors
+Upstream source: https://codeberg.org/Librerama/librerama.git
+Upstream commit: 740d3492beb2b68b94a99ba46b463d08443ed360
+License: GNU GPL v3 or later (code); assets CC BY-SA 4.0 unless noted in each nanogame.json; Noto fonts OFL-1.1; Godot Engine MIT (https://codeberg.org/Librerama/librerama/src/branch/master/README.md#licenses)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - exported with the official Godot 4.6.3 editor and its web_nothreads_release template, preset "Web" from export_presets.cfg
+  - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game

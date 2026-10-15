@@ -1,0 +1,19 @@
+Achtung, die Kurve! (HTML5 version by Markus Mächler) — hosted by Gamidio (gamidio.com)
+
+Original game: Markus Mächler and contributors; music and sound effects by Grant Robertson
+Upstream source: https://github.com/maechler/kurve
+Upstream commit: 02702ad86319c22e28ab5cc2038ba39a4ba722a9
+License: GNU GPL v3 (https://github.com/maechler/kurve/blob/main/LICENSE.txt)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/Kurve.js: no cookie notice / Matomo tracking
+  - src/KurvePiwik.js: analytics calls are no-ops
+  - src/KurvePiwik.js: (same)
+  - gulpfile.js: privacy policy module (Matomo loader) not bundled
+  - gulpfile.js: no source map
+  - index.html: no link to the author's privacy policy
+  - index.html: author's cookie notice and privacy policy (Matomo opt-out iframe) removed
+  - index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - built with: npm ci && gulp build (Node 18); shipped: index.html and dist/ (without screenshots)
