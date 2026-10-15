@@ -1,0 +1,473 @@
+/** The main menu and the modes it switches between. */
+
+import { command } from "../commands.js";
+import { DEFAULT_DEPTH, MAX_DEPTH } from "../config.js";
+import { doComputerMove } from "../engine/analysis.js";
+import { applyPlayStrength, ensurePlayEngine } from "../engine/engines.js";
+import { isMobile } from "../env.js";
+import { historyMove } from "../game/history.js";
+import {
+	promotionLabel,
+	toggleCoachMode,
+	togglePromotionPiece,
+} from "../game/position.js";
+import { clearPremove } from "../game/premove.js";
+import { state } from "../state.js";
+import { showBoard } from "./board.js";
+import { byId, makeButton, setElemText } from "./dom.js";
+
+/**
+ * @param {boolean} open Toggle the menu; false closes it.
+ * @param {{target: EventTarget | null, srcElement?: EventTarget | null, type?: string, detail?: number}} [e]
+ *   The click or press, to ignore one inside the menu.
+ */
+export function showHideMenu(open, e) {
+	if (e != null) {
+		let target = /** @type {HTMLElement} */ (
+			e.target != null ? e.target : e.srcElement
+		);
+		while (
+			target != null &&
+			target.id !== "buttonMenu" &&
+			target.id !== "menu" &&
+			target.tagName !== "BODY"
+		)
+			target = /** @type {HTMLElement} */ (target.parentNode);
+		if (target == null) return;
+		if (!open && (target.id === "buttonMenu" || target.id === "menu")) return;
+	}
+	// A <button> pressed with Enter or Space fires a click with detail 0.
+	const fromKeyboard = open && e?.type === "click" && e.detail === 0;
+	if (open) state.menu = !state.menu;
+	else state.menu = false;
+
+	const bElem = byId("buttonMenu");
+	const mElem = byId("menu");
+	bElem.className = state.menu ? "on down" : "on";
+	bElem.setAttribute("aria-expanded", String(state.menu));
+	mElem.style.top =
+		(bElem.getBoundingClientRect().bottom -
+			byId("container").getBoundingClientRect().top) *
+			state.bodyScale +
+		"px";
+	mElem.style.left =
+		(bElem.getBoundingClientRect().left -
+			byId("container").getBoundingClientRect().left) *
+			state.bodyScale +
+		"px";
+	mElem.style.right = "auto";
+	if (isMobile) {
+		mElem.style.left = "auto";
+		mElem.style.right =
+			(-bElem.getBoundingClientRect().right +
+				byId("container").getBoundingClientRect().right -
+				1) *
+				state.bodyScale +
+			"px";
+	}
+	// Closing the menu hides whatever inside it had focus; give focus back to
+	// the button that opened it rather than losing it to the page.
+	if (!state.menu && mElem.contains(document.activeElement)) bElem.focus();
+	mElem.style.display = state.menu ? "" : "none";
+	if (state.menu) reloadMenu(fromKeyboard);
+}
+
+/** @param {number} c */
+export function setBoardColor(c) {
+	const count = 6;
+	if (c < 0) c = count - 1;
+	if (c >= count) c = 0;
+	byId("cbTable").className = `c${c}`;
+	byId("boxBoard").className = `c${c}`;
+	byId("chessboard1").className = `cb c${c}`;
+	const elem = byId("icolor");
+	if (elem != null) elem.className = `c${c}`;
+	state.boardColor = c;
+}
+
+/** @param {HTMLElement} elem */
+export function setEngineValue(elem) {
+	const depth = state.analysisEngine?.ready
+		? state.analysisEngine.depth
+		: DEFAULT_DEPTH;
+	setElemText(elem, String(depth));
+	elem.setAttribute(
+		"aria-label",
+		`Analysis depth ${depth}. Press to switch analysis off or on.`,
+	);
+	elem.removeAttribute("title");
+}
+
+/**
+ * The menu's keyboard-operable items, in tab order.
+ *
+ * @param {HTMLElement} menu
+ */
+function menuControls(menu) {
+	return [...menu.querySelectorAll('[tabindex="0"]')];
+}
+
+/**
+ * Rebuild the menu. The rebuild replaces every item, so the one that had
+ * focus (say, "Increase analysis depth") is found again by position and
+ * refocused. `focusFirst` moves focus into a menu opened from the keyboard.
+ */
+export function reloadMenu(focusFirst = false) {
+	requestAnimationFrame(() => {
+		const parent = byId("menu");
+		const active = document.activeElement;
+		const focusIndex = focusFirst
+			? 0
+			: active == null
+				? -1
+				: menuControls(parent).indexOf(active);
+		while (parent.firstChild) parent.removeChild(parent.firstChild);
+
+		const addMenuLine = () => {
+			const div = document.createElement("div");
+			div.className = "menuLine";
+			parent.appendChild(div);
+		};
+
+		/**
+		 * @param {string} className
+		 * @param {string} text
+		 * @param {string | number | null} key The shortcut shown beside the item.
+		 * @param {boolean} enabled
+		 * @param {() => void} func
+		 */
+		const addMenuItem = (className, text, key, enabled, func) => {
+			const div = document.createElement("div");
+			div.className = `menuItem ${className}`;
+			if (!enabled) div.className += " disabled";
+			if (enabled) makeButton(div);
+			else div.setAttribute("aria-disabled", "true");
+			const span1 = document.createElement("span");
+			setElemText(span1, text);
+			div.appendChild(span1);
+			const span2 = document.createElement("span");
+			span2.className = "key";
+			if (key != null) setElemText(span2, String(key));
+			div.appendChild(span2);
+			if (enabled) div.onclick = func;
+			parent.appendChild(div);
+		};
+
+		/**
+		 * @param {string} className
+		 * @param {string} text
+		 */
+		const addMenuItemEngine = (className, text) => {
+			const div = document.createElement("div");
+			div.className = `menuItem ${className}`;
+			const span1 = document.createElement("span");
+			setElemText(span1, text);
+			div.appendChild(span1);
+			const span2 = document.createElement("span");
+			span2.id = "buttonEnginePlus";
+			makeButton(span2, "Increase analysis depth");
+			span2.onclick = () => {
+				if (state.analysisEngine?.ready)
+					command(
+						`depth ${Math.min(MAX_DEPTH, state.analysisEngine.depth + 1)}`,
+					);
+				showBoard(false, true);
+				setEngineValue(byId("buttonEngineValue"));
+			};
+			div.appendChild(span2);
+			const span3 = document.createElement("span");
+			span3.id = "buttonEngineValue";
+			makeButton(span3);
+			span3.onclick = () => {
+				if (state.analysisEngine?.ready)
+					command(
+						`depth ${state.analysisEngine.depth !== 0 ? "0" : DEFAULT_DEPTH}`,
+					);
+				showBoard(false, true);
+				setEngineValue(byId("buttonEngineValue"));
+			};
+			setEngineValue(span3);
+			div.appendChild(span3);
+			const span4 = document.createElement("span");
+			span4.id = "buttonEngineMinus";
+			makeButton(span4, "Decrease analysis depth");
+			span4.onclick = () => {
+				if (state.analysisEngine?.ready)
+					command(`depth ${Math.max(0, state.analysisEngine.depth - 1)}`);
+				showBoard(false, true);
+				setEngineValue(byId("buttonEngineValue"));
+			};
+			div.appendChild(span4);
+			parent.appendChild(div);
+		};
+
+		/**
+		 * @param {string} className
+		 * @param {string} text
+		 */
+		const addMenuItemUciElo = (className, text) => {
+			const div = document.createElement("div");
+			div.className = `menuItem ${className}`;
+
+			const span1 = document.createElement("span");
+			setElemText(span1, text);
+			div.appendChild(span1);
+
+			// '+' button
+			const span2 = document.createElement("span");
+			span2.id = "buttonUciEloPlus";
+			makeButton(span2, "Raise playing engine rating");
+			span2.onclick = () => {
+				state.userUciEloRating = Math.min(3190, state.userUciEloRating + 10);
+				updateUciEloValue(span3);
+				applyPlayStrength(state.playEngine);
+			};
+			div.appendChild(span2);
+
+			// Elo rating display
+			const span3 = document.createElement("span");
+			span3.id = "buttonUciEloValue";
+			updateUciEloValue(span3);
+			div.appendChild(span3);
+
+			// '-' button
+			const span4 = document.createElement("span");
+			span4.id = "buttonUciEloMinus";
+			makeButton(span4, "Lower playing engine rating");
+			span4.onclick = () => {
+				state.userUciEloRating = Math.max(1320, state.userUciEloRating - 10);
+				updateUciEloValue(span3);
+				applyPlayStrength(state.playEngine);
+			};
+			div.appendChild(span4);
+			parent.appendChild(div);
+		};
+
+		// Helper function to update the Elo rating display
+		/** @param {HTMLElement} span */
+		function updateUciEloValue(span) {
+			setElemText(span, `${state.userUciEloRating}`);
+		}
+
+		/**
+		 * @param {string} className
+		 * @param {string} text
+		 */
+		const addMenuItemColor = (className, text) => {
+			const div = document.createElement("div");
+			div.className = `menuItem ${className}`;
+			const span1 = document.createElement("span");
+			setElemText(span1, text);
+			div.appendChild(span1);
+
+			const span2 = document.createElement("span");
+			span2.id = "buttonColorNext";
+			makeButton(span2, "Next board theme");
+			span2.onclick = () => {
+				setBoardColor(state.boardColor + 1);
+			};
+			div.appendChild(span2);
+			const div1 = document.createElement("div");
+			div1.id = "icolor";
+			makeButton(div1, "Default board theme");
+			div1.className = `c${state.boardColor}`;
+			div1.onclick = () => {
+				setBoardColor(0);
+			};
+			let div2,
+				div3 = document.createElement("div");
+			div2 = document.createElement("div");
+			div2.style.left = "0px";
+			div2.style.top = "0px";
+			div2.className = "l";
+			div3.appendChild(div2);
+			div2 = document.createElement("div");
+			div2.style.left = "0px";
+			div2.style.top = "5px";
+			div2.className = "d";
+			div3.appendChild(div2);
+			div2 = document.createElement("div");
+			div2.style.left = "5px";
+			div2.style.top = "0px";
+			div2.className = "d";
+			div3.appendChild(div2);
+			div2 = document.createElement("div");
+			div2.style.left = "5px";
+			div2.style.top = "5px";
+			div2.className = "l";
+			div3.appendChild(div2);
+			div1.appendChild(div3);
+			div.appendChild(div1);
+
+			const span4 = document.createElement("span");
+			span4.id = "buttonColorPrev";
+			makeButton(span4, "Previous board theme");
+			span4.onclick = () => {
+				setBoardColor(state.boardColor - 1);
+			};
+			div.appendChild(span4);
+
+			parent.appendChild(div);
+		};
+
+		addMenuItem(
+			"menuAnalysisMode",
+			"Mode 1: Analyze Board",
+			1,
+			state.gameMode !== 1,
+			() => {
+				menuAnalysisMode();
+			},
+		);
+		addMenuItem(
+			"menuPlayEngine",
+			"Mode 2: Player (White) vs. Engine (Black)",
+			2,
+			state.gameMode !== 2,
+			() => {
+				menuPlayEngineWhite();
+			},
+		);
+		addMenuItem(
+			"menuPlayEngine",
+			"Mode 3: Engine (White) vs. Player (Black)",
+			3,
+			state.gameMode !== 3,
+			() => {
+				menuPlayEngineBlack();
+			},
+		);
+		addMenuItem(
+			"menuTwoPlayerMode",
+			"Mode 4: Player vs. Player",
+			4,
+			state.gameMode !== 4,
+			() => {
+				menuTwoPlayerMode();
+			},
+		);
+		addMenuLine();
+		addMenuItemEngine("menuAnalysisEngine", "Analysis Engine Depth");
+		addMenuItemUciElo("menuPlayingEngine", "Playing Engine Rating");
+		addMenuLine();
+		addMenuItem("menuPromote", promotionLabel(), "P", true, () => {
+			togglePromotionPiece();
+		});
+		addMenuLine();
+		addMenuItem("menuCoach", state.coachModeLabel, null, true, () => {
+			toggleCoachMode();
+			showHideMenu(false);
+		});
+		addMenuLine();
+		addMenuItem(
+			"menuKeep",
+			"Keep Changes",
+			"K",
+			byId("buttonRevert").className === "on",
+			() => {
+				command("keep");
+				showHideMenu(false);
+			},
+		);
+		addMenuItem(
+			"menuRevert",
+			"Revert Changes",
+			"ESC",
+			byId("buttonRevert").className === "on",
+			() => {
+				command("revert");
+				showHideMenu(false);
+			},
+		);
+		addMenuLine();
+		addMenuItem("menuFlip", "Flip Board", "F", true, () => {
+			command("flip");
+			showHideMenu(false);
+		});
+		addMenuItem("menuStm", "Change Side To Move", "T", true, () => {
+			command("sidetomove");
+			showHideMenu(false);
+		});
+		addMenuLine();
+		addMenuItem(
+			"menuStart",
+			"Go To First Move",
+			"Home",
+			byId("buttonBack").className === "on",
+			() => {
+				historyMove(-1, null, true);
+				showHideMenu(false);
+			},
+		);
+		addMenuItem(
+			"menuEnd",
+			"Go To Last Move",
+			"End",
+			byId("buttonForward").className === "on",
+			() => {
+				historyMove(+1, null, true);
+				showHideMenu(false);
+			},
+		);
+		addMenuItem("menuReset", "Reset Game", "0", true, () => {
+			command("reset");
+			showHideMenu(false);
+		});
+		addMenuLine();
+		addMenuItemColor("menuColor", "Chessboard Theme");
+		addMenuItem("menuWindow", "Open Board In New Window", "N", true, () => {
+			command("window");
+			showHideMenu(false);
+		});
+		if (focusIndex >= 0) {
+			const controls = menuControls(parent);
+			const control = /** @type {HTMLElement | undefined} */ (
+				controls[Math.min(focusIndex, controls.length - 1)]
+			);
+			control?.focus();
+		}
+	});
+}
+
+export function menuAnalysisMode() {
+	clearPremove();
+	state.gameMode = 1;
+	state.play = null;
+	if (state.analysisEngine) {
+		state.analysisEngine.kill = false;
+		state.analysisEngine.send("setoption name Skill Level value 20");
+	}
+	showBoard(false);
+	showHideMenu(false);
+}
+
+export function menuPlayEngineWhite() {
+	clearPremove();
+	state.gameMode = 2;
+	state.isPlayerWhite = true;
+	state.play = 0;
+	ensurePlayEngine();
+	showBoard(true);
+	showHideMenu(false);
+	doComputerMove();
+}
+
+export function menuPlayEngineBlack() {
+	clearPremove();
+	state.gameMode = 3;
+	state.isPlayerWhite = false;
+	state.play = 1;
+	ensurePlayEngine();
+	showBoard(true);
+	showHideMenu(false);
+	doComputerMove();
+}
+
+export function menuTwoPlayerMode() {
+	clearPremove();
+	state.gameMode = 4;
+	if (state.analysisEngine) state.analysisEngine.kill = true;
+	state.play = null;
+	showBoard(false);
+	showHideMenu(false);
+}

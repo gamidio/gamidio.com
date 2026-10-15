@@ -1,0 +1,385 @@
+/** Rendering the board: pieces, legal-move dots and the position header. */
+
+import { colorflip, parseFEN, parseMoveNumber } from "../chess/fen.js";
+import { isLegal, isWhiteCheck } from "../chess/rules.js";
+import { command } from "../commands.js";
+import { evalAll } from "../engine/analysis.js";
+import { historyMove } from "../game/history.js";
+import { getCurFEN } from "../game/position.js";
+import {
+	canPremove,
+	isPlayerPiece,
+	premoveTargets,
+	shownPremove,
+} from "../game/premove.js";
+import { getBook } from "../openings/book.js";
+import { bestMoveSan, ERRORS, gradeGame } from "../report/grade.js";
+import { state } from "../state.js";
+import {
+	repaintLastMoveArrow,
+	repaintReviewArrows,
+	setArrow,
+	showArrow3,
+} from "./arrows.js";
+import {
+	byId,
+	getCircleClassName,
+	getElemText,
+	getEvalText,
+	scrollReset,
+	setButtonEnabled,
+	setElemText,
+} from "./dom.js";
+import { repaintGraph } from "./graph.js";
+import { reloadMenu } from "./menu.js";
+import { refreshMoves } from "./moves.js";
+import { refreshOpening } from "./opening-view.js";
+import { repaintSidebars } from "./panels.js";
+import { refreshReport } from "./report-view.js";
+import { repaintStatic } from "./static-view.js";
+import { updateTooltip } from "./tooltip.js";
+
+/** @param {import("../chess/fen.js").Square | null} [from] The selected square, or null to clear the selection. */
+export function showLegalMoves(from) {
+	setArrow(from == null);
+	const pos = parseFEN(getCurFEN());
+	// On the engine's turn, the player's piece shows where it can pre-move.
+	const premoving = from != null && canPremove(pos) && isPlayerPiece(pos, from);
+	const targets = premoving ? premoveTargets(pos, from) : [];
+	/** @type {Element} */
+	let elem = byId("chessboard1");
+	for (let i = 0; i < elem.children.length; i++) {
+		const div = /** @type {HTMLElement} */ (elem.children[i]);
+		if (div.tagName !== "DIV") continue;
+		if (Number(div.style.zIndex) > 0) continue;
+		let x = parseInt(div.style.left.replace("px", ""), 10) / 40;
+		let y = parseInt(div.style.top.replace("px", ""), 10) / 40;
+		if (state.flip) {
+			x = 7 - x;
+			y = 7 - y;
+		}
+		let c = `${div.className.split(" ")[0]} ${div.className.split(" ")[1]}`;
+		if (div.className.indexOf(" h2") >= 0) c += " h2";
+		if (div.className.indexOf(" h4") >= 0) c += " h4";
+		div.className = c;
+		div.onmouseover = null;
+		setElemText(div, "");
+		if (from == null || from.x < 0 || from.y < 0) continue;
+		if (from.x === x && from.y === y) {
+			div.className += " h0";
+			state.clickFromElem = div;
+		} else if (premoving) {
+			if (targets.some((t) => t.x === x && t.y === y)) div.className += " h1";
+		} else if (
+			isLegal(pos, from, {
+				x: x,
+				y: y,
+			})
+		) {
+			if (state.curmoves.length === 0) continue;
+			let text = "",
+				san = "",
+				answerpv = null,
+				cl = null;
+			for (let j = 0; j < state.curmoves.length; j++) {
+				if (
+					state.curmoves[j].move.from.x === from.x &&
+					state.curmoves[j].move.from.y === from.y &&
+					state.curmoves[j].move.to.x === x &&
+					state.curmoves[j].move.to.y === y &&
+					(state.curmoves[j].move.p === "Q" || state.curmoves[j].move.p == null)
+				) {
+					text = getEvalText(state.curmoves[j].eval, true);
+					san = state.curmoves[j].san;
+					answerpv = state.curmoves[j].answerpv;
+					cl = getCircleClassName(j);
+					break;
+				}
+			}
+			div.className += " h1";
+			setElemText(div, text);
+			div.tooltip = san + (text.length > 0 ? ` ${text}` : "");
+			div.answerpv = answerpv == null ? [] : answerpv;
+			div.cl = cl == null ? "circle" : cl;
+			div.onmouseover = (e) => {
+				updateTooltip(div.tooltip ?? "", div.answerpv, null, div.cl, e);
+			};
+			div.onmouseout = () => {
+				updateTooltip("");
+			};
+		}
+		updateTooltip("");
+	}
+
+	elem = byId("editWrapper").children[0];
+	for (let i = 0; i < elem.children.length; i++) {
+		const div = /** @type {HTMLElement} */ (elem.children[i]);
+		if (div.tagName !== "DIV") continue;
+		if (Number(div.style.zIndex) > 0) continue;
+		const x = -parseInt(div.style.left.replace("px", ""), 10) / 40 - 1;
+		const y = -parseInt(div.style.top.replace("px", ""), 10) / 40 - 1;
+		const c = `${div.className.split(" ")[0]} ${div.className.split(" ")[1]}`;
+		div.className = c;
+		setElemText(div, "");
+		if (from == null || from.x >= 0 || from.y >= 0) continue;
+		if (from.x === x && from.y === y) {
+			div.className += " h0";
+			state.clickFromElem = div;
+		}
+	}
+	showArrow3(null);
+
+	state.clickFrom = from;
+}
+
+export function updateLegalMoves() {
+	const elem = byId("chessboard1");
+	for (let i = 0; i < elem.children.length; i++) {
+		const div = /** @type {HTMLElement} */ (elem.children[i]);
+		if (
+			div.tagName !== "DIV" ||
+			Number(div.style.zIndex) > 0 ||
+			div.className.indexOf(" h1") < 0 ||
+			div.cl !== "circle"
+		)
+			continue;
+		for (let j = 0; j < state.curmoves.length; j++) {
+			if (div.tooltip === state.curmoves[j].san) {
+				const text = getEvalText(state.curmoves[j].eval, true);
+				const san = state.curmoves[j].san;
+				const answerpv = state.curmoves[j].answerpv;
+				const cl = getCircleClassName(j);
+				setElemText(div, text);
+				div.tooltip = san + (text.length > 0 ? ` ${text}` : "");
+				div.answerpv = answerpv == null ? [] : answerpv;
+				div.cl = cl == null ? "circle" : cl;
+				div.onmouseover = (e) => {
+					updateTooltip(div.tooltip ?? "", div.answerpv, null, div.cl, e);
+				};
+				div.onmouseout = () => {
+					updateTooltip("");
+				};
+				if (
+					state.tooltipState &&
+					getElemText(/** @type {Node} */ (byId("tooltip").firstChild)) ===
+						state.curmoves[j].san
+				)
+					updateTooltip(div.tooltip, div.answerpv, null, div.cl, null);
+				break;
+			}
+		}
+	}
+}
+
+/**
+ * @param {boolean} [noeval] Keep the running analysis.
+ * @param {boolean} [refreshhistory] Rebuild the History panel.
+ * @param {boolean} [keepcontent] Keep the move list.
+ */
+export function showBoard(noeval, refreshhistory, keepcontent) {
+	requestAnimationFrame(() => {
+		const pos = parseFEN(getCurFEN());
+		const dragElem = byId("dragPiece");
+		while (dragElem.firstChild) dragElem.removeChild(dragElem.firstChild);
+
+		const elem = byId("chessboard1");
+		if (keepcontent && elem.children.length !== 64) keepcontent = false;
+		if (!keepcontent) while (elem.firstChild) elem.removeChild(elem.firstChild);
+
+		const premove = shownPremove(getCurFEN());
+		/** @param {number} x @param {number} y */
+		const onPremove = (x, y) =>
+			premove != null &&
+			((premove.from.x === x && premove.from.y === y) ||
+				(premove.to.x === x && premove.to.y === y));
+
+		const fragment = document.createDocumentFragment();
+		let index = 0;
+		for (let x = 0; x < 8; x++) {
+			for (let y = 0; y < 8; y++) {
+				const div = keepcontent
+					? /** @type {HTMLElement} */ (elem.children[index])
+					: document.createElement("div");
+				index++;
+				div.style.left = `${(state.flip ? 7 - x : x) * 40}px`;
+				div.style.top = `${(state.flip ? 7 - y : y) * 40}px`;
+				div.className = `${(x + y) % 2 ? "d" : "l"} ${pos.b[x][y]}`;
+				if (
+					(pos.b[x][y] === "K" && isWhiteCheck(pos)) ||
+					(pos.b[x][y] === "k" && isWhiteCheck(colorflip(pos)))
+				) {
+					div.className += " h2";
+				}
+				if (onPremove(x, y)) div.className += " h4";
+				if (!keepcontent) fragment.appendChild(div);
+			}
+		}
+
+		if (!keepcontent) elem.appendChild(fragment);
+
+		if (
+			state.clickFromElem != null &&
+			state.clickFrom != null &&
+			state.clickFrom.x >= 0 &&
+			state.clickFrom.y >= 0
+		)
+			state.clickFromElem = null;
+		/** @type {HTMLInputElement} */ (
+			document.getElementById("searchInput")
+		).value = getCurFEN();
+
+		if (!noeval) {
+			refreshMoves();
+			if (refreshhistory) {
+				for (let i = 0; i < state.history.length; i++) {
+					const evaluation = state.history[i].evaluation;
+					if (evaluation != null) evaluation.depth = -1;
+				}
+			}
+			scrollReset("Moves");
+			scrollReset("Static");
+			if (state.analysisEngine && !state.analysisEngine.kill) evalAll();
+		}
+
+		byId("buttonStm").className = pos.w ? "white" : "black";
+
+		// Batch updates
+		setArrow(true);
+		repaintLastMoveArrow();
+		repaintReviewArrows();
+		showArrow3(null);
+
+		if (state.menu) reloadMenu();
+		repaintGraph();
+		repaintSidebars();
+		updateInfo();
+		repaintStatic();
+		updateTooltip("");
+	});
+}
+
+export function updateInfo() {
+	const curfen = getCurFEN();
+	const pos = parseFEN(curfen);
+	let positionInfoText =
+		"Position: " +
+		(state.historyindex + 1) +
+		" of " +
+		state.history.length +
+		" - Last Move: ";
+
+	if (state.history[state.historyindex].san != null) {
+		const pos2 = parseFEN(state.history[state.historyindex].fen);
+		positionInfoText +=
+			(pos2.w ? `${pos2.m[1] - 1}... ` : `${pos2.m[1]}. `) +
+			state.history[state.historyindex].san;
+	} else positionInfoText += "-";
+
+	const movesInfoText =
+		(pos.w ? "White" : "Black") +
+		" To Play (" +
+		state.curmoves.length +
+		" Legal Move" +
+		(state.curmoves.length === 1 ? "" : "s") +
+		")";
+
+	// Batch DOM updates
+	const positionInfoElem = byId("positionText");
+	const movesInfoElem = byId("movesInfo");
+	positionInfoElem.innerText = positionInfoText;
+	movesInfoElem.innerText = movesInfoText;
+	refreshOpening();
+	refreshReport();
+
+	// History window
+	const historyElem = byId("history");
+	while (historyElem.firstChild)
+		historyElem.removeChild(historyElem.firstChild);
+
+	const historyFragment = document.createDocumentFragment();
+	const grades = gradeGame(state.history, getBook());
+
+	for (let i = 0; i < state.history.length; i++) {
+		// A move takes its number from the position it was played in: "3." before
+		// White's move, and "3…" before Black's only when nothing precedes it (the
+		// first move, or one after a set-up position).
+		if (i > 0 && state.history[i].san != null) {
+			const before = state.history[i - 1];
+			const white = before.fen.split(" ")[1] === "w";
+			if (white || i === 1 || before.san == null) {
+				const span1 = document.createElement("span");
+				const mn = parseMoveNumber(before.fen);
+				setElemText(span1, white ? `${mn}. ` : `${mn}… `);
+				span1.style.color = "#64c4db";
+				historyFragment.appendChild(span1);
+			}
+		}
+		const san = state.history[i].san ?? "\u2605";
+		const span2 = document.createElement("span");
+		setElemText(span2, san);
+		span2.className = `movelink${i === state.historyindex ? " selected" : ""}`;
+		span2.targetindex = i;
+		const grade = grades[i];
+		if (grade != null) {
+			const error = ERRORS[grade.category];
+			const plain = grade.category === "Book" || grade.category === "Best Move";
+			const best = plain ? null : bestMoveSan(state.history, i);
+			span2.title = plain
+				? grade.category
+				: `${grade.category} (\u2212${grade.loss.toFixed(1)}%)${
+						best == null ? "" : ` \u00b7 best ${best}`
+					}`;
+			if (error != null) {
+				const mark = document.createElement("span");
+				setElemText(mark, error.mark);
+				mark.className = `grade ${error.className}`;
+				span2.appendChild(mark);
+				span2.style.borderBottomColor = error.color;
+			}
+		}
+		span2.onclick = () => {
+			const targetIndex = span2.targetindex ?? -1;
+			if (
+				targetIndex < state.history.length &&
+				targetIndex >= 0 &&
+				targetIndex !== state.historyindex
+			) {
+				historyMove(targetIndex - state.historyindex);
+			}
+		};
+		historyFragment.appendChild(span2);
+		historyFragment.appendChild(document.createTextNode(" "));
+	}
+	historyElem.appendChild(historyFragment);
+}
+
+export function refreshFlip() {
+	const elem = byId("cbTable");
+	for (let i = 0; i < 8; i++) {
+		elem.children[0].children[0].children[1 + i].textContent =
+			elem.children[0].children[9].children[1 + i].textContent = "abcdefgh"[
+				state.flip ? 7 - i : i
+			];
+		elem.children[0].children[1 + i].children[0].textContent =
+			elem.children[0].children[1 + i].children[i === 0 ? 2 : 1].textContent =
+				"12345678"[state.flip ? i : 7 - i];
+	}
+	showBoard(true);
+}
+
+export function doFlip() {
+	state.flip = !state.flip;
+	refreshFlip();
+}
+
+export function refreshButtonRevert() {
+	const button = byId("buttonRevert");
+	setButtonEnabled(button, state.history2 != null);
+	if (state.history2 == null) {
+		button.onclick = null;
+	} else {
+		button.onclick = (e) => {
+			command(e.ctrlKey ? "keep" : "revert");
+		};
+	}
+}

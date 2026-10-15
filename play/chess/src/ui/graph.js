@@ -1,0 +1,333 @@
+/** The evaluation graph canvas. */
+
+import { parseFEN } from "../chess/fen.js";
+import { historyMove } from "../game/history.js";
+import { getBook } from "../openings/book.js";
+import { ERRORS, gradeGame } from "../report/grade.js";
+import { state } from "../state.js";
+import { repaintLastMoveArrow } from "./arrows.js";
+import { byId, getEvalText } from "./dom.js";
+import { updateTooltip, updateTooltipPos } from "./tooltip.js";
+
+/**
+ * @param {number} i
+ * @returns {number | null}
+ */
+export function getGraphPointData(i) {
+	let e = null,
+		black = false;
+	if (state.analysisEngine == null || state.analysisEngine.depth === 0)
+		return 0;
+	if (
+		i >= 0 &&
+		i < state.history.length &&
+		state.history[i].evaluation != null &&
+		state.history[i].evaluation.score != null
+	) {
+		black = state.history[i].evaluation.black;
+		e = state.history[i].evaluation.score / 100;
+		if (black) e = -e;
+		if ((e || 0) > 10) e = 10;
+		else if ((e || 0) < -10) e = -10;
+	}
+	return e;
+}
+
+/**
+ * The color of the move that reached entry `i`: its grade's, green for a
+ * graded move that is not an error, or by pawn loss while it is ungraded.
+ * Loops pass `grades` once rather than regrading the game per point.
+ *
+ * @param {number} i
+ * @param {Array<import("../report/grade.js").Grade | null>} [grades]
+ */
+export function getGraphPointColor(
+	i,
+	grades = gradeGame(state.history, getBook()),
+) {
+	const grade = grades[i];
+	if (grade != null) return ERRORS[grade.category]?.color ?? "#008800";
+	const e = getGraphPointData(i),
+		laste = getGraphPointData(i - 1);
+	const black =
+		i >= 0 &&
+		i < state.history.length &&
+		state.history[i].evaluation != null &&
+		state.history[i].evaluation.score != null &&
+		state.history[i].evaluation.black;
+	const lost = laste == null || e == null ? 0 : black ? laste - e : e - laste;
+	return lost <= 1.0 ? "#008800" : lost <= 3.0 ? "#bb8800" : "#bb0000";
+}
+
+/**
+ * @param {number} i
+ * @param {MouseEvent} [event]
+ */
+export function showGraphTooltip(i, event) {
+	if (
+		i >= 0 &&
+		i < state.history.length &&
+		state.history[i] != null &&
+		state.history[i].san != null
+	) {
+		const pos = parseFEN(state.history[i].fen);
+		let evalText = state.history[i].san;
+		if (
+			state.history[i].evaluation != null &&
+			state.history[i].evaluation.score != null
+		) {
+			let e = state.history[i].evaluation.score;
+			if (state.history[i].evaluation.black) e = -e;
+			evalText += ` ${getEvalText(e, true)}`;
+		}
+		updateTooltip(
+			evalText,
+			null,
+			pos.w ? `${pos.m[1] - 1}...` : `${pos.m[1]}.`,
+			null,
+			event,
+		);
+	} else updateTooltip("");
+}
+
+/** @param {MouseEvent} [event] The pointer over the graph, to update its tooltip. */
+export function repaintGraph(event) {
+	requestAnimationFrame(() => {
+		const data = [];
+		const color = [];
+		const grades = gradeGame(state.history, getBook());
+		for (let i = 0; i < state.history.length; i++) {
+			data.push(getGraphPointData(i));
+			color.push(getGraphPointColor(i, grades));
+		}
+
+		const border1 = 4.5,
+			border2 = 18.5;
+		let xMax = 40,
+			yMax = 2,
+			xStep = 10,
+			yStep = 1;
+
+		for (let i = 0; i < data.length; i++) {
+			if (Math.ceil(Math.abs(Number(data[i]))) > yMax)
+				yMax = Math.ceil(Math.abs(Number(data[i])));
+		}
+		if (data.length > xMax) xMax = data.length;
+
+		const cw = byId("graphWrapper").clientWidth;
+		const ch = byId("graphWrapper").clientHeight;
+		let mouseDataPos = null;
+
+		if (event != null) {
+			const rect = byId("graph").getBoundingClientRect();
+			const mx = event.clientX - rect.left;
+			const my = event.clientY - rect.top;
+			const b1 = border1 / state.bodyScale,
+				b2 = border2 / state.bodyScale;
+			const mUnit = (rect.width - b1 - b2) / xMax;
+			if (
+				mx > b2 + mUnit / 2 &&
+				mx < rect.width - b1 + mUnit / 2 &&
+				my > b1 &&
+				my < rect.height - b2
+			) {
+				mouseDataPos = Math.round((mx - b2) / mUnit) - 1;
+			}
+			if (mouseDataPos === state.lastMouseDataPos) return;
+			state.lastMouseDataPos = mouseDataPos;
+		} else {
+			state.lastMouseDataPos = mouseDataPos;
+		}
+
+		const canvas = /** @type {HTMLCanvasElement} */ (
+			document.getElementById("graph")
+		);
+		const ctx = canvas.getContext("2d");
+		if (ctx == null) return;
+		canvas.width = cw;
+		canvas.height = ch;
+		const yTotal = canvas.height - border1 - border2,
+			xTotal = canvas.width - border1 - border2;
+		let xUnit = xTotal / (xMax / xStep),
+			yUnit = yTotal / ((yMax * 2) / yStep);
+
+		if (yUnit > 0) {
+			while (yUnit < 12) {
+				yUnit *= 2;
+				yStep *= 2;
+			}
+		}
+		if (xUnit > 0) {
+			while (xUnit < 18) {
+				xUnit *= 2;
+				xStep *= 2;
+			}
+		}
+
+		ctx.font = "10px Segoe UI";
+		ctx.textAlign = "right";
+		ctx.textBaseline = "middle";
+		ctx.lineWidth = 1;
+		ctx.fillStyle = "#a0aab4";
+		ctx.fillText("0", border2 - 6, border1 + yTotal / 2);
+		ctx.beginPath();
+		ctx.strokeStyle = "#738191";
+		for (let i = yStep; i <= yMax; i += yStep) {
+			if (i === 0) continue;
+			const y = Math.round((i * yUnit) / yStep);
+			ctx.fillText(`+${i}`, border2 - 6, border1 + yTotal / 2 - y);
+			ctx.fillText(`-${i}`, border2 - 6, border1 + yTotal / 2 + y);
+			if (i < yMax) {
+				ctx.moveTo(border2, border1 + yTotal / 2 - y);
+				ctx.lineTo(border2 + xTotal, border1 + yTotal / 2 - y);
+				ctx.moveTo(border2, border1 + yTotal / 2 + y);
+				ctx.lineTo(border2 + xTotal, border1 + yTotal / 2 + y);
+			}
+		}
+		ctx.moveTo(border2, border1);
+		ctx.lineTo(border2 + xTotal, border1);
+		ctx.stroke();
+		ctx.beginPath();
+
+		ctx.textAlign = "center";
+		ctx.strokeStyle = "#a0aab4";
+		for (let i = 0; i <= xMax; i += xStep) {
+			const x = Math.round((i * xUnit) / xStep);
+			ctx.fillText(
+				String(i / 2),
+				border2 + x,
+				border1 + yTotal + border2 / 2 + 2,
+			);
+			ctx.moveTo(border2 + x, border1 + yTotal);
+			ctx.lineTo(border2 + x, border1 + yTotal + 3);
+		}
+		for (let i = 0; i <= yMax; i += yStep) {
+			const y = Math.round((i * yUnit) / yStep);
+			ctx.moveTo(border2 - 3, border1 + yTotal / 2 - y);
+			ctx.lineTo(border2, border1 + yTotal / 2 - y);
+			ctx.moveTo(border2 - 3, border1 + yTotal / 2 + y);
+			ctx.lineTo(border2, border1 + yTotal / 2 + y);
+		}
+
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(border2, border1);
+		ctx.lineTo(border2, border1 + yTotal);
+		ctx.moveTo(border2, border1 + yTotal);
+		ctx.lineTo(border2 + xTotal, border1 + yTotal);
+		ctx.moveTo(border2, border1 + yTotal / 2);
+		ctx.lineTo(border2 + xTotal, border1 + yTotal / 2);
+		ctx.stroke();
+
+		for (let i = 1; i < data.length; i++) {
+			const from = data[i - 1],
+				to = data[i];
+			if (to != null && from != null) {
+				ctx.beginPath();
+				ctx.strokeStyle =
+					color[i] === "#bb0000"
+						? "red"
+						: color[i] === "#008800"
+							? "black"
+							: "white";
+				ctx.lineWidth = 1;
+				ctx.moveTo(
+					border2 + i * (xUnit / xStep),
+					border1 + yTotal / 2 - from * (yUnit / yStep),
+				);
+				ctx.lineTo(
+					border2 + (i + 1) * (xUnit / xStep),
+					border1 + yTotal / 2 - to * (yUnit / yStep),
+				);
+				ctx.stroke();
+			}
+		}
+
+		for (let i = 0; i < data.length; i++) {
+			if (i !== mouseDataPos && i !== state.historyindex) {
+				ctx.beginPath();
+				ctx.arc(
+					border2 + (i + 1) * (xUnit / xStep),
+					border1 + yTotal / 2 - Number(data[i]) * (yUnit / yStep),
+					2,
+					0,
+					2 * Math.PI,
+					false,
+				);
+				ctx.fillStyle = "black";
+				ctx.fill();
+			}
+		}
+
+		let i = state.historyindex;
+		ctx.beginPath();
+		ctx.arc(
+			border2 + (i + 1) * (xUnit / xStep),
+			border1 + yTotal / 2 - Number(data[i]) * (yUnit / yStep),
+			4,
+			0,
+			2 * Math.PI,
+			false,
+		);
+		ctx.fillStyle = "black";
+		ctx.fill();
+		ctx.beginPath();
+		ctx.arc(
+			border2 + (i + 1) * (xUnit / xStep),
+			border1 + yTotal / 2 - Number(data[i]) * (yUnit / yStep),
+			2,
+			0,
+			2 * Math.PI,
+			false,
+		);
+		ctx.fillStyle = "#e1e2e6";
+		ctx.fill();
+
+		// No point is under the pointer: nothing to mark.
+		if (mouseDataPos != null) {
+			i = mouseDataPos;
+			ctx.beginPath();
+			ctx.arc(
+				border2 + (i + 1) * (xUnit / xStep),
+				border1 + yTotal / 2 - Number(data[i]) * (yUnit / yStep),
+				4,
+				0,
+				2 * Math.PI,
+				false,
+			);
+			ctx.fillStyle = "black";
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(
+				border2 + (i + 1) * (xUnit / xStep),
+				border1 + yTotal / 2 - Number(data[i]) * (yUnit / yStep),
+				2,
+				0,
+				2 * Math.PI,
+				false,
+			);
+			ctx.fillStyle = "#64c4db";
+			ctx.fill();
+		}
+
+		// -1 clears the tooltip, as the null position did.
+		if (event) showGraphTooltip(mouseDataPos ?? -1, event);
+		repaintLastMoveArrow();
+	});
+}
+
+/** @param {MouseEvent} event */
+export function graphMouseMove(event) {
+	repaintGraph(event);
+	if (state.tooltipState) updateTooltipPos(event);
+}
+
+export function graphMouseDown() {
+	if (state.lastMouseDataPos != null) {
+		const i = state.lastMouseDataPos;
+		if (i < state.history.length && i >= 0 && i !== state.historyindex) {
+			historyMove(i - state.historyindex);
+		}
+	}
+}

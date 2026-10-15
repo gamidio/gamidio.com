@@ -1,0 +1,127 @@
+/** Keyboard shortcuts. */
+
+import { command } from "../commands.js";
+import { DEFAULT_DEPTH, MAX_DEPTH, MIN_DEPTH } from "../config.js";
+import { historyMove } from "../game/history.js";
+import { togglePromotionPiece } from "../game/position.js";
+import { clearPremove } from "../game/premove.js";
+import { state } from "../state.js";
+import { showBoard } from "../ui/board.js";
+import { byId } from "../ui/dom.js";
+import {
+	menuAnalysisMode,
+	menuPlayEngineBlack,
+	menuPlayEngineWhite,
+	menuTwoPlayerMode,
+	showHideMenu,
+} from "../ui/menu.js";
+import { showHideWindow } from "../ui/panels.js";
+
+/** @param {KeyboardEvent} e */
+export function onKeyDown(e) {
+	if (e.ctrlKey) return;
+
+	const key = e.key;
+	const engine = state.analysisEngine;
+	const engineReady = engine?.ready;
+
+	switch (key) {
+		case "`":
+		case "*":
+			if (engine && engineReady)
+				command(`depth ${engine.depth !== 0 ? "0" : DEFAULT_DEPTH}`);
+			break;
+		case "+":
+			if (engine && engineReady)
+				command(`depth ${Math.min(MAX_DEPTH, engine.depth + 1)}`);
+			break;
+		case "-":
+			if (engine && engineReady)
+				command(`depth ${Math.max(MIN_DEPTH, engine.depth - 1)}`);
+			break;
+		case "ArrowUp":
+		case "ArrowLeft":
+			historyMove(-1);
+			break;
+		case "PageUp":
+			historyMove(-10);
+			break;
+		case "Home":
+			historyMove(-1, null, true);
+			break;
+		case "ArrowDown":
+		case "ArrowRight":
+			historyMove(1);
+			break;
+		case "PageDown":
+			historyMove(10);
+			break;
+		case "End":
+			historyMove(1, null, true);
+			break;
+		case "R":
+			showBoard(false, true);
+			break;
+		case "P":
+			togglePromotionPiece();
+			break;
+		case "K":
+			command("keep");
+			break;
+		case "Escape":
+			// An open menu closes first, handing focus back to its button.
+			if (state.menu) {
+				byId("buttonMenu").focus();
+				showHideMenu(false);
+			} else if (state.premove != null) {
+				// Then a queued pre-move is cancelled.
+				clearPremove();
+				showBoard(true);
+			} else command("revert");
+			break;
+		case "F":
+			command("flip");
+			break;
+		case "T":
+			command("sidetomove");
+			break;
+		case "0":
+			command("reset");
+			break;
+		case "N":
+			command("window");
+			break;
+		case "C":
+			showHideWindow("Chessboard");
+			break;
+		case "M":
+			showHideWindow("Moves");
+			break;
+		case "H":
+			showHideWindow("History");
+			break;
+		case "G":
+			showHideWindow("Graph");
+			break;
+		case "S":
+			showHideWindow("Static");
+			break;
+		case "E":
+			showHideWindow("Edit");
+			break;
+		case "1":
+			menuAnalysisMode();
+			break;
+		case "2":
+			menuPlayEngineWhite();
+			break;
+		case "3":
+			menuPlayEngineBlack();
+			break;
+		case "4":
+			menuTwoPlayerMode();
+			break;
+		default:
+			break;
+	}
+}

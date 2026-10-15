@@ -1,0 +1,64 @@
+--- a/index.html
++++ b/index.html
+@@ -2,12 +2,12 @@
+ <html lang="en">
+ 
+ <head>
++<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="description"
+         content="Expert free chess app powered by Stockfish 19. Professional GUI for all your chess needs.">
+     <meta name="author" content="BoldChess.com">
+-    <link rel="canonical" href="https://web-app.boldchess.com">
+     <link rel="preload" href="styles.css" as="style">
+     <link rel="stylesheet" href="styles.css">
+     <link rel="icon" type="image/svg+xml" sizes="any" href="BoldChess-Logo.svg">
+--- a/src/engine/uci.js
++++ b/src/engine/uci.js
+@@ -50,7 +50,7 @@
+ 	}
+ 	let worker;
+ 	try {
+-		worker = new Worker("./engine/stockfish-19-lite.js");
++		worker = new Worker("./engine/stockfish-19-lite-single.js");
+ 	} catch (error) {
+ 		return disable(error instanceof Error ? error.message : String(error));
+ 	}
+--- a/src/state.js
++++ b/src/state.js
+@@ -82,7 +82,7 @@
+ 	 */
+ 	playEngine: undefined,
+ 	/** Elo the playing engine is limited to. */
+-	userUciEloRating: 2000,
++	userUciEloRating: 1320,
+ 
+ 	// Game history
+ 	/**
+--- a/src/ui/menu.js
++++ b/src/ui/menu.js
+@@ -419,23 +419,6 @@
+ 			command("window");
+ 			showHideMenu(false);
+ 		});
+-		addMenuLine();
+-		addMenuItem("menuApp", "Get The BoldChess App", null, true, () => {
+-			window.open(
+-				"https://boldchess.com/go/app/",
+-				"_blank",
+-				"noopener,noreferrer",
+-			);
+-			showHideMenu(false);
+-		});
+-		addMenuItem("menuAcademy", "BoldChess Academy", null, true, () => {
+-			window.open(
+-				"https://boldchess.com/learn/",
+-				"_blank",
+-				"noopener,noreferrer",
+-			);
+-			showHideMenu(false);
+-		});
+ 		if (focusIndex >= 0) {
+ 			const controls = menuControls(parent);
+ 			const control = /** @type {HTMLElement | undefined} */ (

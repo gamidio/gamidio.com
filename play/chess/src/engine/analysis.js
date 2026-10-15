@@ -1,0 +1,342 @@
+/** Driving the engines: analysing the current position and playing moves. */
+
+import { generateFEN, parseFEN } from "../chess/fen.js";
+import { sanMove } from "../chess/notation.js";
+import { checkPosition, doMove, genMoves } from "../chess/rules.js";
+import { historyAdd } from "../game/history.js";
+import { gameDrawReason, getCurFEN, setCurFEN } from "../game/position.js";
+import { playPremove } from "../input/mouse.js";
+import { state } from "../state.js";
+import { showBoard } from "../ui/board.js";
+import { repaintGraph } from "../ui/graph.js";
+import { requestInfoUpdate } from "../ui/layout.js";
+import { showEvals } from "../ui/moves.js";
+import { updateTooltip } from "../ui/tooltip.js";
+import { ensurePlayEngine } from "./engines.js";
+
+/** @typedef {import("../chess/rules.js").Move} Move */
+
+/**
+ * @param {number} index
+ * @param {number | null} score
+ * @param {number} depth
+ * @param {Move | null} [move]
+ */
+export function addHistoryEval(index, score, depth, move) {
+	const entry = state.history[index];
+	if (entry.evaluation == null || entry.evaluation.depth < depth) {
+		const black = entry.fen.indexOf(" b ") > 0;
+		entry.evaluation = { score: score, depth: depth, black: black, move: move };
+		repaintGraph();
+		requestInfoUpdate();
+	}
+}
+
+export function evalNext() {
+	const engine = state.analysisEngine;
+	if (engine == null) return;
+	for (let i = 0; i < state.curmoves.length; i++) {
+		if ((state.curmoves[i].depth ?? 0) < engine.depth) {
+			const curpos = state.curmoves[i].fen;
+			engine.score = null;
+			if (!engine.waiting) return;
+			engine.waiting = false;
+			const initialdepth = engine.depth;
+			/** @type {string[]} */
+			let savedpv = [];
+			engine.eval(
+				curpos,
+				function done(str) {
+					engine.waiting = true;
+					// The move list was rebuilt while this searched (showBoard
+					// refreshes it a frame after starting the analysis, and a mate
+					// in one answers sooner): drop the stale result, keep going.
+					if (i >= state.curmoves.length || state.curmoves[i].fen !== curpos) {
+						if (!engine.kill) evalNext();
+						return;
+					}
+					if (engine.score != null && engine.depth === initialdepth) {
+						state.curmoves[i].eval = state.curmoves[i].w
+							? engine.score
+							: -engine.score;
+						state.curmoves[i].depth = engine.depth;
+						const m = str.match(/^bestmove\s(\S+)(?:\sponder\s(\S+))?/);
+						state.curmoves[i].answer =
+							m &&
+							m.length > 1 &&
+							m[1] != null &&
+							(m[1].length === 4 || m[1].length === 5)
+								? m[1]
+								: null;
+						/** @type {string[]} */
+						const answerpv = [];
+						state.curmoves[i].answerpv = answerpv;
+						let pvtext = "";
+						if (m != null && state.curmoves[i].answer != null) {
+							if (savedpv.length < 1 || savedpv[0] !== m[1]) savedpv = [m[1]];
+							if (
+								m.length > 2 &&
+								m[2] != null &&
+								m[2].length !== 4 &&
+								m[2].length !== 5
+							) {
+								if (savedpv.length < 2 || savedpv[1] !== m[2])
+									savedpv = [m[1], m[2]];
+							}
+							let nextpos = parseFEN(curpos);
+							for (let j = 0; j < savedpv.length; j++) {
+								const move = parseBestMove(savedpv[j]);
+								if (move == null) break;
+								if (pvtext.length > 0) pvtext += " ";
+								pvtext += sanMove(nextpos, move, genMoves(nextpos));
+								answerpv.push(savedpv[j]);
+								if (j + 1 < savedpv.length)
+									nextpos = doMove(nextpos, move.from, move.to, move.p);
+							}
+						}
+						state.curmoves[i].pvtext = pvtext.length > 0 ? pvtext : "-";
+						showEvals();
+					}
+					if (!engine.kill) evalNext();
+				},
+				function info(_depth, _score, pv) {
+					savedpv = pv;
+				},
+			);
+			return;
+		}
+	}
+	if (
+		state.curmoves.length > 0 &&
+		state.history[state.historyindex].fen === getCurFEN()
+	)
+		addHistoryEval(
+			state.historyindex,
+			state.curmoves[0].w
+				? -(state.curmoves[0].eval ?? 0)
+				: state.curmoves[0].eval,
+			engine.depth,
+			state.curmoves[0].move,
+		);
+	for (let i = state.history.length - 1; i >= 0; i--) {
+		const evaluation = state.history[i].evaluation;
+		if (evaluation == null || evaluation.depth < engine.depth - 1) {
+			const curpos = state.history[i].fen;
+			engine.score = null;
+			if (!engine.waiting) return;
+			if (checkPosition(parseFEN(curpos)).length > 0) {
+				addHistoryEval(i, null, engine.depth - 1);
+				if (!engine.kill) evalNext();
+			} else {
+				engine.waiting = false;
+				engine.eval(curpos, function done(str) {
+					engine.waiting = true;
+					// The history changed while this searched: drop the stale
+					// result and carry on with the history as it is now.
+					if (i >= state.history.length || state.history[i].fen !== curpos) {
+						if (!engine.kill) evalNext();
+						return;
+					}
+					if (engine.score != null) {
+						const m = str.match(/^bestmove\s(\S+)(?:\sponder\s(\S+))?/);
+						const answer =
+							m && m.length > 1 && (m[1].length === 4 || m[1].length === 5)
+								? m[1]
+								: null;
+						addHistoryEval(
+							i,
+							engine.score,
+							engine.depth - 1,
+							parseBestMove(answer),
+						);
+					}
+					if (!engine.kill) evalNext();
+				});
+			}
+			return;
+		}
+	}
+}
+
+/**
+ * @param {string} m The move, in UCI notation.
+ * @param {number | null} s
+ * @param {number} d
+ */
+export function applyEval(m, s, d) {
+	if (s == null || m.length < 4 || state.analysisEngine?.depth === 0) return;
+	for (let i = 0; i < state.curmoves.length; i++) {
+		if (
+			state.curmoves[i].move.from.x === "abcdefgh".indexOf(m[0]) &&
+			state.curmoves[i].move.from.y === "87654321".indexOf(m[1]) &&
+			state.curmoves[i].move.to.x === "abcdefgh".indexOf(m[2]) &&
+			state.curmoves[i].move.to.y === "87654321".indexOf(m[3])
+		) {
+			if (d > (state.curmoves[i].depth ?? 0)) {
+				state.curmoves[i].eval = state.curmoves[i].w ? -s : s;
+				state.curmoves[i].depth = d;
+				showEvals();
+			}
+			break;
+		}
+	}
+}
+
+/**
+ * @param {string | null} m A move in UCI notation.
+ * @returns {Move | null}
+ */
+export function parseBestMove(m) {
+	if (m == null || m.length < 4) return null;
+	const from = {
+		x: "abcdefgh".indexOf(m[0]),
+		y: "87654321".indexOf(m[1]),
+	};
+	const to = {
+		x: "abcdefgh".indexOf(m[2]),
+		y: "87654321".indexOf(m[3]),
+	};
+	const p = m.length > 4 ? "nbrq".indexOf(m[4]) : -1;
+	if (p < 0)
+		return {
+			from: from,
+			to: to,
+		};
+	return {
+		from: from,
+		to: to,
+		p: "NBRQ"[p],
+	};
+}
+
+export function evalAll() {
+	if (state.coachMode === false && state.play != null) {
+		return;
+	}
+	// An engine that could not start never becomes ready; polling for it
+	// would keep a timer running every 50 ms for the life of the page.
+	if (state.analysisEngine?.failed) return;
+	if (
+		state.analysisEngine == null ||
+		!state.analysisEngine.ready ||
+		!state.analysisEngine.waiting
+	) {
+		if (state.analysisEngine) state.analysisEngine.kill = true;
+		window.setTimeout(evalAll, 50);
+		return;
+	}
+	const engine = state.analysisEngine;
+	engine.kill = false;
+	engine.waiting = false;
+	for (let i = 0; i < state.curmoves.length; i++) {
+		state.curmoves[i].eval = null;
+		state.curmoves[i].depth = null;
+	}
+	if (engine.depth === 0) {
+		engine.waiting = true;
+		return;
+	}
+	const fen = getCurFEN();
+	// No `ucinewgame` here: it clears the engine's hash table, and consecutive
+	// positions (stepping through a game, trying a move) share most of their
+	// search tree, so keeping it makes re-analysis noticeably faster.
+	engine.send("stop");
+	// The analysis engine always searches at full strength. A Skill Level
+	// below 20 makes Stockfish search four lines and play a deliberately weaker
+	// one, so the score read back would belong to the wrong move. Lower depth
+	// is the speed knob; playing strength is set on the playing engine.
+	engine.score = null;
+	if (state.curmoves.length === 0) {
+		engine.waiting = true;
+		if (!engine.kill) evalNext();
+		return;
+	}
+	engine.eval(
+		fen,
+		function done(str) {
+			engine.waiting = true;
+			if (fen !== getCurFEN()) return;
+			const matches = str.match(/^bestmove\s(\S+)(?:\sponder\s(\S+))?/);
+			if (matches && matches.length > 1) {
+				applyEval(matches[1], engine.score, engine.depth - 1);
+				if (state.history[state.historyindex].fen === fen)
+					addHistoryEval(
+						state.historyindex,
+						engine.score,
+						engine.depth - 1,
+						parseBestMove(matches[1]),
+					);
+			}
+			if (!engine.kill) evalNext();
+		},
+		function info(depth, score, pv) {
+			if (fen !== getCurFEN() || depth <= 10) return;
+			applyEval(pv[0], score, depth - 1);
+			if (state.history[state.historyindex].fen === fen)
+				addHistoryEval(
+					state.historyindex,
+					score,
+					depth - 1,
+					parseBestMove(pv[0]),
+				);
+		},
+	);
+}
+
+export function doComputerMove() {
+	if (state.play == null) return;
+	const fen = getCurFEN();
+	// Stockfish 19 aborts its worker on a position without both kings, which
+	// the board editor can produce mid-game; there is nothing to play anyway.
+	if (checkPosition(parseFEN(fen)).length > 0) return;
+	// The game is over; the move list says why.
+	if (gameDrawReason(fen) != null) return;
+	if (state.isPlayerWhite && fen.indexOf(" w ") > 0) return;
+	if (!state.isPlayerWhite && fen.indexOf(" b ") > 0) return;
+
+	if (state.playEngine != null && !state.playEngine.waiting) {
+		if (state.playEngine) state.playEngine.kill = true;
+		window.setTimeout(doComputerMove, 50);
+		return;
+	}
+	const playEngine = ensurePlayEngine();
+	// A failed engine never becomes ready; retrying would spin forever.
+	if (playEngine.failed) return;
+	if (!playEngine.ready) {
+		window.setTimeout(doComputerMove, 100);
+		return;
+	} else {
+		playEngine.kill = false;
+		playEngine.waiting = false;
+		playEngine.send("stop");
+		playEngine.send("ucinewgame");
+		playEngine.score = null;
+		playEngine.eval(fen, function done(str) {
+			playEngine.waiting = true;
+			if (fen !== getCurFEN()) return;
+			const matches = str.match(/^bestmove\s(\S+)(?:\sponder\s(\S+))?/);
+			if (matches && matches.length > 1) {
+				const move = parseBestMove(matches[1]);
+				if (move == null) return;
+				const fenBeforeMove = getCurFEN(); // FEN before the engine's move
+				const pos = doMove(parseFEN(fenBeforeMove), move.from, move.to, move.p); // Apply the engine's move
+				setCurFEN(generateFEN(pos)); // Update to the new position
+				// Compute SAN notation for the engine's move
+				const san = sanMove(
+					parseFEN(fenBeforeMove),
+					move,
+					genMoves(parseFEN(fenBeforeMove)),
+				);
+				// Add only one entry to history with the new position, move, and SAN notation
+				historyAdd(getCurFEN(), null, move, san);
+				// Optional: Log history for debugging
+				// console.log('History:', state.history);
+				updateTooltip("");
+				showBoard(false);
+				// After showBoard's frame, which rebuilds the move list the
+				// pre-move is looked up in.
+				requestAnimationFrame(() => playPremove(fenBeforeMove));
+			}
+		});
+	}
+}

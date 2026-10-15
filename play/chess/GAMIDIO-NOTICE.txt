@@ -1,0 +1,16 @@
+BoldChess Web App — hosted by Gamidio (gamidio.com)
+
+Original game: BoldChess Team (Labinator Solutions); Stockfish.js by Nathan Rugg / Chess.com; Stockfish by its developers
+Upstream source: https://github.com/LabinatorSolutions/boldchess-web-app
+Upstream commit: 9ae62bd4a918e7fc7e4af239a974f8f07c2c83ef
+License: GNU AGPL v3 (app); GNU GPL v3 (Stockfish.js engine) (https://github.com/LabinatorSolutions/boldchess-web-app/blob/master/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - public/ copied without the Netlify _headers file; engine/stockfish-19-lite.* (multi-threaded) replaced by stockfish-19-lite-single.* from the stockfish npm package 19.0.1 (Stockfish.js by nmrugg, GPL-3)
+  - src/engine/uci.js: single-threaded engine build (no SharedArrayBuffer needed)
+  - index.html: no canonical link to the author's host
+  - src/state.js: computer opponent starts at 1320 Elo instead of 2000
+  - src/ui/menu.js: no 'Get The BoldChess App' / 'BoldChess Academy' menu items
+  - index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
