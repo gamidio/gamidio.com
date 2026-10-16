@@ -1,0 +1,14 @@
+Coric's Quest — hosted by Gamidio (gamidio.com)
+
+Original game: Tung Nguyen; art by Lanea Zimmerman and David E. Gervais; music by Avgvsta and Yubatake
+Upstream source: https://github.com/tung/corics-quest
+Upstream commit: 215476b69b39080ecd287704d78ced6f0fffbe68
+License: MIT License (code); assets CC BY 3.0 / CC BY 4.0 / OGA-BY 3.0 (see README Attribution) (https://github.com/tung/corics-quest/blob/master/LICENSE.txt)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built with: cargo build --release --target wasm32-unknown-unknown (Rust 1.89); JS loaders from the miniquad, sapp-jsutils, quad-storage and quad-snd crates in Cargo.lock
+  - (build output) index.html: the author's play page with Gamidio guards (own localStorage namespace, keyboard focus)
+  - (build output) index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - gamidio-gamepad.js: Gamidio's on-screen gamepad (written by Gamidio, part of these changes), included in full in this folder
