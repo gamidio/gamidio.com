@@ -1,0 +1,77 @@
+--- a/data/config.xml
++++ b/data/config.xml
+@@ -14,7 +14,7 @@
+ 	<var name="show_shadow" value="false"/>
+ 	<var name="left_script_name" value="hyp014"/>
+ 	<var name="right_script_name" value="reduced"/>
+-	<var name="left_player_human" value="true"/>
++	<var name="left_player_human" value="false"/>
+ 	<var name="right_player_human" value="true"/>
+ 	<var name="left_player_name" value="Left Player"/>
+ 	<var name="right_player_name" value="Right Player"/>
+@@ -22,13 +22,13 @@
+ 	<var name="global_volume" value="1.000000"/>
+ 	<var name="mute" value="false"/>
+ 	<var name="scoretowin" value="15"/>
+-	<var name="showfps" value="true"/>
++	<var name="showfps" value="false"/>
+ 	<var name="blood" value="false"/>
+ 	<var name="background" value="strand2.bmp"/>
+ 	<var name="network_side" value="1"/>
+ 	<var name="use_remote_color" value="true"/>
+ 	<var name="language" value="en"/>
+-	<var name="left_script_strength" value="4"/>
++	<var name="left_script_strength" value="13"/>
+ 	<var name="right_script_strength" value="13"/>
+ 	<var name="additional_network_server" value="0.0.0.0"/>
+ 	<var name="rules" value="default.lua"/>
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -25,6 +25,9 @@
+ #include <atomic>
+ #include <thread>
+ #include <iostream>
++#ifdef __EMSCRIPTEN__
++#include <emscripten.h>
++#endif
+ 
+ #include <SDL.h>
+ 
+@@ -225,6 +228,9 @@
+ 				app.getRenderManager().refresh();
+ 			}
+ 			scontroller.update();
++#ifdef __EMSCRIPTEN__
++			emscripten_sleep(0); // Gamidio: hand the frame to the browser
++#endif
+ 		}
+ 	}
+ 	catch (std::exception& e)
+--- a/src/state/State.cpp
++++ b/src/state/State.cpp
+@@ -102,14 +102,6 @@
+ 	imgui.doImage(GEN_ID, Vector2(400.0, 300.0), "background");
+ 	imgui.doOverlay(GEN_ID, Vector2(0.0, 0.0), Vector2(800.0, 600.0));
+ 	imgui.doImage(GEN_ID, Vector2(400.0, 175.0), "gfx/titel.bmp");
+-	if (imgui.doButton(GEN_ID, Vector2(34, 300.0), TextManager::MNU_LABEL_ONLINE))
+-	{
+-		switchState( new OnlineSearchState() );
+-	}
+-	if (imgui.doButton(GEN_ID, Vector2(34, 340.0), TextManager::MNU_LABEL_LAN))
+-	{
+-		switchState( new LANSearchState() );
+-	}
+ 	if (imgui.doButton(GEN_ID, Vector2(34.0, 380.0), TextManager::MNU_LABEL_START))
+ 	{
+ 		try
+@@ -140,10 +132,6 @@
+ 		switchState(new CreditsState());
+ 	}
+ 
+-	if (imgui.doButton(GEN_ID, Vector2(34.0, 540.0), TextManager::MNU_LABEL_EXIT))
+-	{
+-		getInputMgr().setEndBlobby();
+-	}
+ }
+ 
+ const char* MainMenuState::getStateName() const

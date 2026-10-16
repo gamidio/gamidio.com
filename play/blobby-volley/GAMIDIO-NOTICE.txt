@@ -1,0 +1,21 @@
+Blobby Volley 2 — hosted by Gamidio (gamidio.com)
+
+Original game: Daniel Knobe, Jonathan Sieber and the Blobby Volley 2 developers
+Upstream source: https://github.com/danielknobe/blobbyvolley2
+Upstream commit: c28c5fa87872b7592f34f5f86196e93d127b6cf9
+License: GNU GPL v2 or later (https://github.com/danielknobe/blobbyvolley2/blob/master/COPYING)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/main.cpp: Emscripten header
+  - src/main.cpp: main loop yields to the browser every frame (ASYNCIFY)
+  - src/state/State.cpp: no Online / LAN game in the menu
+  - src/state/State.cpp: no Exit in the menu
+  - data/config.xml: left player: computer
+  - data/config.xml: computer at medium strength
+  - data/config.xml: no FPS counter
+  - built with emsdk 4.0.20: PhysFS 3.2.0 (static), SDL2 and Boost headers ports, CMake Release, -sASYNCIFY -sLEGACY_GL_EMULATION (the GL renderer is linked, the SDL renderer is used); data packed with file_packager
+  - (build output) index.html: Gamidio page (4:3 canvas scaled to the frame)
+  - (build output) index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - gamidio-gamepad.js: Gamidio's on-screen gamepad (written by Gamidio, part of these changes), included in full in this folder
