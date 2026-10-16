@@ -1,0 +1,23 @@
+--- a/sdl2/sdl2.cpp
++++ b/sdl2/sdl2.cpp
+@@ -59,7 +59,7 @@
+ int anySelectButtonPushedMask = 0;
+ int framesPlayed = 0;
+ bool checkDemoMode = false;
+-bool fullscreen = true;
++bool fullscreen = false; // Gamidio: windowed canvas in the page
+ 
+ void quit(int rc)
+ {
+@@ -416,10 +416,7 @@
+          {
+             pressESC();
+          }
+-         if (inTheMenu())
+-         {
+-            done = SDL_TRUE;
+-         }
++         /* Gamidio: no quitting from the menu in the browser */
+       }
+       break;
+ 

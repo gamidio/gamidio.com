@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mr. Boom</title>
+<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
+<script>/* Gamidio: no requests to third-party servers from this game */(function(){
+var dead=new URL('gamidio-offline-blocked',location.href).href;
+var foreign=function(u){try{return new URL(u,location.href).origin!==location.origin}catch(e){return false}};
+var f=window.fetch;if(f){window.fetch=function(i,o){var u=typeof i==='string'?i:(i&&i.url);if(u&&foreign(u)){return f.call(window,dead,o&&{method:'GET'})}return f.apply(window,arguments)}}
+var op=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){var a=[].slice.call(arguments);if(u&&foreign(u)){a[0]='GET';a[1]=dead}return op.apply(this,a)};
+var W=window.WebSocket;if(W){window.WebSocket=function(u,p){if(foreign(String(u).replace(/^ws/,'http')))throw new DOMException('blocked by Gamidio','SecurityError');return new W(u,p)};window.WebSocket.prototype=W.prototype}
+})();</script>
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}
+#canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+#status{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#999;font:16px system-ui,sans-serif}</style>
+</head>
+<body>
+<div id="status">Loading Mr. Boom...</div>
+<canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+<script>
+var Module = {
+  canvas: document.getElementById("canvas"),
+  print: function (t) { console.log(t); },
+  printErr: function (t) { console.warn(t); },
+  setStatus: function (s) { var e = document.getElementById("status"); if (!e) return; if (s) e.textContent = s; else e.remove(); }
+};
+</script>
+<script>
+/* The game draws a 320x200 (16:10) picture stretched over its canvas: keep the canvas at 16:10, as large as the frame allows. */
+(function () {
+  var c = document.getElementById("canvas");
+  function fit() {
+    var w = window.innerWidth, h = window.innerHeight;
+    if (w / h > 1.6) w = h * 1.6; else h = w / 1.6;
+    var W = Math.floor(w) + "px", H = Math.floor(h) + "px";
+    if (c.style.width !== W || c.style.getPropertyPriority("width") !== "important") c.style.setProperty("width", W, "important");
+    if (c.style.height !== H || c.style.getPropertyPriority("height") !== "important") c.style.setProperty("height", H, "important");
+  }
+  window.addEventListener("resize", fit);
+  new MutationObserver(fit).observe(c, {attributes: true, attributeFilter: ["style"]});
+  fit();
+})();
+</script>
+<script async src="mrboom.js"></script>
+<script>window.GAMIDIO_GAMEPAD={"buttons": [{"label": "A", "keys": ["End"]}, {"label": "B", "keys": ["PageDown"]}, {"label": "X", "keys": ["Home"]}, {"label": "Y", "keys": ["Enter"]}], "menu": {"label": "☰", "keys": ["Escape"]}, "fullscreen": true}</script><script src="gamidio-gamepad.js"></script>
+</body>
+</html>
