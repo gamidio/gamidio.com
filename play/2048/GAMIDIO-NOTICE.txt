@@ -1,0 +1,15 @@
+2048 — hosted by Gamidio (gamidio.com)
+
+Original game: Gabriele Cirulli
+Upstream source: https://github.com/gabrielecirulli/2048
+Upstream commit: 478b6ec346e3787f589e4af751378d06ded4cbbc
+License: MIT License; Clear Sans font Apache 2.0 (https://github.com/gabrielecirulli/2048/blob/master/LICENSE.txt)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace (gameState is also A Dark Room's key)
+  - index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - index.html: removed the note that this page is the official 2048 site
+  - index.html: smaller top margin in our frame
+  - index.html: heading and board scaled to fit the frame height

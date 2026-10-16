@@ -1,0 +1,46 @@
+--- a/index.html
++++ b/index.html
+@@ -1,6 +1,17 @@
+ <!DOCTYPE html>
+ <html>
+ <head>
++<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
++<script>/* Gamidio: this game only sees its own localStorage keys */(function(){
++var P='2048:',S;try{S=window.localStorage}catch(e){return}
++var own=function(){var r=[];for(var i=0;i<S.length;i++){var k=S.key(i);if(k&&k.indexOf(P)===0)r.push(k.slice(P.length))}return r};
++var api={getItem:function(k){return S.getItem(P+k)},setItem:function(k,v){S.setItem(P+k,String(v))},removeItem:function(k){S.removeItem(P+k)},
++clear:function(){own().forEach(function(k){S.removeItem(P+k)})},key:function(i){var o=own();return i<o.length?o[i]:null}};
++var px=new Proxy(api,{get:function(o,k){if(k==='length')return own().length;if(k in o)return o[k];if(typeof k==='string'){var v=S.getItem(P+k);return v===null?undefined:v}},
++set:function(o,k,v){S.setItem(P+k,String(v));return true},deleteProperty:function(o,k){S.removeItem(P+k);return true},
++has:function(o,k){return k in o||S.getItem(P+k)!==null},ownKeys:function(){return own()},
++getOwnPropertyDescriptor:function(o,k){var v=S.getItem(P+k);return v===null?undefined:{value:v,enumerable:true,configurable:true,writable:true}}});
++Object.defineProperty(window,'localStorage',{configurable:true,get:function(){return px}});})();</script>
+   <meta charset="utf-8">
+   <title>2048</title>
+ 
+@@ -17,6 +28,7 @@
+   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+ </head>
+ <body>
++<style>body{margin:24px 0}</style>
+   <div class="container">
+     <div class="heading">
+       <h1 class="title">2048</h1>
+@@ -77,10 +89,6 @@
+     </p>
+     <hr>
+     <p>
+-    <strong class="important">Note:</strong> This site is the official version of 2048. You can play it on your phone via <a href="http://git.io/2048">http://git.io/2048.</a> All other apps or sites are derivatives or fakes, and should be used with caution.
+-    </p>
+-    <hr>
+-    <p>
+     Created by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli.</a> Based on <a href="https://itunes.apple.com/us/app/1024!/id823499224" target="_blank">1024 by Veewo Studio</a> and conceptually similar to <a href="http://asherv.com/threes/" target="_blank">Threes by Asher Vollmer.</a>
+     </p>
+   </div>
+@@ -95,5 +103,6 @@
+   <script src="js/local_storage_manager.js"></script>
+   <script src="js/game_manager.js"></script>
+   <script src="js/application.js"></script>
++<script>/* Gamidio: fit the board into the frame */(function(){var c=document.querySelector('.container'),g=document.querySelector('.game-container');function f(){c.style.transform='';var h=g.getBoundingClientRect().bottom+24,z=Math.min(1,window.innerHeight/h);c.style.transformOrigin='top center';c.style.transform=z<1?'scale('+z+')':''}window.addEventListener('resize',f);f()})();</script>
+ </body>
+ </html>

@@ -1,0 +1,19 @@
+Neverball — hosted by Gamidio (gamidio.com)
+
+Original game: Robert Kooima and the Neverball developers
+Upstream source: https://github.com/Neverball/neverball
+Upstream commit: 82883833043725b21a65fe45416524cb77412e39
+License: GNU GPL v2 or later (see LICENSE.md for fonts and exceptions) (https://github.com/Neverball/neverball/blob/master/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - share/package.c: packages are served from our copy (packages/), not play.neverball.org
+  - js/index.html: (same, page side)
+  - js/index.html: no preload from play.neverball.org
+  - js/index.html: no share image of the author's host
+  - js/index.html: no service worker (offline app install) inside our site
+  - js/index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - js/index.html: no web app manifest (not installable from our site)
+  - js/index.html: while playing, the game fills the whole frame
+  - built as the authors' web workflow (emsdk 3.1.65, make sols, gl4es c9895df, emscripten/ball.mk BUILD=release) plus 'make -f emscripten/ball.mk packages' (level sets and balls from this repository, without the Octocat ball)
