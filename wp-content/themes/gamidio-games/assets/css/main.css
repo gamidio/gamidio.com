@@ -129,23 +129,23 @@ button {
 	}
 }
 
-@media (min-width: 529px) { .grid { --cols: 4; } }
-@media (min-width: 652px) { .grid { --cols: 5; } }
-@media (min-width: 775px) { .grid { --cols: 6; } }
-@media (min-width: 898px) { .grid { --cols: 7; } }
-@media (min-width: 1021px) { .grid { --cols: 8; } }
-@media (min-width: 1144px) { .grid { --cols: 9; } }
-@media (min-width: 1267px) { .grid { --cols: 10; } }
-@media (min-width: 1390px) { .grid { --cols: 11; } }
-@media (min-width: 1513px) { .grid { --cols: 12; } }
-@media (min-width: 1636px) { .grid { --cols: 13; } }
-@media (min-width: 1759px) { .grid { --cols: 14; } }
-@media (min-width: 1882px) { .grid { --cols: 15; } }
-@media (min-width: 2005px) { .grid { --cols: 16; } }
-@media (min-width: 2128px) { .grid { --cols: 17; } }
-@media (min-width: 2251px) { .grid { --cols: 18; } }
-@media (min-width: 2374px) { .grid { --cols: 19; } }
-@media (min-width: 2497px) { .grid { --cols: 20; } }
+@media (min-width: 529px) { .grid, .category-row { --cols: 4; } }
+@media (min-width: 652px) { .grid, .category-row { --cols: 5; } }
+@media (min-width: 775px) { .grid, .category-row { --cols: 6; } }
+@media (min-width: 898px) { .grid, .category-row { --cols: 7; } }
+@media (min-width: 1021px) { .grid, .category-row { --cols: 8; } }
+@media (min-width: 1144px) { .grid, .category-row { --cols: 9; } }
+@media (min-width: 1267px) { .grid, .category-row { --cols: 10; } }
+@media (min-width: 1390px) { .grid, .category-row { --cols: 11; } }
+@media (min-width: 1513px) { .grid, .category-row { --cols: 12; } }
+@media (min-width: 1636px) { .grid, .category-row { --cols: 13; } }
+@media (min-width: 1759px) { .grid, .category-row { --cols: 14; } }
+@media (min-width: 1882px) { .grid, .category-row { --cols: 15; } }
+@media (min-width: 2005px) { .grid, .category-row { --cols: 16; } }
+@media (min-width: 2128px) { .grid, .category-row { --cols: 17; } }
+@media (min-width: 2251px) { .grid, .category-row { --cols: 18; } }
+@media (min-width: 2374px) { .grid, .category-row { --cols: 19; } }
+@media (min-width: 2497px) { .grid, .category-row { --cols: 20; } }
 
 /* ---------- Tiles ---------- */
 
@@ -214,8 +214,21 @@ button {
 	display: none;
 }
 
+/* Genre links: one row of their own under the game grid, as wide as the grid. */
+.category-row {
+	box-sizing: border-box;
+	max-width: calc(var(--cols, 3) * var(--grid-cell) + (var(--cols, 3) - 1) * var(--grid-gap) + 2 * var(--page-pad));
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--grid-gap);
+	padding: 0 var(--page-pad) var(--page-pad);
+}
+
 .tile-category {
-	grid-column: span 2;
+	flex: 0 0 calc(2 * var(--grid-cell) + var(--grid-gap));
+	min-height: calc(var(--grid-cell) * 0.6);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -241,7 +254,7 @@ button {
 /* Three columns: a 2-wide label would leave one empty cell beside it. */
 @media (max-width: 528px) {
 	.tile-category {
-		grid-column: span 3;
+		flex-basis: calc(50% - var(--grid-gap) / 2);
 	}
 }
 
