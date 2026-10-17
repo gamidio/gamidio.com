@@ -1,0 +1,12 @@
+Interplanetary Postal Service — hosted by Gamidio (gamidio.com)
+
+Original game: Sebastian Macke
+Upstream source: https://github.com/s-macke/Interplanetary-Postal-Service
+Upstream commit: 1cd8eb6c3e667ae66ad1b938f86120a0359ea62d
+License: GNU GPL v3 (https://github.com/s-macke/Interplanetary-Postal-Service/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built as the author's build.sh (bin/compress for the maps, make with clang --target=wasm32); files from src/js
+  - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game

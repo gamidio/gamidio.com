@@ -1,0 +1,12 @@
+Nightclub Showdown — hosted by Gamidio (gamidio.com)
+
+Original game: Sébastien Bénard (deepnight)
+Upstream source: https://github.com/deepnight/ld41-nightclubShowdown
+Upstream commit: 50ca78c2f04e17a2b7a8bf65643913fe93c2cdbd
+License: Apache License 2.0 (code and assets) (https://github.com/deepnight/ld41-nightclubShowdown/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
+  - index.html: no scrollbars around the game in our frame

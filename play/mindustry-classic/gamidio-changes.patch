@@ -1,0 +1,31 @@
+--- a/assets/assets.txt
++++ b/assets/assets.txt
+@@ -62,12 +62,12 @@
+ b:sprites/icon.icns:4990:application/unknown
+ i:sprites/background.png:208:image/png
+ d:music:0:application/unknown
+-a:music/2.mp3:2615726:application/unknown
+-a:music/1.mp3:2136000:application/unknown
+-a:music/6.mp3:2976000:application/unknown
+-a:music/4.mp3:2352000:application/unknown
+-a:music/5.mp3:2376000:application/unknown
+-a:music/3.mp3:1679707:application/unknown
++a:music/2.mp3:3952:application/unknown
++a:music/1.mp3:3952:application/unknown
++a:music/6.mp3:3952:application/unknown
++a:music/4.mp3:3952:application/unknown
++a:music/5.mp3:3952:application/unknown
++a:music/3.mp3:3952:application/unknown
+ d:sounds:0:application/unknown
+ a:sounds/waveend.mp3:17086:application/unknown
+ a:sounds/enemyshoot.mp3:3124:application/unknown
+--- a/index.html
++++ b/index.html
+@@ -1,6 +1,7 @@
+ <!doctype html>
+ <html>
+        <head>
++<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
+               <title>Mindustry</title>
+               <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+               <link href="styles.css" rel="stylesheet" type="text/css">

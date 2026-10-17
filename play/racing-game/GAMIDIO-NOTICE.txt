@@ -1,0 +1,30 @@
+Racing Game (pmndrs) — hosted by Gamidio (gamidio.com)
+
+Original game: Poimandres (pmndrs) and contributors; car model by Alexus16, track by Batuhan13, train by NIKCORE (Sketchfab, CC BY 4.0)
+Upstream source: https://github.com/pmndrs/racing-game
+Upstream commit: 7816a5d954b75e6ad853ae4e4f0cbbd628072643
+License: MIT License (code); assets CC0, 3D models CC BY 4.0 (authors named in the model files) (https://github.com/pmndrs/racing-game/blob/main/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/data.ts: offline version (best times saved in this browser), no Supabase leaderboard or sign-in
+  - src/ui/Auth.tsx: no sign-in buttons (Google, GitHub, Discord)
+  - src/ui/Intro.tsx: no sign-in / account line on the start screen
+  - src/ui/Finished.tsx: the finish screen offers a local best time
+  - src/ui/Finished.tsx: button label for the local best time
+  - src/effects/audio/Accelerate.tsx: asset paths relative to the game folder
+  - src/effects/audio/Boost.tsx: asset paths relative to the game folder
+  - src/effects/audio/Brake.tsx: asset paths relative to the game folder
+  - src/effects/audio/Engine.tsx: asset paths relative to the game folder
+  - src/effects/audio/Honk.tsx: asset paths relative to the game folder
+  - src/main.tsx: asset paths relative to the game folder
+  - src/models/track/Heightmap.tsx: asset paths relative to the game folder
+  - src/models/track/Track.tsx: asset paths relative to the game folder
+  - src/models/track/Train.tsx: asset paths relative to the game folder
+  - src/models/vehicle/Chassis.tsx: asset paths relative to the game folder
+  - src/models/vehicle/Wheel.tsx: asset paths relative to the game folder
+  - built with: yarn install --frozen-lockfile; vite build --base ./ (node 16); Draco decoder copied from node_modules/three/examples/js/libs/draco/gltf/ into draco/
+  - (build output) assets/vendor.6d7f4856.js: Draco decoder from draco/ in this folder
+  - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) index.html: the start screen's credits footer is hidden in low frames (it overlapped 'Click to start'); credits stay in GAMIDIO-NOTICE.txt

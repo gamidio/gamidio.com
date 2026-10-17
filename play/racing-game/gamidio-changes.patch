@@ -1,0 +1,265 @@
+--- a/src/data.ts
++++ b/src/data.ts
+@@ -1,7 +1,6 @@
+-import { createClient } from '@supabase/supabase-js'
+-import type { Provider } from '@supabase/supabase-js'
+ import type { Setter } from './store'
+ 
++// Gamidio: offline version. The original leaderboard and sign-in used Supabase; here the best times stay in this browser.
+ interface IScore {
+   name: string
+   thumbnail: string
+@@ -12,43 +11,34 @@
+   id: string
+ }
+ 
+-const { VITE_SUPABASE_ANON_KEY, VITE_SUPABASE_URL } = import.meta.env
++export type Provider = string
+ 
+-const config = {
+-  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMzMyMTAxOCwiZXhwIjoxOTM4ODk3MDE4fQ.YISggSEzSk6WsMNkvN2a5MHYWBVjQ84nHwWYne9sTA0',
+-  url: 'https://tfvnrohsjcgsekfnggks.supabase.co',
++const KEY = 'racing-game:best-times'
++const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACw='
++
++const load = (): SavedScore[] => {
++  try {
++    return JSON.parse(localStorage.getItem(KEY) || '[]')
++  } catch (e) {
++    return []
++  }
+ }
+ 
+-const isString = (v: unknown): v is string => typeof v === 'string'
++export const getScores = (limit = 50): PromiseLike<SavedScore[]> =>
++  Promise.resolve(load().sort((a, b) => a.time - b.time).slice(0, limit))
+ 
+-const key = isString(VITE_SUPABASE_ANON_KEY) ? VITE_SUPABASE_ANON_KEY : config.key
+-const url = isString(VITE_SUPABASE_URL) ? VITE_SUPABASE_URL : config.url
+-
+-const client = createClient(url, key)
+-
+-export const getScores = (limit = 50): PromiseLike<SavedScore[]> =>
+-  client
+-    .from('scores')
+-    .select()
+-    .gt('time', 1337)
+-    .limit(limit)
+-    .order('time')
+-    .then(({ data }) => data || [])
+-
+-export const insertScore = ({ name, thumbnail, time }: IScore): PromiseLike<SavedScore[]> =>
+-  client
+-    .from('scores')
+-    .insert({ name, thumbnail, time })
+-    .then(({ data }) => data || [])
++export const insertScore = ({ name, time }: IScore): PromiseLike<SavedScore[]> => {
++  const score = { id: String(Date.now()), name, thumbnail: BLANK, time }
++  try {
++    localStorage.setItem(KEY, JSON.stringify([...load(), score].sort((a, b) => a.time - b.time).slice(0, 50)))
++  } catch (e) {}
++  return Promise.resolve([score])
++}
+ 
+ export const setupSession = (set: Setter) => {
+-  set({ session: client.auth.session() })
+-
+-  client.auth.onAuthStateChange((_event, session) => {
+-    set({ session })
+-  })
++  set({ session: { user: { aud: 'authenticated', user_metadata: { full_name: 'You', avatar_url: BLANK } } } as any })
+ }
+ 
+-export const authenticateUser = (provider: Provider) => client.auth.signIn({ provider })
++export const authenticateUser = (_provider: Provider) => Promise.resolve()
+ 
+-export const unAuthenticateUser = () => client.auth.signOut()
++export const unAuthenticateUser = () => Promise.resolve()
+--- a/src/effects/audio/Accelerate.tsx
++++ b/src/effects/audio/Accelerate.tsx
+@@ -30,5 +30,5 @@
+     }
+   }, [])
+ 
+-  return <PositionalAudio ref={ref} url="/sounds/accelerate.mp3" loop distance={5} />
++  return <PositionalAudio ref={ref} url="sounds/accelerate.mp3" loop distance={5} />
+ }
+--- a/src/effects/audio/Boost.tsx
++++ b/src/effects/audio/Boost.tsx
+@@ -28,5 +28,5 @@
+     }
+   }, [boost, sound])
+ 
+-  return <PositionalAudio ref={ref} url="/sounds/boost.mp3" distance={5} />
++  return <PositionalAudio ref={ref} url="sounds/boost.mp3" distance={5} />
+ }
+--- a/src/effects/audio/Brake.tsx
++++ b/src/effects/audio/Brake.tsx
+@@ -25,5 +25,5 @@
+     }
+   }, [brake, sound])
+ 
+-  return <PositionalAudio ref={ref} url="/sounds/tire-brake.mp3" distance={10} />
++  return <PositionalAudio ref={ref} url="sounds/tire-brake.mp3" distance={10} />
+ }
+--- a/src/effects/audio/Engine.tsx
++++ b/src/effects/audio/Engine.tsx
+@@ -30,5 +30,5 @@
+     }
+   }, [])
+ 
+-  return <PositionalAudio autoplay ref={ref} url="/sounds/engine.mp3" loop distance={5} />
++  return <PositionalAudio autoplay ref={ref} url="sounds/engine.mp3" loop distance={5} />
+ }
+--- a/src/effects/audio/Honk.tsx
++++ b/src/effects/audio/Honk.tsx
+@@ -19,5 +19,5 @@
+     }
+   }, [honk, sound])
+ 
+-  return <PositionalAudio ref={ref} url="/sounds/honk.mp3" distance={10} />
++  return <PositionalAudio ref={ref} url="sounds/honk.mp3" distance={10} />
+ }
+--- a/src/main.tsx
++++ b/src/main.tsx
+@@ -4,9 +4,9 @@
+ import './styles.css'
+ import { App } from './App'
+ 
+-useTexture.preload('/textures/heightmap_1024.png')
+-useGLTF.preload('/models/track-draco.glb')
+-useGLTF.preload('/models/chassis-draco.glb')
+-useGLTF.preload('/models/wheel-draco.glb')
++useTexture.preload('textures/heightmap_1024.png')
++useGLTF.preload('models/track-draco.glb')
++useGLTF.preload('models/chassis-draco.glb')
++useGLTF.preload('models/wheel-draco.glb')
+ 
+ createRoot(document.getElementById('root')!).render(<App />)
+--- a/src/models/track/Heightmap.tsx
++++ b/src/models/track/Heightmap.tsx
+@@ -47,7 +47,7 @@
+ type HeightmapProps = Required<Pick<HeightfieldProps, 'position' | 'rotation'>> & Required<Pick<HeightfieldArgs['1'], 'elementSize'>>
+ 
+ export function Heightmap({ elementSize, position, rotation }: HeightmapProps) {
+-  const heightmap = useTexture('/textures/heightmap_1024.png')
++  const heightmap = useTexture('textures/heightmap_1024.png')
+   const heights = useAsset<number[][], Texture[]>(async () => createHeightfieldMatrix(heightmap.image), heightmap)
+   useHeightfield(() => ({ args: [heights, { elementSize }], position, rotation }), undefined, [elementSize, position, rotation])
+   return null
+--- a/src/models/track/Track.tsx
++++ b/src/models/track/Track.tsx
+@@ -60,7 +60,7 @@
+ 
+ export function Track(): JSX.Element {
+   const level = useStore((state) => state.level)
+-  const { nodes: n, materials: m } = useGLTF('/models/track-draco.glb') as TrackGLTF
++  const { nodes: n, materials: m } = useGLTF('models/track-draco.glb') as TrackGLTF
+   const config = { receiveShadow: true, castShadow: true, 'material-roughness': 1 }
+   const birds = useRef<Group>(null!)
+   const clouds = useRef<Group>(null!)
+@@ -84,7 +84,7 @@
+         <mesh geometry={n.terrain.geometry} material={n.terrain.material} {...config} />
+         <mesh geometry={n.water.geometry}>
+           <MeshDistortMaterial speed={4} map={m.ColorPaletteWater.map} roughness={0} side={DoubleSide} />
+-          <ToggledPositionalAudio url="/sounds/water.mp3" loop autoplay distance={10} />
++          <ToggledPositionalAudio url="sounds/water.mp3" loop autoplay distance={10} />
+         </mesh>
+       </group>
+       <group ref={birds}>
+--- a/src/models/track/Train.tsx
++++ b/src/models/track/Train.tsx
+@@ -44,7 +44,7 @@
+ 
+ export function Train({ args = [38, 8, 10], position = [-145.84, 3.42, 54.67], rotation = [0, -0.09, 0] }: BoxProps): JSX.Element {
+   const ref = useRef<Group>(null!)
+-  const { animations, nodes: n, materials: m } = useGLTF('/models/track-draco.glb') as TrainGLTF
++  const { animations, nodes: n, materials: m } = useGLTF('models/track-draco.glb') as TrainGLTF
+   const [, api] = useBox(() => ({ mass: 10000, type: 'Kinematic', args, position, rotation }), ref, [args, position, rotation])
+   const { actions } = useAnimations(animations, ref)
+   const config = { receiveShadow: true, castShadow: true, 'material-roughness': 1 }
+@@ -68,7 +68,7 @@
+       <mesh geometry={n.train_7.geometry} material={m.steelClone} {...config} />
+       <mesh geometry={n.train_8.geometry} material={m.lightRedClone} {...config} />
+       <mesh geometry={n.train_9.geometry} material={m.darkClone} {...config} />
+-      <ToggledPositionalAudio url="/sounds/train.mp3" loop autoplay distance={5} />
++      <ToggledPositionalAudio url="sounds/train.mp3" loop autoplay distance={5} />
+     </group>
+   )
+ }
+--- a/src/models/vehicle/Chassis.tsx
++++ b/src/models/vehicle/Chassis.tsx
+@@ -75,7 +75,7 @@
+   const chassis_1 = useRef<MaterialMesh>(null!)
+   const crashAudio = useRef<PositionalAudioImpl>(null!)
+   const [maxSpeed] = useStore((s) => [s.vehicleConfig.maxSpeed])
+-  const { nodes: n, materials: m } = useGLTF('/models/chassis-draco.glb') as ChassisGLTF
++  const { nodes: n, materials: m } = useGLTF('models/chassis-draco.glb') as ChassisGLTF
+ 
+   const onCollide = useCallback(
+     debounce<(e: CollideEvent) => void>((e) => {
+@@ -161,7 +161,7 @@
+         />
+       </group>
+       {children}
+-      <PositionalAudio ref={crashAudio} url="/sounds/crash.mp3" loop={false} distance={5} />
++      <PositionalAudio ref={crashAudio} url="sounds/crash.mp3" loop={false} distance={5} />
+     </group>
+   )
+ })
+--- a/src/models/vehicle/Wheel.tsx
++++ b/src/models/vehicle/Wheel.tsx
+@@ -27,7 +27,7 @@
+ 
+ export const Wheel = forwardRef<Group, WheelProps>(({ leftSide, ...props }, ref) => {
+   const { radius } = useStore((state) => state.wheelInfo)
+-  const { nodes, materials } = useGLTF('/models/wheel-draco.glb') as WheelGLTF
++  const { nodes, materials } = useGLTF('models/wheel-draco.glb') as WheelGLTF
+   const scale = radius / 0.34
+   useCompoundBody(
+     () => ({
+--- a/src/ui/Auth.tsx
++++ b/src/ui/Auth.tsx
+@@ -33,7 +33,8 @@
+   },
+ ] as const
+ 
+-export function Auth() {
++export const Auth = (): JSX.Element | null => null
++export function OriginalAuth() {
+   const signIn = async (provider: Provider) => {
+     try {
+       await authenticateUser(provider)
+--- a/src/ui/Finished.tsx
++++ b/src/ui/Finished.tsx
+@@ -53,9 +53,9 @@
+               ) : null
+             ) : (
+               <>
+-                <h2>You belong on our leaderboard, {name}! </h2>
++                <h2>Save this time to your best times in this browser?</h2>
+                 <button onClick={sendScore} style={{ margin: '0 auto', width: 'auto' }} className="popup-item-key">
+-                  Add my score
++                  Save my time
+                 </button>
+               </>
+             )}
+--- a/src/ui/Intro.tsx
++++ b/src/ui/Intro.tsx
+@@ -38,16 +38,6 @@
+               {loading ? `loading ${progress.toFixed()} %` : 'Click to start'}
+             </a>
+           </div>
+-          {session?.user?.aud !== 'authenticated' ? (
+-            <Auth />
+-          ) : (
+-            <div>
+-              Hello {session.user.user_metadata.full_name}
+-              <button className="logout" onClick={unAuthenticateUser}>
+-                Logout
+-              </button>{' '}
+-            </div>
+-          )}
+         </div>
+         <Footer
+           date="2. June"
