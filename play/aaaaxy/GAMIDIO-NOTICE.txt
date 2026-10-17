@@ -1,0 +1,12 @@
+AAAAXY — hosted by Gamidio (gamidio.com)
+
+Original game: Rudolf Polzer (divVerent) and contributors; music and art by the artists in licenses/
+Upstream source: https://github.com/divVerent/aaaaxy
+Upstream commit: 90cfc2287a764bd1abc12b90705f121f7fc37811
+License: Apache License 2.0 (game); assets CC0 / CC BY / CC BY-SA / OFL as listed in licenses/ (included) (https://github.com/divVerent/aaaaxy/blob/main/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built as .github/workflows/deploy-wasm.yml (Go 1.27, GOOS=js GOARCH=wasm make BUILDTYPE=release); licenses/ of the game and its assets copied next to it
+  - (build output) index.html: keyboard focus on click; game keys do not scroll the page around the game
