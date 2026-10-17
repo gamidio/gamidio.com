@@ -1,0 +1,11 @@
+The Wandering Wraith — hosted by Gamidio (gamidio.com)
+
+Original game: Mateusz Tomczyk (tulustul)
+Upstream source: https://github.com/tulustul/The-Wandering-Wraith
+Upstream commit: 7d177ec66226bed5f653c19641f105a8e5bfbede
+License: MIT License (https://github.com/tulustul/The-Wandering-Wraith/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game

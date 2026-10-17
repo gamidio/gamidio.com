@@ -1,0 +1,11 @@
+Highway 404 — hosted by Gamidio (gamidio.com)
+
+Original game: Jerome Lecomte (herebefrogs)
+Upstream source: https://github.com/herebefrogs/highway-404
+Upstream commit: a26df4b7b57bba00af81d48edd91d6205f2be3e5
+License: MIT License (https://github.com/herebefrogs/highway-404/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game

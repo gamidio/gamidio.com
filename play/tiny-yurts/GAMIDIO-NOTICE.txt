@@ -1,0 +1,11 @@
+Tiny Yurts — hosted by Gamidio (gamidio.com)
+
+Original game: burntcustard (Ben Hollins)
+Upstream source: https://github.com/burntcustard/tiny-yurts
+Upstream commit: a9f176cc3c67ed1472cf60a1078e71645d4dc217
+License: MIT License (https://github.com/burntcustard/tiny-yurts/blob/main/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game

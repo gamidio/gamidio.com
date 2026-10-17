@@ -1,0 +1,12 @@
+Black Hole Square — hosted by Gamidio (gamidio.com)
+
+Original game: Quinten Clause
+Upstream source: https://github.com/Quinten/black-hole-square
+Upstream commit: 4865ba14ccf143b4d30117df0427932fe982a2f7
+License: MIT License (https://github.com/Quinten/black-hole-square/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
+  - index.html: no service worker (offline app install) inside our site
