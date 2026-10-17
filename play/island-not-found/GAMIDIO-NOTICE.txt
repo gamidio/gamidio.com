@@ -1,0 +1,11 @@
+Island Not Found — hosted by Gamidio (gamidio.com)
+
+Original game: Ben Clark and Salvatore Previti
+Upstream source: https://github.com/SalvatorePreviti/js13k-2020
+Upstream commit: d143919a0031374e172aeff2e8f3cf2066833921
+License: MIT License (https://github.com/SalvatorePreviti/js13k-2020/blob/biscuit/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game

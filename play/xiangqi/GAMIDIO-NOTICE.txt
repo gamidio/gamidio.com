@@ -1,0 +1,43 @@
+XiangQi Wizard Light — hosted by Gamidio (gamidio.com)
+
+Original game: Morning Yellow (www.xqbase.com)
+Upstream source: https://github.com/xqbase/xqwlight
+Upstream commit: 6221733f1f79b3acb44cce6f83dc6100443cb2c9
+License: GNU GPL v2 (https://github.com/xqbase/xqwlight/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.htm served as index.html; index.html and board.js converted from GBK to UTF-8; background.gif from the repository root copied next to the page
+  - index.html: English: charset=utf-8
+  - index.html: English: <title>XiangQi Wizard Light</title>
+  - index.html: English: font-family:sans-serif">XiangQi Wizard L
+  - index.html: English: <div class="label">Who moves first</div>
+  - index.html: English: >I move first</option>
+  - index.html: English: >Computer first</option>
+  - index.html: English: >Two players</option>
+  - index.html: English: <div class="label">Handicap</div>
+  - index.html: English: >No handicap</option>
+  - index.html: English: >Minus left horse</option>
+  - index.html: English: >Minus both horses</option>
+  - index.html: English: >Minus nine pieces</option>
+  - index.html: English: value="Restart"
+  - index.html: English: value="Undo move"
+  - index.html: English: <div class="label">Computer level</div>
+  - index.html: English: >Beginner</option>
+  - index.html: English: >Amateur</option>
+  - index.html: English: >Expert</option>
+  - index.html: English: >Animation</label>
+  - index.html: English: >Sound</label>
+  - index.html: English: <div class="label">Moves</div>
+  - index.html: English: font-family:monospace"
+  - index.html: English: === Start ===
+  - index.html: English: url(background.gif)
+  - board.js: English message: Draw by repetition. Well played!
+  - board.js: English message: Perpetual attack loses. Don't give up!
+  - board.js: English message: The computer's perpetual attack loses. Congratulations, you win!
+  - board.js: English message: Neither side has attacking pieces left: draw. Well played!
+  - board.js: English message: Move limit reached: draw. Well played!
+  - board.js: English message: Try again!
+  - board.js: English message: Congratulations, you win!
+  - index.html: keyboard focus on click

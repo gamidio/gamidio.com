@@ -1,0 +1,133 @@
+--- a/board.js
++++ b/board.js
+@@ -242,15 +242,15 @@
+     if (vlRep > -WIN_VALUE && vlRep < WIN_VALUE) {
+       this.playSound("draw");
+       this.result = RESULT_DRAW;
+-      alertDelay("双方不变作和，辛苦了！");
++      alertDelay("Draw by repetition. Well played!");
+     } else if (computerMove == (vlRep < 0)) {
+       this.playSound("loss");
+       this.result = RESULT_LOSS;
+-      alertDelay("长打作负，请不要气馁！");
++      alertDelay("Perpetual attack loses. Don't give up!");
+     } else {
+       this.playSound("win");
+       this.result = RESULT_WIN;
+-      alertDelay("长打作负，祝贺你取得胜利！");
++      alertDelay("The computer's perpetual attack loses. Congratulations, you win!");
+     }
+     this.postAddMove2();
+     this.busy = false;
+@@ -268,7 +268,7 @@
+     if (!hasMaterial) {
+       this.playSound("draw");
+       this.result = RESULT_DRAW;
+-      alertDelay("双方都没有进攻棋子了，辛苦了！");
++      alertDelay("Neither side has attacking pieces left: draw. Well played!");
+       this.postAddMove2();
+       this.busy = false;
+       return;
+@@ -284,7 +284,7 @@
+     if (!captured) {
+       this.playSound("draw");
+       this.result = RESULT_DRAW;
+-      alertDelay("超过自然限着作和，辛苦了！");
++      alertDelay("Move limit reached: draw. Well played!");
+       this.postAddMove2();
+       this.busy = false;
+       return;
+@@ -310,7 +310,7 @@
+ }
+ 
+ Board.prototype.postMate = function(computerMove) {
+-  alertDelay(computerMove ? "请再接再厉！" : "祝贺你取得胜利！");
++  alertDelay(computerMove ? "Try again!" : "Congratulations, you win!");
+   this.postAddMove2();
+   this.busy = false;
+ }
+--- a/index.html
++++ b/index.html
+@@ -1,7 +1,8 @@
+ <html>
+   <head>
+-    <meta http-equiv="Content-Type" content="text/html; charset=gbk">
+-    <title>象棋小巫师</title>
++<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
++    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
++    <title>XiangQi Wizard Light</title>
+     <script type="text/javascript" src="book.js"></script>
+     <script type="text/javascript" src="position.js"></script>
+     <script type="text/javascript" src="search.js"></script>
+@@ -9,7 +10,7 @@
+     <script type="text/javascript" src="cchess.js"></script>
+     <style type="text/css"><!--
+ body {
+-  background: url(../background.gif);
++  background: url(background.gif);
+ }
+ 
+ span.td {
+@@ -43,41 +44,41 @@
+     --></style>
+   </head>
+   <body>
+-    <div style="text-align:center;font-size:28px;font-family:黑体">象棋小巫师</div>
++    <div style="text-align:center;font-size:28px;font-family:sans-serif">XiangQi Wizard Light</div>
+     <div style="height:16px"></div>
+     <div style="text-align:center;white-space:nowrap">
+       <span class="td" style="margin-right:10px">
+         <div id="container"></div>
+       </span><span class="td" style="vertical-align:top;width:120px;"><div style="text-align:left">
+-        <div class="label">谁先走</div>
++        <div class="label">Who moves first</div>
+         <div><select id="selMoveMode" size="3">
+-          <option selected value="0">我先走</option>
+-          <option value="1">电脑先走</option>
+-          <option value="2">不用电脑</option>
++          <option selected value="0">I move first</option>
++          <option value="1">Computer first</option>
++          <option value="2">Two players</option>
+         </select></div>
+-        <div class="label">先走让子</div>
++        <div class="label">Handicap</div>
+         <div><select id="selHandicap" style="padding:0px">
+-          <option selected value="0">不让子</option>
+-          <option value="1">让左马</option>
+-          <option value="2">让双马</option>
+-          <option value="3">让九子</option>
++          <option selected value="0">No handicap</option>
++          <option value="1">Minus left horse</option>
++          <option value="2">Minus both horses</option>
++          <option value="3">Minus nine pieces</option>
+         </select></div>
+-        <div style="padding-top:2px"><input type="button" class="button" value="重新开始" onclick="restart_click()"></div>
+-        <div style="padding-top:2px"><input type="button" class="button" value="悔棋" onclick="retract_click()"></div>
++        <div style="padding-top:2px"><input type="button" class="button" value="Restart" onclick="restart_click()"></div>
++        <div style="padding-top:2px"><input type="button" class="button" value="Undo move" onclick="retract_click()"></div>
+         <div style="height:12px"></div>
+-        <div class="label">电脑水平</div>
++        <div class="label">Computer level</div>
+         <div><select id="selLevel" size="3" onchange="level_change()">
+-          <option selected value="0">入门</option>
+-          <option value="1">业余</option>
+-          <option value="2">专业</option>
++          <option selected value="0">Beginner</option>
++          <option value="1">Amateur</option>
++          <option value="2">Expert</option>
+         </select></div>
+         <div style="height:12px"></div>
+-        <div><input type="checkbox" class="checkbox" id="chkAnimated" checked onclick="board.animated = checked"><label for="chkAnimated">动画</label></input></div>
+-        <div><input type="checkbox" class="checkbox" checked onclick="board.setSound(checked)"><label for="chkSound">音效</label></input></div>
++        <div><input type="checkbox" class="checkbox" id="chkAnimated" checked onclick="board.animated = checked"><label for="chkAnimated">Animation</label></input></div>
++        <div><input type="checkbox" class="checkbox" checked onclick="board.setSound(checked)"><label for="chkSound">Sound</label></input></div>
+         <div style="height:60px"></div>
+-        <div class="label">步骤</div>
+-        <div><select id="selMoveList" size="10" style="font-family:宋体" onchange="moveList_change()">
+-          <option selected value="0">=== 开始 ===</option>
++        <div class="label">Moves</div>
++        <div><select id="selMoveList" size="10" style="font-family:monospace" onchange="moveList_change()">
++          <option selected value="0">=== Start ===</option>
+         </select></div>
+       </div></span>
+     </div>

@@ -1,0 +1,11 @@
+ONOFF — hosted by Gamidio (gamidio.com)
+
+Original game: Daniel Marino (starzonmyarmz) and contributors
+Upstream source: https://github.com/starzonmyarmz/js13k-2018
+Upstream commit: cb1e2e4615af6195aeb0dade06c08738511dd3b6
+License: MIT License (https://github.com/starzonmyarmz/js13k-2018/blob/gh-pages/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game

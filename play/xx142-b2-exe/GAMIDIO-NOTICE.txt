@@ -1,0 +1,11 @@
+xx142-b2.exe — hosted by Gamidio (gamidio.com)
+
+Original game: Ben Clark and Salvatore Previti
+Upstream source: https://github.com/bencoder/js13k-2019
+Upstream commit: ebf73c9796efb48e171c07149ec61a12d466f8c2
+License: MIT License (https://github.com/bencoder/js13k-2019/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game

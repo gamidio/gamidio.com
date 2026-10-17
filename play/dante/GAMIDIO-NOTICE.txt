@@ -1,0 +1,12 @@
+Dante — hosted by Gamidio (gamidio.com)
+
+Original game: Salvatore Previti; music by Ryan Malm (and Beethoven's Moonlight Sonata)
+Upstream source: https://github.com/SalvatorePreviti/js13k-2022
+Upstream commit: b88e159f3905843f1f420e409430e1c2e5c9931f
+License: MIT License (https://github.com/SalvatorePreviti/js13k-2022/blob/main/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built with the author's `npm ci; npm run build` (node 18, Java for Closure Compiler), page dist/3-bundle/index.html
+  - (build output) index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
