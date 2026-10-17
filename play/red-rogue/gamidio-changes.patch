@@ -1,0 +1,19 @@
+--- a/src/Game.as
++++ b/src/Game.as
+@@ -263,7 +263,7 @@
+ 			actualFrameCount = 1;
+ 			
+ 			// detect allowScriptAccess for tracking
+-			allowScriptAccess = ExternalInterface.available;
++			allowScriptAccess = false;
+ 			if(allowScriptAccess){
+ 				try{
+ 					ExternalInterface.call("");
+@@ -524,6 +524,7 @@
+ 				createFocusPrompt();
+ 				stage.addEventListener(Event.DEACTIVATE, onFocusLost);
+ 				stage.addEventListener(Event.ACTIVATE, onFocus);
++				focusPrompt.addEventListener(MouseEvent.CLICK, onFocus);
+ 			}
+ 			
+ 			// CREATE FIRST LEVEL =================================================================

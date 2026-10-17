@@ -1,0 +1,16 @@
+--- a/index.html
++++ b/index.html
+@@ -0,0 +1,13 @@
++<!doctype html>
++<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
++<title>Ending</title>
++<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
++<style>html,body{margin:0;height:100%;overflow:hidden;background:#000000}#game,#game>*{display:block;width:100%;height:100%}</style>
++<script>window.RufflePlayer={config:{publicPath:"../ruffle/",autoplay:"on",unmuteOverlay:"hidden",splashScreen:false,letterbox:"on",
++showSwfDownload:false,contextMenu:"rightClickOnly",warnOnUnsupportedContent:false,allowNetworking:"none",openUrlMode:"deny",
++backgroundColor:"#000000",quality:"high",scale:"showAll",forceScale:true,forceAlign:true}};</script>
++<script src="../ruffle/ruffle.js"></script>
++</head><body><div id="game"></div>
++<script>var player=window.RufflePlayer.newest().createPlayer();document.getElementById("game").appendChild(player);
++player.ruffle().load({url:"ending.swf"});player.addEventListener("pointerdown",function(){player.focus()});</script>
++</body></html>

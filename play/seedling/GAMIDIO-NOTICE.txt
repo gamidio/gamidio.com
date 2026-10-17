@@ -1,0 +1,21 @@
+Seedling — hosted by Gamidio (gamidio.com)
+
+Original game: Connor Ullmann (design, art, programming); music and sound effects by Rekcahdam
+Upstream source: https://github.com/ConnorUllmann/Seedling
+Upstream commit: 826ba77d67a4e6cc826204faa8948ecfaa1c00fa
+License: The Unlicense (public domain dedication of the source code and assets in the repository); FlashPunk MIT (https://github.com/ConnorUllmann/Seedling/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/Preloader.as: no connection to the Newgrounds API
+  - src/Preloader.as: the loading screen shows no Newgrounds ad
+  - src/Preloader.as: the loading screen does not show the Newgrounds logo (only the progress bar)
+  - src/Main.as: intro starts with the author's and the composer's logos, without the Newgrounds logo
+  - src/Game.as: no Newgrounds logo button under the title
+  - src/Game.as: no page of Newgrounds game promotions
+  - src/Game.as: the title menu has three pages (title, controls, credits)
+  - src/Game.as: no link area where the Newgrounds button was
+  - src/Puzzlements/Whirlpool.as: embedded asset paths in the exact letter case of the files (case-sensitive build)
+  - built with Apache Flex SDK 4.16.1 mxmlc (Flash Player 32 API), options as in Shrum.as3proj
+  - (build output) index.html: Gamidio page that plays seedling.swf in Ruffle nightly-2026-10-17 (play/ruffle/, MIT/Apache-2.0), with networking switched off for the game

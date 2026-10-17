@@ -1,0 +1,12 @@
+Ending — hosted by Gamidio (gamidio.com)
+
+Original game: Aaron Steed (st33d, robotacid.com)
+Upstream source: https://github.com/st33d/Ending
+Upstream commit: ebb2b276bc4d0665cbce0f14a14f0b71be53a272
+License: GNU GPL v2 (code and assets) (https://github.com/st33d/Ending/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - ending.swf = bin/game.swf of the upstream commit, unchanged
+  - index.html: Gamidio page that plays ending.swf in Ruffle nightly-2026-10-17 (play/ruffle/, MIT/Apache-2.0), with networking switched off for the game

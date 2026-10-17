@@ -1,0 +1,84 @@
+--- a/src/Game.as
++++ b/src/Game.as
+@@ -580,7 +580,7 @@
+ 		//Main Menu motion stuff
+ 		private static var menuOffset:Point = new Point;
+ 		private const menuAlphaDivisor:int = 128;
+-		private const menuStates:int = 4;
++		private const menuStates:int = 3;
+ 		private const menuTweenTime:int = 10;
+ 		private static var menuState:int = 0;
+ 		private static var menuTween:Tween;
+@@ -826,7 +826,7 @@
+ 			{
+ 				var cursor:String = MouseCursor.ARROW;
+ 				var renderPt:Point = ngPos(menuOffset.x, menuOffset.y);
+-				if (Input.mouseX >= renderPt.x - sprNG.originX && Input.mouseX < renderPt.x - sprNG.originX + sprNG.width &&
++				if (false && Input.mouseX >= renderPt.x - sprNG.originX && Input.mouseX < renderPt.x - sprNG.originX + sprNG.width &&
+ 					Input.mouseY >= renderPt.y - sprNG.originY && Input.mouseY < renderPt.y - sprNG.originY + sprNG.height)
+ 				{
+ 					cursor = MouseCursor.BUTTON;
+@@ -1304,7 +1304,8 @@
+ 				spGames.visible = false;
+ 				return;
+ 			}
+-			spGames.visible = true;
++			spGames.visible = false;
++			return;
+ 			
+ 			var rectW:int = (spGames.width * FP.screen.scale + 4) / 2;
+ 			Draw.rect(FP.camera.x + basePos.x + _xoff - rectW, FP.camera.y, rectW * 2, FP.screen.height, 0, tweenScale * maxRectAlpha);
+@@ -1448,8 +1449,6 @@
+ 			t.render(new Point(renderPt.x - sprLogo.originX, renderPt.y - sprLogo.originY), new Point);
+ 			Text.size = 16;
+ 			
+-			sprNG.alpha = sprLogo.alpha;
+-			sprNG.render(ngPos(_xoff, _yoff), new Point);
+ 		}
+ 		private function ngPos(_xoff:int, _yoff:int):Point
+ 		{
+--- a/src/Main.as
++++ b/src/Main.as
+@@ -47,7 +47,7 @@
+ 			
+ 			Music.begin();
+ 			
+-			FP.world = new Splash();// Game(level, playerPositionX, playerPositionY);// Splash();
++			FP.world = new Splash(1);// Game(level, playerPositionX, playerPositionY);// Splash();
+ 			
+ 			FP.screen.color = 0x000000;
+ 			FP.screen.scale = 3;
+--- a/src/Preloader.as
++++ b/src/Preloader.as
+@@ -75,8 +75,6 @@
+ 			FREEWORLDGROUP = checkDomain(["freeworldgroup.com"]) == 1;
+ 			ANDKON = checkDomain(["andkon.com"]) == 1;
+ 			
+-			if (!ARMORGAMES && !KONGREGATE)
+-				API.connect(root, NGAPPID, NGENCRYPTIONKEY);
+ 			if (KONGREGATE)
+ 				QuickKong.connectToKong(stage);
+ 			
+@@ -86,8 +84,9 @@
+ 			if (sponsorVersion && !CONNORULLMANN)
+ 				return;
+ 			
+-			if (ARMORGAMES || KONGREGATE || CONNORULLMANN || FREEWORLDGROUP || ANDKON)
+-			{
++			if (true)
++			{
++				sprNG.visible = false;
+ 				addChild(sprNG);
+ 				sprNG.x = (sw - sprNG.width) / 2;
+ 				sprNG.y = (sh - sprNG.height) / 3;
+--- a/src/Puzzlements/Whirlpool.as
++++ b/src/Puzzlements/Whirlpool.as
+@@ -12,7 +12,7 @@
+ 	 */
+ 	public class Whirlpool extends Entity
+ 	{
+-		[Embed(source = "../../assets/graphics/WhirlPool.png")] private var imgWhirlpool:Class;
++		[Embed(source = "../../assets/graphics/Whirlpool.png")] private var imgWhirlpool:Class;
+ 		private var sprWhirlpool:Spritemap = new Spritemap(imgWhirlpool, 32, 32);
+ 		
+ 		private const whirlFrames:Array = new Array(0, 1, 2, 1,0,1,2,1,0,1,2,1,0,1,2,1);

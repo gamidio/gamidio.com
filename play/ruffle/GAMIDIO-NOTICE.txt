@@ -1,0 +1,5 @@
+Ruffle — Flash Player emulator used by Gamidio for its Flash games (gamidio.com)
+
+Upstream: https://github.com/ruffle-rs/ruffle (https://ruffle.rs/)
+Version: nightly-2026-10-17 (web-selfhosted build), unchanged; source maps (*.map) left out
+License: MIT OR Apache-2.0 (LICENSE_MIT, LICENSE_APACHE in this folder)
