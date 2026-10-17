@@ -1,0 +1,12 @@
+ROTA — hosted by Gamidio (gamidio.com)
+
+Original game: Harmony Monroe (Harmony Honey) and contributors
+Upstream source: https://github.com/HarmonyHoney/ROTA
+Upstream commit: ce872d57fbbab01317da2e64cb6dd505bc4a3abd
+License: The Unlicense (public domain; the addons/ folder is excluded and not used by the web build) (https://github.com/HarmonyHoney/ROTA/blob/master4/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - exported with Godot 3.6.2 (headless editor, official webassembly_release template) and the project's HTML5 preset
+  - (build output) index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game

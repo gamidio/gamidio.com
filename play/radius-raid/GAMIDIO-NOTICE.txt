@@ -1,0 +1,11 @@
+Radius Raid — hosted by Gamidio (gamidio.com)
+
+Original game: Jack Rugile
+Upstream source: https://github.com/jackrugile/radius-raid-js13k
+Upstream commit: 361ab5166570cfc8a29a4fc15c9afba566117b66
+License: MIT License; sound effects generated with jsfxr (in the game) (https://github.com/jackrugile/radius-raid-js13k/blob/master/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: keyboard focus on click; game keys do not scroll the page around the game

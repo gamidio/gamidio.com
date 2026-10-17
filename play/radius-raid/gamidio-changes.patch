@@ -1,0 +1,10 @@
+--- a/index.html
++++ b/index.html
+@@ -1,6 +1,7 @@
+ <!doctype html>
+ <html>
+ 	<head>
++<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
+ 		<title>Radius Raid</title>
+ 		<link rel="shortcut icon" id="favicon" />
+ 
