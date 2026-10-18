@@ -1,0 +1,12 @@
+13th Floor — hosted by Gamidio (gamidio.com)
+
+Original game: Rob Louie (roblouie)
+Upstream source: https://github.com/js13kGames/13th-floor
+Upstream commit: competition build from play.js13kgames.com/13th-floor/ (downloaded 2026-10-18); source: js13kGames/13th-floor @ 21c2274be34e97c309db0d396f4caf56fbd5f270
+License: MIT License (https://github.com/js13kGames/13th-floor/blob/21c2274be34e97c309db0d396f4caf56fbd5f270/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
+  - index.html: <meta charset="utf-8"> (the page's emoji need UTF-8 on any server)

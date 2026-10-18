@@ -1,0 +1,12 @@
+Bounce Back — hosted by Gamidio (gamidio.com)
+
+Original game: Frank Force
+Upstream source: https://github.com/js13kGames/bounce-back
+Upstream commit: competition build from play.js13kgames.com/bounce-back/ (downloaded 2026-10-18); source: js13kGames/bounce-back @ faa7bf4f578d9e2cc9fa32e7042c4ac3dd24820a
+License: GNU GPL v3 (https://github.com/js13kGames/bounce-back/blob/faa7bf4f578d9e2cc9fa32e7042c4ac3dd24820a/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
+  - index.html: <meta charset="utf-8"> (the page's emoji need UTF-8 on any server)

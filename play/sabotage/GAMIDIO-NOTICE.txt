@@ -1,0 +1,13 @@
+Sabotage — hosted by Gamidio (gamidio.com)
+
+Original game: Sébastien Bénard (deepnight)
+Upstream source: https://github.com/deepnight/ld45
+Upstream commit: 57dfcc6c00a30df93c470e54e3e627a0513f40ac
+License: MIT License (code and assets); music by a third party removed; fonts Barlow Condensed (OFL) and Minecraftia (Andrew Tyler) (https://github.com/deepnight/ld45/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
+  - index.html: no scrollbars around the game in our frame
+  - client.js: the embedded music (R_music_leatherneck_mp3, David Whittaker's Leatherneck theme, third party) replaced by one second of silence (base64 MP3); the rest of client.js is unchanged

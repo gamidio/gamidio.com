@@ -1,0 +1,12 @@
+Minipunk — hosted by Gamidio (gamidio.com)
+
+Original game: Cody Ebberson
+Upstream source: https://github.com/js13kGames/minipunk
+Upstream commit: competition build from play.js13kgames.com/minipunk/ (downloaded 2026-10-18); source: js13kGames/minipunk @ 7108b68c7a2e5e1936660bbd6ddacbac01c3519b
+License: MIT License (https://github.com/js13kGames/minipunk/blob/7108b68c7a2e5e1936660bbd6ddacbac01c3519b/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
+  - index.html: <meta charset="utf-8"> (the page's emoji need UTF-8 on any server)
