@@ -255,6 +255,10 @@ button {
 @media (max-width: 528px) {
 	.tile-category {
 		flex-basis: calc(50% - var(--grid-gap) / 2);
+		/* Tighter on phones, so labels like "Best on Mobile" stay on one line (owner 2026-10-18). */
+		padding: 10px 6px;
+		letter-spacing: 0.02em;
+		font-size: 0.8rem;
 	}
 }
 
