@@ -1,0 +1,14 @@
+You're the OS! — hosted by Gamidio (gamidio.com)
+
+Original game: Pier-Luc Brault and contributors
+Upstream source: https://github.com/plbrault/youre-the-os
+Upstream commit: 20ff9e4a78b5447b3f7d55c82d4c7e664a374aaf
+License: GNU GPL v3 or later (code); OpenMoji emojis CC BY-SA 4.0; icon CC BY 3.0 (Muhammat Sukirman); game over image CC0; fonts VT323 and Victor Mono OFL; pygbag runtime MIT (https://github.com/plbrault/youre-the-os/blob/main/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built as .github/workflows/pygbag.yml: pygbag 0.9.2 --app_name youre_the_os --ume_block 0 --build src (python 3.12)
+  - (build output) pygbag/: 14 files of the pygbag 0.9 runtime (MIT; CPython 3.12 WebAssembly build, pygame-ce wheel) from https://pygame-web.github.io/archives/, unchanged
+  - (build output) index.html: runtime loaded from pygbag/ in this folder
+  - (build output) index.html: requests for the pygbag CDN go to our copy; keyboard focus on click, game keys do not scroll the page
