@@ -1,0 +1,12 @@
+Zero Volt X — hosted by Gamidio (gamidio.com)
+
+Original game: Sébastien Bénard (deepnight)
+Upstream source: https://github.com/deepnight/ld39-zeroVoltX
+Upstream commit: 10ffc738f7d2da1e79e3d84b13f573ee4c7d49da
+License: Apache License 2.0 (code and assets); font Minecraftia (Andrew Tyler) (https://github.com/deepnight/ld39-zeroVoltX/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
+  - index.html: no scrollbars around the game in our frame

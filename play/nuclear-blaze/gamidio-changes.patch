@@ -1,0 +1,28 @@
+--- a/index.html
++++ b/index.html
+@@ -1,6 +1,17 @@
+ <!DOCTYPE html>
+ <html>
+ 	<head>
++<script>/* Gamidio: this game only sees its own localStorage keys */(function(){
++var P='nuclear-blaze:',S;try{S=window.localStorage}catch(e){return}
++var own=function(){var r=[];for(var i=0;i<S.length;i++){var k=S.key(i);if(k&&k.indexOf(P)===0)r.push(k.slice(P.length))}return r};
++var api={getItem:function(k){return S.getItem(P+k)},setItem:function(k,v){S.setItem(P+k,String(v))},removeItem:function(k){S.removeItem(P+k)},
++clear:function(){own().forEach(function(k){S.removeItem(P+k)})},key:function(i){var o=own();return i<o.length?o[i]:null}};
++var px=new Proxy(api,{get:function(o,k){if(k==='length')return own().length;if(k in o)return o[k];if(typeof k==='string'){var v=S.getItem(P+k);return v===null?undefined:v}},
++set:function(o,k,v){S.setItem(P+k,String(v));return true},deleteProperty:function(o,k){S.removeItem(P+k);return true},
++has:function(o,k){return k in o||S.getItem(P+k)!==null},ownKeys:function(){return own()},
++getOwnPropertyDescriptor:function(o,k){var v=S.getItem(P+k);return v===null?undefined:{value:v,enumerable:true,configurable:true,writable:true}}});
++Object.defineProperty(window,'localStorage',{configurable:true,get:function(){return px}});})();</script>
++<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('pointerdown',f,true);addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
+ 		<meta name="viewport" content="width=device-width, user-scalable=no">
+ 		<meta charset="utf-8"/><title>NuclearBlaze</title>
+ 		<style>
+@@ -16,6 +27,7 @@
+ 				width : 100% !important;
+ 				height : 100% !important;
+ 			}
++			html, body { overflow: hidden; }
+ 		</style>
+ 	</head>
+ 	<body id="body">
