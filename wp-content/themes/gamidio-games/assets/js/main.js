@@ -27,9 +27,10 @@
 		if (!window.Fuse) {
 			return null;
 		}
-		// Fuzzy on titles only: fuzzy matching on genre names ("car" ~ "Arcade") adds noise.
+		// Fuzzy on titles only: fuzzy matching on genre names ("car" ~ "Arcade") adds noise. "Similar to" (D-052) counts
+		// less, so "diablo" finds Flare and "minecraft" finds Luanti without pushing exact titles down.
 		return new window.Fuse(games, {
-			keys: ['title'],
+			keys: [{ name: 'title', weight: 1 }, { name: 'similar', weight: 0.4 }],
 			threshold: 0.2,
 			ignoreLocation: true,
 			minMatchCharLength: 2
@@ -39,7 +40,8 @@
 	/** Games whose genre or tag starts with the query ("horr" → Horror games). */
 	function byLabel(games, q) {
 		return games.filter(function (g) {
-			return (g.genres || []).concat(g.tags || []).some(function (name) {
+			var similar = g.similar ? g.similar.split(', ') : [];
+			return (g.genres || []).concat(g.tags || [], similar).some(function (name) {
 				return name.toLowerCase().indexOf(q) === 0;
 			});
 		});
