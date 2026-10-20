@@ -1,0 +1,15 @@
+Antimatter Dimensions — hosted by Gamidio (gamidio.com)
+
+Original game: Hevipelle (IvarK) and contributors
+Upstream source: https://github.com/IvarK/AntimatterDimensionsSourceCode
+Upstream commit: 5409e320cecef96a917cca1dfb68f1f183e499ca
+License: MIT License (https://github.com/IvarK/AntimatterDimensionsSourceCode/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/core/ui.js: removed vue-gtag import
+  - src/core/ui.js: removed Google Analytics (vue-gtag)
+  - built with: npm ci && npm run build:release; source maps removed
+  - (build output) index.html: Google Font https://fonts.googleapis.com/css?family=PT+Mono served locally from vendor/fonts/
+  - (build output) stylesheets/styles.css: https://fonts.gstatic.com/s/opensanscondensed/v10/gk5FxslNkTTHtojXrkp-xBEur64QvLD-0IbiAdTUNXE.woff2 served locally as fonts/gk5FxslNkTTHtojXrkp-xBEur64QvLD-0IbiAdTUNXE.woff2
