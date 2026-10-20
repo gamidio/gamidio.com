@@ -1,0 +1,13 @@
+Cats are Assholes — hosted by Gamidio (gamidio.com)
+
+Original game: Sébastien Bénard (deepnight)
+Upstream source: https://github.com/deepnight/ld40-catsAreAssholes
+Upstream commit: b5032e06f0722602e749023c6ec8e8abb9b80e77
+License: Apache License 2.0 (code and assets, made by the author alone: music composed in Bosca Ceoil, sounds recorded by him); font Minecraftia (Andrew Tyler) (https://github.com/deepnight/ld40-catsAreAssholes/blob/master/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
+  - index.html: no scrollbars around the game in our frame
+  - client.js: Main.presses created in the constructor (the game crashed on start reading it before the first press)
