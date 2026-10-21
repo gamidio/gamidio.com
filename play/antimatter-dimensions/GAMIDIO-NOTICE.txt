@@ -10,6 +10,6 @@ Corresponding source of this copy = the upstream commit above + gamidio-changes.
 Changes made by Gamidio:
   - src/core/ui.js: removed vue-gtag import
   - src/core/ui.js: removed Google Analytics (vue-gtag)
-  - built with: npm ci && npm run build:release; source maps removed
+  - built with: npm ci && npm run build:release; source maps and the unused fungame/ page removed
   - (build output) index.html: Google Font https://fonts.googleapis.com/css?family=PT+Mono served locally from vendor/fonts/
   - (build output) stylesheets/styles.css: https://fonts.gstatic.com/s/opensanscondensed/v10/gk5FxslNkTTHtojXrkp-xBEur64QvLD-0IbiAdTUNXE.woff2 served locally as fonts/gk5FxslNkTTHtojXrkp-xBEur64QvLD-0IbiAdTUNXE.woff2
