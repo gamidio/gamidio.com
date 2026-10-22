@@ -1,0 +1,12 @@
+PRISMHOOF — hosted by Gamidio (gamidio.com)
+
+Original game: BeluBruh123
+Upstream source: https://github.com/js13kGames/prismhoof
+Upstream commit: competition build from play.js13kgames.com/prismhoof/ (downloaded 2026-10-22); source: js13kGames/prismhoof @ 80410c1f2971f4493442b656112a84db4a97f8bb
+License: CC0 1.0 (public domain) (https://github.com/js13kGames/prismhoof/blob/80410c1f2971f4493442b656112a84db4a97f8bb/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
+  - index.html: <meta charset="utf-8"> (the page's emoji need UTF-8 on any server)

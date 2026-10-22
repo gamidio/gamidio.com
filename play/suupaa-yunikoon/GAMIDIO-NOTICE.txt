@@ -1,0 +1,12 @@
+SUUPAA YUNIKOON — hosted by Gamidio (gamidio.com)
+
+Original game: Almar Suarez (wololoa)
+Upstream source: https://github.com/js13kGames/suupaa-yunikoon
+Upstream commit: competition build from play.js13kgames.com/suupaa-yunikoon/ (downloaded 2026-10-22); source: js13kGames/suupaa-yunikoon @ ea0139ff030abe532b68724708d9248646951d14
+License: MIT License (https://github.com/js13kGames/suupaa-yunikoon/blob/ea0139ff030abe532b68724708d9248646951d14/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
+  - index.html: <meta charset="utf-8"> (the page's emoji need UTF-8 on any server)

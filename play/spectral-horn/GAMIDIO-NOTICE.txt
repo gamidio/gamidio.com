@@ -1,0 +1,12 @@
+Spectral Horn — hosted by Gamidio (gamidio.com)
+
+Original game: Filip Paulů (ingSlonik)
+Upstream source: https://github.com/js13kGames/spectral-horn
+Upstream commit: competition build from play.js13kgames.com/spectral-horn/ (downloaded 2026-10-22); source: js13kGames/spectral-horn @ 6ea3aecd766f4082af8cb79a5ffdfc0f4df14ef3
+License: MIT License (https://github.com/js13kGames/spectral-horn/blob/6ea3aecd766f4082af8cb79a5ffdfc0f4df14ef3/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
+  - index.html: <meta charset="utf-8"> (the page's emoji need UTF-8 on any server)
