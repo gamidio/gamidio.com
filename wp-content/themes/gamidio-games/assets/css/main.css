@@ -1166,3 +1166,21 @@ button {
 	background: rgba(255, 255, 255, 0.06);
 	color: var(--color-text);
 }
+
+/* Link to the "games like X" list (D-054), on its own line in the box. */
+.similar-to__more {
+	display: block;
+	margin-top: 6px;
+	color: var(--color-link);
+	font-weight: 600;
+}
+
+.similar-to__more:first-child {
+	margin-top: 0;
+}
+
+.trademark-note {
+	margin-top: 16px;
+	font-size: var(--text-sm);
+	opacity: 0.7;
+}
