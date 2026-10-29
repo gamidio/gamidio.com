@@ -265,12 +265,78 @@ button {
 /* ---------- Logo block ---------- */
 
 .logo-block {
+	position: relative;
 	grid-column: span 2;
 	display: flex;
-	overflow: hidden;
+	/* No overflow: hidden, so the YouTube tooltip can sit below the tile; the search button rounds its own corners. */
 	border-radius: var(--radius-tile);
 	background: var(--color-brand-bg);
 	box-shadow: var(--shadow-tile);
+}
+
+/* YouTube corner (D-057): a paper corner at the bottom right of the logo peels back on hover. */
+.logo-block__yt {
+	position: absolute;
+	right: 30%;
+	bottom: 0;
+	width: 61%;
+	max-width: 66px;
+	aspect-ratio: 1;
+}
+
+.logo-block__peel {
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.logo-block__peel-reveal,
+.logo-block__peel-paper {
+	transition: d 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.logo-block__yt:hover .logo-block__peel-reveal,
+.logo-block__yt:focus-visible .logo-block__peel-reveal {
+	d: path("M100 10 Q58 58 10 100 L100 100 Z");
+}
+
+.logo-block__yt:hover .logo-block__peel-paper,
+.logo-block__yt:focus-visible .logo-block__peel-paper {
+	d: path("M100 10 Q58 58 10 100 C16.1 68.6 28.2 47.7 30.2 30.2 C47.7 28.2 68.6 16.1 100 10 Z");
+}
+
+.logo-block__yt-tip {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: -12px;
+	z-index: 5;
+	padding: 6px 10px;
+	border-radius: 8px;
+	background: #0b0c16;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+	color: #fff;
+	font-size: var(--text-xs);
+	font-weight: 600;
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0;
+	transform: translateY(-4px);
+	transition: opacity var(--speed) ease, transform var(--speed) ease;
+}
+
+.logo-block__yt:hover .logo-block__yt-tip,
+.logo-block__yt:focus-visible .logo-block__yt-tip {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.logo-block__peel-reveal,
+	.logo-block__peel-paper,
+	.logo-block__yt-tip {
+		transition: none;
+	}
 }
 
 .logo-block__home {
@@ -296,6 +362,7 @@ button {
 	justify-content: center;
 	width: 30%;
 	border: 0;
+	border-radius: 0 var(--radius-tile) var(--radius-tile) 0;
 	background: var(--color-accent);
 	color: #fff;
 	cursor: pointer;
