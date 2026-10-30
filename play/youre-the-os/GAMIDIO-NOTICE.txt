@@ -11,4 +11,6 @@ Changes made by Gamidio:
   - built as .github/workflows/pygbag.yml: pygbag 0.9.2 --app_name youre_the_os --ume_block 0 --build src (python 3.12)
   - (build output) pygbag/: 14 files of the pygbag 0.9 runtime (MIT; CPython 3.12 WebAssembly build, pygame-ce wheel) from https://pygame-web.github.io/archives/, unchanged
   - (build output) index.html: runtime loaded from pygbag/ in this folder
+  - (build output) index.html: absolute runtime URL for module imports
+  - (build output) index.html: prefetch of the Python start file under its real name
   - (build output) index.html: requests for the pygbag CDN go to our copy; keyboard focus on click, game keys do not scroll the page

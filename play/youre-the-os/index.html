@@ -1,7 +1,7 @@
 <html lang="en-us"><script>/* Gamidio: pygbag runtime served from this folder, not from the pygame-web CDN */(function(){
-var CDN='https://pygame-web.github.io/archives/',LOCAL=new URL('pygbag/',location.href).href;
-var fix=function(u){return (typeof u==='string'&&u.indexOf(CDN)===0)?LOCAL+u.slice(CDN.length):u};
-var f=window.fetch;if(f){window.fetch=function(i,o){if(typeof i==='string')i=fix(i);else if(i&&i.url&&i.url.indexOf(CDN)===0)i=new Request(fix(i.url),i);return f.call(window,i,o)}}
+var CDN='https://pygame-web.github.io/archives/',DEV='http://localhost:8000/archives/',LOCAL=new URL('pygbag/',location.href).href;
+var fix=function(u){if(typeof u!=='string')return u;if(u.indexOf(CDN)===0)return LOCAL+u.slice(CDN.length);if(u.indexOf(DEV)===0)return LOCAL+u.slice(DEV.length);return u};
+var f=window.fetch;if(f){window.fetch=function(i,o){if(typeof i==='string')i=fix(i);else if(i&&i.url&&fix(i.url)!==i.url)i=new Request(fix(i.url),i);return f.call(window,i,o)}}
 var op=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){var a=[].slice.call(arguments);a[1]=fix(String(u));return op.apply(this,a)};
 })();</script><script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('pointerdown',f,true);addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script><script src="pygbag/0.9/pythons.js" type=module id=site data-LINES=57 data-CONSOLE=25 data-python=python3.12 data-os=vtx,fs,snd,gui async defer>#<!--
 
@@ -246,7 +246,7 @@ config = {
     can_close : 0,
     archive : "src",
     gui_debug : 3,
-    cdn : "pygbag/0.9/",
+    cdn : new URL("pygbag/0.9/", location.href).href,
     autorun : 0,
     PYBUILD : "3.12"
 }
@@ -261,7 +261,7 @@ config = {
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"/>
 
-    <link rel="prefetch" href="pygbag/0.9/pythonrc.py">
+    <link rel="prefetch" href="pygbag/0.9/cpythonrc.py">
     <link rel="prefetch" href="pygbag/0.9/vt/xterm.js">
     <link rel="prefetch" href="pygbag/0.9/vt/xterm-addon-image.js">
     <link rel="prefetch" href="pygbag/0.9/vt/xterm-addon-image.js">

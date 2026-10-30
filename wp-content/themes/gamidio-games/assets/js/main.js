@@ -117,10 +117,8 @@
 			var query = input.value.trim();
 			var list;
 			if (!query && !genre) {
-				list = games.filter(function (g) { return g.popular || g.featured; }).slice(0, 24);
-				if (!list.length) {
-					list = games.slice(0, 24);
-				}
+				// Our own ranking (RANKING in build_catalog.py), best games first; the index itself is ordered by date.
+				list = games.slice().sort(function (a, b) { return b.sort_priority - a.sort_priority; }).slice(0, 24);
 				title.textContent = i18n.popular || 'Popular games';
 			} else {
 				list = filterGames(games, fuse, query, genre).slice(0, 60);

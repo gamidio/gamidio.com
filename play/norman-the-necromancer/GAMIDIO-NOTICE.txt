@@ -10,3 +10,4 @@ Corresponding source of this copy = the upstream commit above + gamidio-changes.
 Changes made by Gamidio:
   - index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
   - built with: yarn install --frozen-lockfile; tsc; vite build --base ./ (node 16)
+  - (build output) index.html: removed the script tag of a file the build inlines (404)

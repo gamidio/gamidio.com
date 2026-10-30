@@ -28,6 +28,48 @@ body {
 	line-height: 1.55;
 }
 
+/* Living background: soft colour blobs drifting slowly behind the page, like light through frosted glass.
+   The blobs are soft gradients moved only with transform (no blur filter), so it costs the page next to nothing. */
+body::before,
+body::after {
+	content: "";
+	position: fixed;
+	inset: -35%;
+	z-index: -1;
+	pointer-events: none;
+}
+
+body::before {
+	background:
+		radial-gradient(38% 34% at 28% 32%, rgba(124, 92, 255, 0.46), transparent 70%),
+		radial-gradient(34% 30% at 72% 66%, rgba(47, 107, 255, 0.36), transparent 70%);
+	animation: page-drift-a 20s ease-in-out infinite alternate;
+}
+
+body::after {
+	background:
+		radial-gradient(32% 30% at 68% 28%, rgba(193, 60, 255, 0.3), transparent 70%),
+		radial-gradient(30% 28% at 30% 72%, rgba(37, 215, 168, 0.24), transparent 70%);
+	animation: page-drift-b 27s ease-in-out infinite alternate;
+}
+
+@keyframes page-drift-a {
+	from { transform: translate3d(-13%, -9%, 0) rotate(0deg) scale(1); }
+	to { transform: translate3d(14%, 10%, 0) rotate(50deg) scale(1.2); }
+}
+
+@keyframes page-drift-b {
+	from { transform: translate3d(12%, 10%, 0) rotate(0deg) scale(1.15); }
+	to { transform: translate3d(-14%, -11%, 0) rotate(-60deg) scale(0.95); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body::before,
+	body::after {
+		animation: none;
+	}
+}
+
 img {
 	display: block;
 	max-width: 100%;
@@ -534,6 +576,40 @@ button {
 	text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
 }
 
+/* Games from other servers (D-059): the whole stage starts the game, except the link in the note. */
+[data-frame-start] {
+	isolation: isolate;
+}
+
+[data-frame-start] .player__launch-art {
+	z-index: -1;
+}
+
+[data-frame-start] .player__launch-cta {
+	position: static;
+	text-decoration: none;
+}
+
+[data-frame-start] .player__launch-cta::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+[data-frame-start] .player__launch-note {
+	max-width: 62ch;
+	margin: 0;
+}
+
+[data-frame-start] .player__launch-note a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+[data-frame-start]:focus-within .player__launch-cover {
+	transform: scale(1.03);
+}
+
 .player__notice {
 	position: absolute;
 	inset: 0;
@@ -797,6 +873,9 @@ button {
 
 .search-panel__close {
 	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 48px;
 	height: 48px;
 	border: 0;
@@ -822,9 +901,8 @@ button {
 	aspect-ratio: 1;
 }
 
+/* Thumbnails carry the game's name, so the text label shows on hover only, as in the grid (a fixed label doubled it). */
 .search-panel__results .tile__title {
-	opacity: 1;
-	transform: none;
 	font-size: var(--text-xs);
 	padding: 20px 6px 6px;
 }
