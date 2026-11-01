@@ -64200,7 +64200,7 @@ hxd_Window.prototype = {
 		this.focused = b;
 	}
 	,get_isFocused: function() {
-		return this.focused;
+		return this.focused || "ontouchstart" in window;
 	}
 	,set_displayMode: function(m) {
 		if(!js_Browser.get_supported()) {

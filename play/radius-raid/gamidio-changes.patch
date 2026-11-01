@@ -8,3 +8,13 @@
  		<title>Radius Raid</title>
  		<link rel="shortcut icon" id="favicon" />
  
+--- a/index.html
++++ b/index.html
+@@ -69,5 +69,6 @@
+ 		<script src="js/levelpop.js"></script>
+ 		<script src="js/button.js"></script>
+ 		<script src="js/game.js"></script>
+-	</body>
++	<script>window.GAMIDIO_GAMEPAD={"stick": {"up": "w", "down": "s", "left": "a", "right": "d"}, "buttons": [{"label": "A", "keys": ["f"]}], "menu": {"label": "☰", "keys": ["p"]}, "pointer": true}</script><script src="gamidio-gamepad.js"></script>
++</body>
+ </html>

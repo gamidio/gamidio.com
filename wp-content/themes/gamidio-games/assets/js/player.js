@@ -37,8 +37,13 @@
 			game.style.setProperty('--design-w', designWidth + 'px');
 			game.style.setProperty('--design-h', designHeight + 'px');
 			game.style.setProperty('--design-scale', scale);
+			// An on-screen gamepad inside the game must not shrink with the frame.
+			if (game.contentWindow) {
+				game.contentWindow.postMessage({ gamidioScale: scaled ? scale : 1 }, '*');
+			}
 		}
 
+		game.addEventListener('load', fit);
 		fit();
 		new ResizeObserver(fit).observe(stage);
 	}

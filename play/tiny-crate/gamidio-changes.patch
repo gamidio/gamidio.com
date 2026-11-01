@@ -1,0 +1,10 @@
+--- a/index.html
++++ b/index.html
+@@ -255,6 +255,7 @@
+ 			}
+ 		})();
+ 	//]]></script>
++<script>window.GAMIDIO_GAMEPAD={"buttons": [{"label": "A", "keys": ["x"]}, {"label": "B", "keys": ["c"]}], "menu": {"label": "☰", "keys": ["Enter"]}}</script><script src="gamidio-gamepad.js"></script>
+ </body>
+ </html>
+ 

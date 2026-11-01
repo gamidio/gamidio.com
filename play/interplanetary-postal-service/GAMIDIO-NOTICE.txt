@@ -10,3 +10,4 @@ Corresponding source of this copy = the upstream commit above + gamidio-changes.
 Changes made by Gamidio:
   - built as the author's build.sh (bin/compress for the maps, make with clang --target=wasm32); files from src/js
   - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)

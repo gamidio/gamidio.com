@@ -12,3 +12,4 @@ Changes made by Gamidio:
   - assets/music/*.mp3 (6 tracks by a third party, no licence we can rely on) replaced by one second of silence; sizes updated in assets/assets.txt
   - index.html: keyboard focus on click; game keys do not scroll the page around the game
   - index.html: removed itch.io htmlgame.js
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)

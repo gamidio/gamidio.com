@@ -41739,7 +41739,7 @@ hxd_Window.prototype = {
 		this.focused = b;
 	}
 	,get_isFocused: function() {
-		return this.focused;
+		return this.focused || "ontouchstart" in window;
 	}
 	,set_displayMode: function(m) {
 		var doc = window.document;

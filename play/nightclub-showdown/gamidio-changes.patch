@@ -26,3 +26,24 @@
  		</style>
  	</head>
  	<body id="body">
+--- a/client.js
++++ b/client.js
+@@ -41739,7 +41739,7 @@
+ 		this.focused = b;
+ 	}
+ 	,get_isFocused: function() {
+-		return this.focused;
++		return this.focused || "ontouchstart" in window;
+ 	}
+ 	,set_displayMode: function(m) {
+ 		var doc = window.document;
+--- a/index.html
++++ b/index.html
+@@ -1,6 +1,7 @@
+ <!DOCTYPE html>
+ <html>
+ 	<head>
++<script>window.GAMIDIO_TOUCH_TARGET="#webgl"</script><script src="gamidio-touch.js"></script>
+ <script>/* Gamidio: this game only sees its own localStorage keys */(function(){
+ var P='nightclub-showdown:',S;try{S=window.localStorage}catch(e){return}
+ var own=function(){var r=[];for(var i=0;i<S.length;i++){var k=S.key(i);if(k&&k.indexOf(P)===0)r.push(k.slice(P.length))}return r};

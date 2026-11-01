@@ -26,3 +26,24 @@
  		</style>
  	</head>
  	<body id="body">
+--- a/client.js
++++ b/client.js
+@@ -50110,7 +50110,7 @@
+ 		this.focused = b;
+ 	}
+ 	,get_isFocused: function() {
+-		return this.focused;
++		return this.focused || "ontouchstart" in window;
+ 	}
+ 	,set_displayMode: function(m) {
+ 		if(!js_Browser.get_supported()) {
+--- a/index.html
++++ b/index.html
+@@ -35,5 +35,6 @@
+ 		<canvas id="webgl"></canvas>
+ 		<script type="text/javascript" src="client.js"></script>
+ 
+-	</body>
++	<script>window.GAMIDIO_GAMEPAD={"buttons": [{"label": "A", "keys": ["ArrowUp"]}, {"label": "B", "keys": [" "]}, {"label": "X", "keys": ["Enter"]}], "menu": {"label": "↺", "keys": ["r"]}, "target": "#webgl"}</script><script src="gamidio-gamepad.js"></script>
++</body>
+ </html>

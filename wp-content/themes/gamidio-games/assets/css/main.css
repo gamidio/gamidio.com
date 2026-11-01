@@ -511,6 +511,14 @@ button {
 	height: min(100vh, 100vw / var(--game-ar, 1.7778));
 }
 
+/* Games that fit any window fill the phone, so an on-screen gamepad sits beside the game instead of over it. */
+@media (pointer: coarse) {
+	.player[data-orientation="portrait"] .player__stage:fullscreen .player__frame {
+		width: 100vw;
+		height: 100vh;
+	}
+}
+
 /* Games that need a bigger window than a phone has (D-062): player.js sets the sizes. */
 .player__stage .player__frame.player__frame--scaled {
 	inset: auto;

@@ -10,3 +10,4 @@ Corresponding source of this copy = the upstream commit above + gamidio-changes.
 Changes made by Gamidio:
   - index.html: own localStorage namespace; keyboard focus on click; game keys do not scroll the page around the game
   - index.html: <meta charset="utf-8"> (the page's emoji need UTF-8 on any server)
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)

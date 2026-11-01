@@ -13414,7 +13414,7 @@ Tutorial.prototype = $extend(dn_Process.prototype,{
 		}
 		var dist = Game.ME.vp.elapsedDistCase;
 		if(this.tryToStart("controls")) {
-			new TutorialTip(null,null,"Use keyboard *ARROWS* or GamePad to move.");
+			new TutorialTip(null,null,"ontouchstart" in window ? "Use the *JOYSTICK* to move." : "Use keyboard *ARROWS* or GamePad to move.");
 		}
 		if(Game.ME.hero.cy <= (Game.ME.lvl.hei - 1 - Game.ME.vp.elapsedDistCase | 0) - 8) {
 			this.tryToComplete("controls");
@@ -13426,7 +13426,7 @@ Tutorial.prototype = $extend(dn_Process.prototype,{
 			}
 			if(this.tryToStart("lazer")) {
 				Game.ME.pause();
-				if(Game.ME.ca.parent.mode == dn_legacy_Mode.Pad) {
+				if((Game.ME.ca.parent.mode == dn_legacy_Mode.Pad || "ontouchstart" in window)) {
 					var _this = Game.ME.hero;
 					var _this1 = Game.ME.hero;
 					new TutorialTip((_this.cx + _this.xr) * Const.GRID,(_this1.cy + _this1.yr) * Const.GRID - 19,"Press *Y button multiple times* to boost *MACHINE GUNS*!",function() {
@@ -13506,7 +13506,7 @@ Tutorial.prototype = $extend(dn_Process.prototype,{
 			}
 			if(Game.ME.vp.elapsedDistCase >= 14 && this.tryToStart("missile")) {
 				Game.ME.pause();
-				if(Game.ME.ca.parent.mode == dn_legacy_Mode.Pad) {
+				if((Game.ME.ca.parent.mode == dn_legacy_Mode.Pad || "ontouchstart" in window)) {
 					var _this = Game.ME.hero;
 					var _this1 = Game.ME.hero;
 					new TutorialTip((_this.cx + _this.xr) * Const.GRID + 16,(_this1.cy + _this1.yr) * Const.GRID,"Press *B button multiple times* to boost *MISSILES*!",function() {
@@ -13586,7 +13586,7 @@ Tutorial.prototype = $extend(dn_Process.prototype,{
 			}
 			if(dist >= 21 && this.tryToStart("shield")) {
 				Game.ME.pause();
-				if(Game.ME.ca.parent.mode == dn_legacy_Mode.Pad) {
+				if((Game.ME.ca.parent.mode == dn_legacy_Mode.Pad || "ontouchstart" in window)) {
 					var _this = Game.ME.hero;
 					var _this1 = Game.ME.hero;
 					new TutorialTip((_this.cx + _this.xr) * Const.GRID - 17,(_this1.cy + _this1.yr) * Const.GRID,"Press *X button multiple times* to boost *SHIELD REGEN*!",function() {
@@ -13666,7 +13666,7 @@ Tutorial.prototype = $extend(dn_Process.prototype,{
 			}
 			if(dist >= 26 && this.tryToStart("balance")) {
 				Game.ME.pause();
-				if(Game.ME.ca.parent.mode == dn_legacy_Mode.Pad) {
+				if((Game.ME.ca.parent.mode == dn_legacy_Mode.Pad || "ontouchstart" in window)) {
 					var _this = Game.ME.hero;
 					var _this1 = Game.ME.hero;
 					new TutorialTip((_this.cx + _this.xr) * Const.GRID,(_this1.cy + _this1.yr) * Const.GRID,"Press *A button* to balance energy.",function() {
@@ -13992,7 +13992,7 @@ var TutorialTip = function(x,y,txt,skipPressed) {
 	if(tmp && skipPressed == null) {
 		var tf = new h2d_HtmlText(Assets.font,f);
 		tf.set_textColor(9675703);
-		if(Game.ME.ca.parent.mode == dn_legacy_Mode.Pad) {
+		if((Game.ME.ca.parent.mode == dn_legacy_Mode.Pad || "ontouchstart" in window)) {
 			tf.set_text("Press A (gamepad) to continue");
 		} else {
 			tf.set_text("Press SPACE to continue");
@@ -54485,7 +54485,7 @@ hxd_Window.prototype = {
 		this.focused = b;
 	}
 	,get_isFocused: function() {
-		return this.focused;
+		return this.focused || "ontouchstart" in window;
 	}
 	,set_displayMode: function(m) {
 		if(!js_Browser.get_supported()) {

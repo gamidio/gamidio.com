@@ -11,3 +11,5 @@ Changes made by Gamidio:
   - index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
   - index.html: no scrollbars around the game in our frame
   - client.js: Main.presses created in the constructor (the game crashed on start reading it before the first press)
+  - client.js: touch screens count as focused (no pause loop)
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)

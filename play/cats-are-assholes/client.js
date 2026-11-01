@@ -43277,7 +43277,7 @@ hxd_Window.prototype = {
 		this.focused = b;
 	}
 	,get_isFocused: function() {
-		return this.focused;
+		return this.focused || "ontouchstart" in window;
 	}
 	,__class__: hxd_Window
 };

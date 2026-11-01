@@ -28,3 +28,4 @@ Changes made by Gamidio:
   - (build output) assets/vendor.6d7f4856.js: Draco decoder from draco/ in this folder
   - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
   - (build output) index.html: the start screen's credits footer is hidden in low frames (it overlapped 'Click to start'); credits stay in GAMIDIO-NOTICE.txt
+  - index.html: on-screen steering wheel and pedals for touch screens (gamidio-gamepad.js, D-048)

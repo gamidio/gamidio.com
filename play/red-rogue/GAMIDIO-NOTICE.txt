@@ -12,3 +12,4 @@ Changes made by Gamidio:
   - src/Game.as: no Google Analytics calls to the page (the author's site tracked game events)
   - built with Apache Flex SDK 4.16.1 mxmlc (Flash Player 32 API), options as in game.as3proj
   - (build output) index.html: Gamidio page that plays red-rogue.swf in Ruffle nightly-2026-10-17 (play/ruffle/, MIT/Apache-2.0), with networking switched off for the game
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)

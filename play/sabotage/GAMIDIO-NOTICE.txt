@@ -11,3 +11,5 @@ Changes made by Gamidio:
   - index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
   - index.html: no scrollbars around the game in our frame
   - client.js: the embedded music (R_music_leatherneck_mp3, David Whittaker's Leatherneck theme, third party) replaced by one second of silence (base64 MP3); the rest of client.js is unchanged
+  - client.js: touch screens count as focused (no pause loop)
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)

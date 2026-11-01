@@ -10,3 +10,4 @@ Corresponding source of this copy = the upstream commit above + gamidio-changes.
 Changes made by Gamidio:
   - ending.swf = bin/game.swf of the upstream commit, unchanged
   - index.html: Gamidio page that plays ending.swf in Ruffle nightly-2026-10-17 (play/ruffle/, MIT/Apache-2.0), with networking switched off for the game
+  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
