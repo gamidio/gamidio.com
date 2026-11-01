@@ -1,0 +1,16 @@
+OpenClonk — hosted by Gamidio (gamidio.com)
+
+Original game: The OpenClonk Team and contributors (RedWolf Design, Matthes Bender); music by K-Pone
+Upstream source: https://github.com/openclonk/openclonk.git
+Upstream commit: 36de799544af0459014ea088867fe263779a8bdd
+License: ISC (code), CC BY 3.0 and CC0 (graphics, sound, music); 'Clonk' is a registered trademark of Matthes Bender (https://github.com/openclonk/openclonk/blob/master/COPYING)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - scripts in apply_patches.py: WebGL 2 and GLSL ES, browser main loop, no network play, mod browser or Exit button in the menu
+  - build.sh: Emscripten 6.0.6, game data in packed groups, music re-encoded at a lower bitrate; only the System, Graphics, Material, Sound, Music, Objects, Decoration, Arena, Worlds, Tutorials and Missions groups are included
+  - index.html: Gamidio launch page; players and settings saved in the browser (IndexedDB)
+  - (build output) index.html: no connections to third-party servers; keyboard focus on click; data stored in parts
+  - (build output) index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - gamidio-gamepad.js: Gamidio's on-screen gamepad (written by Gamidio, part of these changes), included in full in this folder

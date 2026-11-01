@@ -65,7 +65,14 @@
 	// of the screen, and the game keeps its proportions inside (scaled frames and games for any window size need no ratio).
 	window.addEventListener('message', function (event) {
 		var game = player.querySelector('iframe');
-		if (!game || event.source !== game.contentWindow || !event.data || !event.data.gamidioGamepad) {
+		if (!game || event.source !== game.contentWindow || !event.data) {
+			return;
+		}
+		// A game with text fields: the phone's keyboard floats over the page, so the game keeps its size. Only the top page may ask.
+		if (event.data.gamidioFloatingKeyboard && navigator.virtualKeyboard) {
+			navigator.virtualKeyboard.overlaysContent = true;
+		}
+		if (!event.data.gamidioGamepad) {
 			return;
 		}
 		player.classList.add('player--gamepad');

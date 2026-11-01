@@ -1,5 +1,7 @@
 <html>
   <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('pointerdown',f,true);addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>XiangQi Wizard Light</title>
@@ -164,5 +166,12 @@ function moveList_change() {
   board.flushBoard();
 }
     --></script>
-  </body>
+  <script>/* Gamidio: the board fits the frame; on a phone held upright the controls go under it */(function(){
+var side=document.querySelectorAll('.td')[1],row=side.parentNode;
+function fit(){var w=document.documentElement.clientWidth,h=window.innerHeight,tall=h>w&&w<680;
+row.style.whiteSpace=tall?'normal':'nowrap';side.style.display=tall?'block':'';side.style.width=tall?'521px':'120px';side.style.margin=tall?'8px auto':'';
+document.body.style.margin=tall?'0':'';document.body.style.zoom=tall?w/530:Math.min(1,w/680,h/650)}
+fit();addEventListener('resize',fit);
+})();</script>
+</body>
 </html>

@@ -10,4 +10,5 @@ Corresponding source of this copy = the upstream commit above + gamidio-changes.
 Changes made by Gamidio:
   - exported with Godot 3.6.2 (headless editor, official webassembly_release template) and the project's HTML5 preset
   - (build output) index.html: own localStorage namespace; keyboard focus on click, game keys do not scroll the page around the game
-  - index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - (build output) index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - gamidio-gamepad.js: Gamidio's on-screen gamepad (written by Gamidio, part of these changes), included in full in this folder
