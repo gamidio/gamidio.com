@@ -21,9 +21,34 @@
 		frame.addEventListener('error', function () { track('game_error'); });
 	}
 
+	// Some games draw at the size of their window, so on a phone they turn blurry and their layout breaks. Such a game
+	// gets the window it was made for, scaled down to the stage (D-062). Same breakpoint as the game block in main.css.
+	var designWidth = Number(player.getAttribute('data-design-width'));
+	var smallScreen = window.matchMedia('(max-width: 1143px)');
+
+	function fitFrame(game) {
+		var ratio = Number(player.style.getPropertyValue('--game-ar')) || 16 / 9;
+		var designHeight = Math.round(designWidth / ratio);
+
+		function fit() {
+			var scale = Math.min(stage.clientWidth / designWidth, stage.clientHeight / designHeight);
+			var scaled = smallScreen.matches && scale < 1;
+			game.classList.toggle('player__frame--scaled', scaled);
+			game.style.setProperty('--design-w', designWidth + 'px');
+			game.style.setProperty('--design-h', designHeight + 'px');
+			game.style.setProperty('--design-scale', scale);
+		}
+
+		fit();
+		new ResizeObserver(fit).observe(stage);
+	}
+
 	var frame = player.querySelector('iframe');
 	if (frame) {
 		watchFrame(frame);
+		if (designWidth) {
+			fitFrame(frame);
+		}
 	}
 
 	// Games from other servers: the frame is created only after a click on Play (D-059).
@@ -39,6 +64,9 @@
 		game.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
 		start.parentNode.replaceChild(game, start);
 		watchFrame(game);
+		if (designWidth) {
+			fitFrame(game);
+		}
 		game.focus();
 	}
 

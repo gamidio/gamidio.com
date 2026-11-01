@@ -162,8 +162,9 @@ button {
 	padding: var(--page-pad);
 }
 
-/* Phones: three fluid cells fill the width (like Poki). */
-@media (max-width: 405px) {
+/* Phones: three fluid cells fill the width (like Poki), the page edges match the gap between tiles. A desktop
+   window that narrow keeps fixed cells, because 100vw there includes the scrollbar. */
+@media (max-width: 405px), (max-width: 528px) and (pointer: coarse) {
 	:root {
 		--grid-cell: calc((100vw - 2 * var(--page-pad) - 2 * var(--grid-gap)) / 3);
 		--grid-gap: 12px;
@@ -510,6 +511,17 @@ button {
 	height: min(100vh, 100vw / var(--game-ar, 1.7778));
 }
 
+/* Games that need a bigger window than a phone has (D-062): player.js sets the sizes. */
+.player__stage .player__frame.player__frame--scaled {
+	inset: auto;
+	top: 50%;
+	left: 50%;
+	width: var(--design-w);
+	height: var(--design-h);
+	margin: 0;
+	transform: translate(-50%, -50%) scale(var(--design-scale));
+}
+
 /* Games that start on their own page (D-045): the game art with a big Play button. */
 .player__launch {
 	position: absolute;
@@ -737,6 +749,22 @@ button {
 	.grid--game .player[data-orientation="portrait"] {
 		--game-ratio: 9 / 16 !important;
 		--game-ar: 0.5625 !important;
+	}
+}
+
+/* Phones held upright: game window and toolbar take 90 % of the screen (owner 2026-11-01). The game stays centered
+   with black bars around it, which also hints at turning the phone, and the next tiles still show under it. */
+@media (max-width: 651px) and (orientation: portrait) {
+	.grid--game .player__stage {
+		height: calc(90vh - var(--toolbar-h));
+		height: calc(90svh - var(--toolbar-h));
+		max-height: none;
+		aspect-ratio: auto;
+	}
+
+	.grid--game .player[data-orientation="portrait"] .player__frame {
+		width: 100%;
+		height: 100%;
 	}
 }
 
