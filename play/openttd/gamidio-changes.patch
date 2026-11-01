@@ -1,3 +1,11 @@
+--- a/os/emscripten/pre.js
++++ b/os/emscripten/pre.js
+@@ -1,4 +1,4 @@
+-Module.arguments.push('-mnull', '-snull', '-vsdl');
++Module.arguments.push('-vsdl', '-SOpenSFX', '-MOpenMSX');
+ Module['websocket'] = { url: function(host, port, proto) {
+     /* openttd.org hosts a WebSocket proxy for the content service. */
+     if (host == "content.openttd.org" && port == 3978 && proto == "tcp") {
 --- a/os/emscripten/shell.html
 +++ b/os/emscripten/shell.html
 @@ -1,6 +1,14 @@
@@ -33,6 +41,111 @@
  		bool missing_sprites = _missing_extra_graphics > 0 && !IsReleasedVersion();
  		this->GetWidget<NWidgetStacked>(WID_SGI_BASESET_SELECTION)->SetDisplayedPlane(missing_sprites ? 0 : SZSP_NONE);
  
+--- a/src/music/CMakeLists.txt
++++ b/src/music/CMakeLists.txt
+@@ -45,6 +45,12 @@
+ endif()
+ 
+ add_files(
++    emscripten_m.cpp
++    emscripten_m.h
++    CONDITION EMSCRIPTEN
++)
++
++add_files(
+     music_driver.hpp
+     null_m.cpp
+     null_m.h
+--- a/src/music/emscripten_m.cpp
++++ b/src/music/emscripten_m.cpp
+@@ -0,0 +1,59 @@
++/** @file emscripten_m.cpp Gamidio: plays the recorded music set in the browser. */
++
++#include "../stdafx.h"
++#include "emscripten_m.h"
++#include "../base_media_base.h"
++#include "../base_media_music.h"
++#include <emscripten.h>
++
++#include "../safeguards.h"
++
++static FMusicDriver_Emscripten iFMusicDriver_Emscripten;
++
++void MusicDriver_Emscripten::PlaySong(const MusicSongInfo &song)
++{
++	std::string name = song.filename;
++	size_t slash = name.find_last_of("/\\\\");
++	if (slash != std::string::npos) name = name.substr(slash + 1);
++	size_t dot = name.find_last_of('.');
++	if (dot != std::string::npos) name = name.substr(0, dot);
++
++	EM_ASM({
++		var a = window.gamidioMusic || (window.gamidioMusic = new Audio());
++		a.src = 'music/' + UTF8ToString($0) + '.mp3';
++		a.play().catch(function () {
++			// Browsers allow sound only after a tap or click on the page.
++			addEventListener('pointerdown', function () { a.play().catch(function () {}); }, {once: true});
++		});
++	}, name.c_str());
++}
++
++void MusicDriver_Emscripten::StopSong()
++{
++	EM_ASM({ if (window.gamidioMusic) { gamidioMusic.pause(); gamidioMusic.removeAttribute('src'); } });
++}
++
++void MusicDriver_Emscripten::Stop()
++{
++	this->StopSong();
++}
++
++bool MusicDriver_Emscripten::IsSongPlaying()
++{
++	return EM_ASM_INT({ return window.gamidioMusic && gamidioMusic.hasAttribute('src') && !gamidioMusic.ended ? 1 : 0; }) != 0;
++}
++
++void MusicDriver_Emscripten::SetVolume(uint8_t vol)
++{
++	EM_ASM({
++		if (!window.gamidioMusic) {
++			var a = window.gamidioMusic = new Audio();
++			// Music stops with the tab: a phone would keep playing it in the background.
++			document.addEventListener('visibilitychange', function () {
++				if (document.hidden) a.pause();
++				else if (a.hasAttribute('src')) a.play().catch(function () {});
++			});
++		}
++		gamidioMusic.volume = $0 / 127;
++	}, vol);
++}
+--- a/src/music/emscripten_m.h
++++ b/src/music/emscripten_m.h
+@@ -0,0 +1,25 @@
++/** @file emscripten_m.h Gamidio: plays the recorded music set in the browser. */
++
++#ifndef MUSIC_EMSCRIPTEN_H
++#define MUSIC_EMSCRIPTEN_H
++
++#include "music_driver.hpp"
++
++class MusicDriver_Emscripten : public MusicDriver {
++public:
++	std::optional<std::string_view> Start(const StringList &) override { return std::nullopt; }
++	void Stop() override;
++	void PlaySong(const MusicSongInfo &song) override;
++	void StopSong() override;
++	bool IsSongPlaying() override;
++	void SetVolume(uint8_t vol) override;
++	std::string_view GetName() const override { return "emscripten"; }
++};
++
++class FMusicDriver_Emscripten : public DriverFactoryBase {
++public:
++	FMusicDriver_Emscripten() : DriverFactoryBase(Driver::DT_MUSIC, 10, "emscripten", "Browser Music Driver") {}
++	std::unique_ptr<Driver> CreateInstance() const override { return std::make_unique<MusicDriver_Emscripten>(); }
++};
++
++#endif /* MUSIC_EMSCRIPTEN_H */
 --- a/src/network/network.cpp
 +++ b/src/network/network.cpp
 @@ -1289,6 +1289,7 @@

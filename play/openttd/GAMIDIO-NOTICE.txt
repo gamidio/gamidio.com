@@ -3,11 +3,14 @@ OpenTTD — hosted by Gamidio (gamidio.com)
 Original game: OpenTTD team (based on Transport Tycoon Deluxe by Chris Sawyer); OpenGFX graphics by the OpenGFX team
 Upstream source: https://github.com/OpenTTD/OpenTTD
 Upstream commit: 14ec60f248547d4d062a1160f0fc26d742319888
-License: GNU GPL v2 (game and OpenGFX graphics) (https://github.com/OpenTTD/OpenTTD/blob/master/COPYING.md)
+License: GNU GPL v2 (game, OpenGFX graphics, OpenMSX music); OpenSFX sounds CC BY-SA 3.0 (https://github.com/OpenTTD/OpenTTD/blob/master/COPYING.md)
 
 Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
 
 Changes made by Gamidio:
+  - os/emscripten/pre.js: sound and music switched on (the web build starts them as 'null' drivers)
+  - src/music/emscripten_m.cpp: music driver that plays the recorded OpenMSX tracks in the browser
+  - src/music/CMakeLists.txt: the browser music driver is part of the web build
   - src/network/network.cpp: network marked as not available (offline copy: no survey, online content or multiplayer)
   - src/table/settings/network_private_settings.ini: automated survey off by default (no 'Participate in automated survey?' prompt on the first start)
   - src/intro_gui.cpp: main menu: Multiplayer and Online Content greyed out when the network is not available
@@ -16,5 +19,7 @@ Changes made by Gamidio:
   - os/emscripten/shell.html: first save asks the browser to keep the savegames (persistent storage)
   - built with the project's Emscripten Dockerfile recipe (emsdk 3.1.57, as upstream), Release, English only (upstream choice)
   - OpenGFX baseset preloaded from https://cdn.openttd.org/opengfx-releases/8.0/opengfx-8.0-all.zip (GPL v2): no graphics download from openttd.org on first start
+  - OpenSFX sounds preloaded from https://cdn.openttd.org/opensfx-releases/1.0.3/opensfx-1.0.3-all.zip (CC BY-SA 3.0)
+  - OpenMSX music from https://cdn.openttd.org/openmsx-releases/0.4.2/openmsx-0.4.2-all.zip (GPL v2): MIDI recorded to music/*.mp3 with FluidSynth and the FluidR3 GM soundfont (MIT)
   - openttd.html served as index.html
   - gamidio-touch.js: Gamidio's touch controls (written by Gamidio, part of these changes), included in full in this folder

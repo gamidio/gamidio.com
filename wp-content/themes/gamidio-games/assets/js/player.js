@@ -18,6 +18,14 @@
 
 	function watchFrame(frame) {
 		track('game_start');
+		// The game may have loaded before this script: ask again whether it has an on-screen gamepad.
+		var ask = function () {
+			if (frame.contentWindow) {
+				frame.contentWindow.postMessage({ gamidioAsk: true }, '*');
+			}
+		};
+		frame.addEventListener('load', ask);
+		ask();
 		frame.addEventListener('error', function () { track('game_error'); });
 	}
 
@@ -25,17 +33,21 @@
 	// gets the window it was made for, scaled down to the stage (D-062). Same breakpoint as the game block in main.css.
 	var designWidth = Number(player.getAttribute('data-design-width'));
 	var smallScreen = window.matchMedia('(max-width: 1143px)');
+	var refit = null;
 
 	function fitFrame(game) {
 		var ratio = Number(player.style.getPropertyValue('--game-ar')) || 16 / 9;
 		var designHeight = Math.round(designWidth / ratio);
 
 		function fit() {
-			var scale = Math.min(stage.clientWidth / designWidth, stage.clientHeight / designHeight);
+			// With an on-screen gamepad the window takes the shape of the stage, so the controls reach the screen edges.
+			var gamepad = player.classList.contains('player--gamepad');
+			var height = gamepad ? Math.round(designWidth * stage.clientHeight / stage.clientWidth) : designHeight;
+			var scale = gamepad ? stage.clientWidth / designWidth : Math.min(stage.clientWidth / designWidth, stage.clientHeight / designHeight);
 			var scaled = smallScreen.matches && scale < 1;
 			game.classList.toggle('player__frame--scaled', scaled);
 			game.style.setProperty('--design-w', designWidth + 'px');
-			game.style.setProperty('--design-h', designHeight + 'px');
+			game.style.setProperty('--design-h', height + 'px');
 			game.style.setProperty('--design-scale', scale);
 			// An on-screen gamepad inside the game must not shrink with the frame.
 			if (game.contentWindow) {
@@ -44,9 +56,26 @@
 		}
 
 		game.addEventListener('load', fit);
+		refit = fit;
 		fit();
 		new ResizeObserver(fit).observe(stage);
 	}
+
+	// A game with an on-screen gamepad announces itself: its frame then fills the stage, so the gamepad reaches the edges
+	// of the screen, and the game keeps its proportions inside (scaled frames and games for any window size need no ratio).
+	window.addEventListener('message', function (event) {
+		var game = player.querySelector('iframe');
+		if (!game || event.source !== game.contentWindow || !event.data || !event.data.gamidioGamepad) {
+			return;
+		}
+		player.classList.add('player--gamepad');
+		if (refit) {
+			refit();
+		}
+		if (!designWidth && player.getAttribute('data-orientation') !== 'portrait') {
+			game.contentWindow.postMessage({ gamidioFill: Number(player.style.getPropertyValue('--game-ar')) || 16 / 9 }, '*');
+		}
+	});
 
 	var frame = player.querySelector('iframe');
 	if (frame) {
@@ -97,6 +126,11 @@
 			track('fullscreen');
 		});
 		document.addEventListener('fullscreenchange', function () {
+			// Fullscreen also uses the strip of the camera cutout, so the gamepad reaches the real edges of the phone.
+			var viewport = document.querySelector('meta[name="viewport"]');
+			if (viewport) {
+				viewport.content = viewport.content.replace(/,\s*viewport-fit=cover/, '') + (document.fullscreenElement ? ', viewport-fit=cover' : '');
+			}
 			fullscreenBtn.setAttribute('aria-label', document.fullscreenElement ? (i18n.exitFull || 'Exit fullscreen') : (i18n.fullscreen || 'Fullscreen'));
 		});
 	}

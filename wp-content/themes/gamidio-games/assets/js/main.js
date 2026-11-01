@@ -93,6 +93,9 @@
 		var fuse = null;
 		var debounce = null;
 
+		var DEVICE_PC = '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M3 4h18a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-7v2h3v2H7v-2h3v-2H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 2v9h16V6z"/></svg>';
+		var DEVICE_PHONE = '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 3v13h8V5zm4 14.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>';
+
 		function tileHtml(g) {
 			var a = document.createElement('a');
 			a.className = 'tile';
@@ -105,6 +108,13 @@
 				img.width = 256;
 				img.height = 256;
 				a.appendChild(img);
+			}
+			// Same icons as gamidio_device_icons(): computer always, phone only for games tested on a phone.
+			var devices = document.querySelector('.tile__devices');
+			if (devices) {
+				var icons = devices.cloneNode(false);
+				icons.innerHTML = DEVICE_PC + (g.mobile_tested ? DEVICE_PHONE : '');
+				a.appendChild(icons);
 			}
 			var span = document.createElement('span');
 			span.className = 'tile__title';
