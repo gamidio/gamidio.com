@@ -30,7 +30,7 @@ index 92e2b41..b5b8fa0 100644
  	vec3 matSpot2 = matMapX2.rgb * 255.9f / 16.0f;
  	float matAngle2 = matMapX2.a;
 diff --git a/src/config/C4Config.cpp b/src/config/C4Config.cpp
-index 05989ff..97ec914 100644
+index 05989ff..9308435 100644
 --- a/src/config/C4Config.cpp
 +++ b/src/config/C4Config.cpp
 @@ -532,7 +532,7 @@ void C4ConfigGeneral::DeterminePaths()
@@ -38,7 +38,7 @@ index 05989ff..97ec914 100644
  	SCopy(ExePath.getMData(),SystemDataPath);
  #elif defined(OC_SYSTEM_DATA_DIR)
 -	SCopy(OC_SYSTEM_DATA_DIR, SystemDataPath);
-+	SCopy("/data", SystemDataPath);
++	SCopy("/game/data", SystemDataPath);
  #else
  #error Please define OC_SYSTEM_DATA_DIR!
  #endif
@@ -147,6 +147,18 @@ index 4e940ba..9c44994 100644
  	// list of selected players
  	AddElement(pParticipantsLbl = new C4GUI::Label("test", GetClientRect().Wdt*39/40, GetClientRect().Hgt*9/10, ARight, 0xffffffff, &::GraphicsResource.TitleFont, false));
  	pParticipantsLbl->SetToolTip(LoadResStr("IDS_DLGTIP_SELECTEDPLAYERS"));
+diff --git a/src/landscape/C4Particles.h b/src/landscape/C4Particles.h
+index be7f104..6626276 100644
+--- a/src/landscape/C4Particles.h
++++ b/src/landscape/C4Particles.h
+@@ -482,6 +482,7 @@ public:
+ 	{
+ #ifndef USE_CONSOLE
+ 		frameCounterAdvancedEvent.Set();
++		ExecuteCalculation();
+ #endif
+ 	}
+ 	// resets the internal state of the particle system and unloads all definitions
 diff --git a/src/lib/StdMesh.cpp b/src/lib/StdMesh.cpp
 index 10294e5..c56d70d 100644
 --- a/src/lib/StdMesh.cpp
