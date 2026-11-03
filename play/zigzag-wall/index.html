@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<script>/* Gamidio: keyboard focus on click, game keys do not scroll the page around the game */(function(){var f=function(){window.focus()};addEventListener('pointerdown',f,true);addEventListener('mousedown',f,true);addEventListener('touchstart',f,{capture:true,passive:true});addEventListener('keydown',function(e){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','PageUp','PageDown','Home','End'].indexOf(e.key)>=0&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))e.preventDefault()},true)})()</script>
+<script>/* Gamidio: this game only sees its own localStorage keys */(function(){
+var P='zigzag-wall:',S;try{S=window.localStorage}catch(e){return}
+var own=function(){var r=[];for(var i=0;i<S.length;i++){var k=S.key(i);if(k&&k.indexOf(P)===0)r.push(k.slice(P.length))}return r};
+var api={getItem:function(k){return S.getItem(P+k)},setItem:function(k,v){S.setItem(P+k,String(v))},removeItem:function(k){S.removeItem(P+k)},
+clear:function(){own().forEach(function(k){S.removeItem(P+k)})},key:function(i){var o=own();return i<o.length?o[i]:null}};
+var px=new Proxy(api,{get:function(o,k){if(k==='length')return own().length;if(k in o)return o[k];if(typeof k==='string'){var v=S.getItem(P+k);return v===null?undefined:v}},
+set:function(o,k,v){S.setItem(P+k,String(v));return true},deleteProperty:function(o,k){S.removeItem(P+k);return true},
+has:function(o,k){return k in o||S.getItem(P+k)!==null},ownKeys:function(){return own()},
+getOwnPropertyDescriptor:function(o,k){var v=S.getItem(P+k);return v===null?undefined:{value:v,enumerable:true,configurable:true,writable:true}}});
+Object.defineProperty(window,'localStorage',{configurable:true,get:function(){return px}});})();</script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+
+    <meta name="author" content="Michael Kolesidis" />
+    <meta
+      name="description"
+      content="A 3D zigzag game built with React Three Fiber. Stay on the wall and zigzag as far as you can! Just tap the screen to change the ball’s direction. One wrong move and you’re off the edge! How far can you make it?"
+    />
+    <meta
+      name="keywords"
+      content="zigzag, zig-zag, zigzags, casual, casual game, action, action game, runner, runner game, arcade, arcade game, abstract, abstract game, hypercasual, hypercasual game, hyper-casual, hyper-casual game, mobile game, mobile games, free game, free games, free to play, free to play game, free to play games, f2p, f2p game, f2p games, threejs, three.js, threejs, react, reactjs, react-three-fiber, react-three-fiber game, react-three-fiber games, threejs game, threejs games, react game, react games, web game, web games, webgl, webgl game, webgl games"
+    />
+    <link rel="shortcut icon" href="./favicon/favicon.ico" type="image/x-icon" />
+    <title>Zigzag Wall</title>
+    <script type="module" crossorigin src="./assets/index-D7NiukOA.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CjHb_Tqb.css">
+  </head>
+  <body>
+    <img src="./logo.png" style="display: none" alt="ZigZag icon" />
+    <div id="root"></div>
+  </body>
+</html>

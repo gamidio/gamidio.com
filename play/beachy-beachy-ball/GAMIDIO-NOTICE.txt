@@ -1,0 +1,16 @@
+Beachy Beachy Ball — hosted by Gamidio (gamidio.com)
+
+Original game: Michael Kolesidis
+Upstream source: https://github.com/michaelkolesidis/beachy-beachy-ball
+Upstream commit: 1deb797f478794d6e9c336a4cad741b4afd8b160
+License: GNU AGPL v3 (code); assets Creative Commons / public domain or by the author (README) (https://github.com/michaelkolesidis/beachy-beachy-ball/blob/1deb797f478794d6e9c336a4cad741b4afd8b160/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/index.html: removed Google Analytics / Tag Manager
+  - built with: yarn install --frozen-lockfile && vite build (the author's vite.config.js, relative base)
+  - (build output) index.html: own localStorage namespace (the game clears storage)
+  - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game
+  - (build output) index.html: on-screen gamepad for touch screens (gamidio-gamepad.js, D-048)
+  - gamidio-gamepad.js: Gamidio's on-screen gamepad (written by Gamidio, part of these changes), included in full in this folder

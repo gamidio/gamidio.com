@@ -1,0 +1,17 @@
+Slash Saber — hosted by Gamidio (gamidio.com)
+
+Original game: honzaap
+Upstream source: https://github.com/honzaap/SlashSaber
+Upstream commit: ab740a74b9a71cebc79f70c966ca6f35799974fc
+License: Creative Commons Attribution 4.0 (the whole repository: code, 3D models, textures, sounds) (https://github.com/honzaap/SlashSaber/blob/ab740a74b9a71cebc79f70c966ca6f35799974fc/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/api.ts: no online leaderboard (no requests to the author's server)
+  - src/components/SceneOverlay.vue: leaderboard panel hidden
+  - src/components/GameOverScreen.vue: no username prompt for the leaderboard
+  - index.html: removed Google Analytics
+  - built with: npm ci && vite build --base=/play/slash-saber/
+  - (build output) index.html: keyboard focus on click; Space does not scroll the page around the game
+  - (build output) index.html: no PWA manifest

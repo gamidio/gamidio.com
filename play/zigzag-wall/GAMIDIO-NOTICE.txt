@@ -1,0 +1,18 @@
+Zigzag Wall — hosted by Gamidio (gamidio.com)
+
+Original game: Michael Kolesidis
+Upstream source: https://github.com/michaelkolesidis/zigzag
+Upstream commit: 3c09ccbbcdff11bc8abc4b3b7444f46ab2e8c13a
+License: GNU AGPL v3 (the repository, code and sounds by the author); Inter font SIL OFL 1.1 (https://github.com/michaelkolesidis/zigzag/blob/3c09ccbbcdff11bc8abc4b3b7444f46ab2e8c13a/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: removed Google Analytics / Tag Manager
+  - index.html: title: Zigzag Wall
+  - src/interface/Interface.jsx: title: Zigzag Wall
+  - built with: pnpm install --frozen-lockfile && vite build --base=./
+  - (build output) index.html: no service worker
+  - (build output) index.html: no PWA manifest
+  - (build output) index.html: own localStorage namespace (other games share the origin)
+  - (build output) index.html: keyboard focus on click; Space does not scroll the page around the game

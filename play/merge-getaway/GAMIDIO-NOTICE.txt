@@ -1,0 +1,13 @@
+Merge Getaway — hosted by Gamidio (gamidio.com)
+
+Original game: Artsiom Trubchyk (aglitchman)
+Upstream source: https://github.com/aglitchman/defold-ld50-game
+Upstream commit: 69cb621d8c46022d59ab8ced5d28711e32474db6
+License: MIT License (LICENSE.md in the source branch main) (https://github.com/aglitchman/defold-ld50-game/blob/1668afb8200f41c83cafa8b3310793590537e280/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: the page's own button bar hidden
+  - index.html: the game fills the frame (no room kept for the hidden bar)
+  - index.html: keyboard focus on click; arrow keys do not scroll the page around the game
