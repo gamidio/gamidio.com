@@ -1,0 +1,296 @@
+--- a/src/Components/App.css
++++ b/src/Components/App.css
+@@ -29,7 +29,7 @@
+             transparent 60%,
+             #404040 85%
+         ),
+-        url(/public/img/b1.jpg);
++        linear-gradient(135deg, #8a5a2e, #2e6a8a 50%, #7a2f7e);
+     background-position: center center;
+     background-size: cover;
+ 
+--- a/src/Components/App.js
++++ b/src/Components/App.js
+@@ -54,7 +54,6 @@
+                         </Stack>
+                     </SoundsMutedContext.Provider>
+                 </header>
+-                <ConsentDialog />
+             </div>
+         </ThemeProvider>
+     );
+--- a/src/Components/ExtraMenu.js
++++ b/src/Components/ExtraMenu.js
+@@ -24,15 +24,7 @@
+                     paddingBottom: "0.3em",
+                 }}
+             >
+-                {!isSimplified && (<>
+-                    <RateButton
+-                        id="menu-rate"
+-                        onClick={() => {
+-                            setRateOpen(true);
+-                        }}
+-                    />
+-                </>)
+-                }
++                
+                 <CaptionButton
+                     id="credits"
+                     caption="Credits"
+--- a/src/Components/HintBox.js
++++ b/src/Components/HintBox.js
+@@ -24,14 +24,7 @@
+                             },
+                         }}
+                     >
+-                        <img
+-                            src={imgPath("AIPersona.png")}
+-                            alt="AI Persona"
+-                            height="130px"
+-                            style={{
+-                                opacity: "60%",
+-                            }}
+-                        />
++                        <span role="img" aria-label="hint" style={{ fontSize: "96px", lineHeight: "130px", opacity: "60%" }}>🎨</span>
+                     </Tooltip>
+                 </Box>
+             </Fade>
+--- a/src/Components/LevelsPanel.js
++++ b/src/Components/LevelsPanel.js
+@@ -46,9 +46,7 @@
+                             top: 0,
+                             width: "100%",
+                             height: "100%",
+-                            background: `url(${
+-                                process.env.PUBLIC_URL + "/img/b2.jpg"
+-                            })`,
++                            background: "linear-gradient(135deg, #8a5a2e, #2e6a8a 50%, #7a2f7e)",
+                             backgroundPosition: "center center",
+                             backgroundSize: "cover",
+                             filter: "brightness(0.4)",
+--- a/src/Components/MuteButtons.js
++++ b/src/Components/MuteButtons.js
+@@ -19,14 +19,6 @@
+             marginRight="calc(1em + 15px)"
+             marginTop="-5vmin"
+         >
+-            <MuteButton
+-                id="mute_music"
+-                muted={musicMuted}
+-                toggleMute={toggleMuteMusic}
+-                onIcon={<MusicNoteIcon />}
+-                offIcon={<MusicOffIcon />}
+-                title="music"
+-            />
+             <MuteButton
+                 id="mute_sounds"
+                 muted={soundsMuted}
+--- a/src/GA.js
++++ b/src/GA.js
+@@ -1,28 +1,6 @@
+-import ReactGA from "react-ga4";
+-import { getDataConsent } from "./DataConsent";
+-
+-export function gaInitIfConsentGiven() {
+-    if (!getDataConsent()) {
+-        return;
+-    }
+-    gaInit();
+-}
+-
+-export function gaInit() {
+-    ReactGA.initialize("G-EWFT0WDY4J");
+-}
+-
+-export function gaButton(buttonId) {
+-    gaAction("button", buttonId);
+-}
+-
+-export function gaAction(actionType, actionId) {
+-    ReactGA.event("select_content", {
+-        content_type: actionType,
+-        content_id: actionId,
+-    });
+-}
+-
+-export function gaLevelStart(level) {
+-    gaAction("level_start", JSON.stringify(level));
+-}
++// Gamidio: no analytics in this copy (the original sends events to Google Analytics).
++export function gaInitIfConsentGiven() {}
++export function gaInit() {}
++export function gaButton(buttonId) {}
++export function gaAction(actionType, actionId) {}
++export function gaLevelStart(level) {}
+--- a/src/Music.js
++++ b/src/Music.js
+@@ -1,158 +1,6 @@
+-import { Howl } from "howler";
+-import { useCallback, useEffect, useRef } from "react";
+-import { musicFadeDurationMs, musicRate, musicVolume } from "./Constants";
+-import { useLocalStorage } from "./Util/LocalStorageHook";
+-import { usePageVisibility } from "./Util/PageVisibility";
+-import { mapValues } from "./Util/Utils";
+-
+-const musicPrefix = process.env.PUBLIC_URL + "/music/";
+-const trackConfig = {
+-    0: {
+-        loop: "paint_match_1.mp3",
+-    },
+-    12: {
+-        loop: "paint_match_2.mp3",
+-    },
+-    24: {
+-        loop: "paint_match_3.mp3",
+-    },
+-    36: {
+-        loop: "paint_match_4.mp3",
+-    },
+-    50: {
+-        transition: "paint_match_4.5.mp3",
+-        loop: "paint_match_5.mp3",
+-    },
+-};
+-
+-// Music hook, returns mute button and autoplay callback to be called
+-// when interaction with the app started.
++// Gamidio: the music has no licence for redistribution, so this copy plays none (the music button is hidden).
+ function useMusic() {
+-    const [muted, setMuted] = useLocalStorage("muteMusic", false);
+-    const isVisible = usePageVisibility();
+-    // persist Howl sound instance between renders
+-    const jukebox = useRef();
+-    const tracks = useRef();
+-    const canPlay = useRef(isVisible && !muted);
+-    const curLevel = useRef(0);
+-
+-    const playSafe = useCallback(
+-        (fn) => {
+-            try {
+-                if (!jukebox.current || !jukebox.current.sound) {
+-                    return;
+-                }
+-                fn(jukebox.current.sound);
+-            } catch (ex) {
+-                console.warn("Failed to call sound", ex);
+-            }
+-        },
+-        [jukebox]
+-    );
+-    const playPause = useCallback(
+-        (shouldPlay) => {
+-            if (shouldPlay) {
+-                if (!jukebox.current.sound.playing()) {
+-                    playSafe((sound) => sound.play());
+-                }
+-                playSafe((sound) =>
+-                    sound.fade(0, musicVolume, musicFadeDurationMs)
+-                );
+-            } else {
+-                playSafe((sound) =>
+-                    sound.fade(musicVolume, 0, musicFadeDurationMs)
+-                );
+-            }
+-        },
+-        [playSafe]
+-    );
+-    useEffect(() => {
+-        const prev = canPlay.current;
+-        canPlay.current = isVisible && !muted; // refresh muted flag so it's visible in onend callback
+-        if (prev !== canPlay.current) {
+-            playPause(canPlay.current);
+-        }
+-    }, [isVisible, muted, playPause]);
+-
+-    // State machine
+-    const onEnd = useCallback(() => {
+-        if (!canPlay.current) {
+-            return;
+-        }
+-        const nextTrackKey = chooseNextTrack(
+-            Object.keys(trackConfig),
+-            jukebox.current.trackId,
+-            curLevel.current
+-        );
+-        const nextTrack = tracks.current[nextTrackKey];
+-        if (!nextTrack) {
+-            console.warn("no next track for level", curLevel.current);
+-            return;
+-        }
+-        jukebox.current.sound =
+-            nextTrackKey !== jukebox.current.trackId
+-                ? nextTrack.transition ?? nextTrack.loop
+-                : nextTrack.loop;
+-        jukebox.current.trackId = nextTrackKey;
+-        playSafe((sound) => sound.play());
+-        console.log("play", jukebox.current.sound._src, { nextTrackKey });
+-    }, [playSafe]);
+-
+-    // Initialize everything
+-    useEffect(() => {
+-        if (!tracks.current) {
+-            tracks.current = mapValues(trackConfig, (item) =>
+-                mapValues(item, (fileName) => {
+-                    try {
+-                        return new Howl({
+-                            src: [musicPrefix + fileName],
+-                            onend: onEnd,
+-                            volume: musicVolume,
+-                            rate: musicRate,
+-                            autoSuspend: false,
+-                        });
+-                    } catch (ex) {
+-                        console.warn("Failed to create Howl", ex);
+-                        return null;
+-                    }
+-                })
+-            );
+-        }
+-        if (!jukebox.current) {
+-            jukebox.current = {
+-                sound: tracks.current[0].loop,
+-                trackId: 0,
+-            };
+-        }
+-    }, [onEnd, jukebox]);
+-
+-    // Callback exposed to the mute button
+-    const toggleMute = useCallback(() => {
+-        const newMuted = !muted;
+-        setMuted(newMuted);
+-    }, [muted, setMuted]);
+-
+-    // Callback that starts music when the app is ready
+-    const autoPlay = useCallback(() => {
+-        if (muted || jukebox.current.sound.playing()) {
+-            return;
+-        }
+-        playSafe((sound) => sound.play());
+-    }, [muted, playSafe]);
+-
+-    // Game story control
+-    const onChangeLevel = (level) => {
+-        curLevel.current = level;
+-    };
+-    return [muted, toggleMute, autoPlay, onChangeLevel];
+-}
+-
+-function chooseNextTrack(trackIds, curId, levelNum) {
+-    const desiredId = Math.max(...trackIds.filter((x) => x <= levelNum));
+-    if (curId >= desiredId) {
+-        return desiredId;
+-    }
+-    return Math.min(...trackIds.filter((x) => x <= desiredId && x > curId));
++    return [true, () => {}, () => {}, () => {}];
+ }
+ 
+ export default useMusic;
+--- a/src/index.css
++++ b/src/index.css
+@@ -1,4 +1,4 @@
+-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@500");
++@import url("./fonts/fonts.css");
+ 
+ body {
+     margin: 0;

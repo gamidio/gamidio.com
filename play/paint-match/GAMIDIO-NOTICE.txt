@@ -1,0 +1,23 @@
+Paint Match — hosted by Gamidio (gamidio.com)
+
+Original game: Shurick (Ombosoft)
+Upstream source: https://github.com/Ombosoft/paint-match
+Upstream commit: deda8861f6372ba73460b45a7b9b217d1c42ce8f
+License: Apache License 2.0 (code); sound effects CC0 (README); no music, our own backgrounds (https://github.com/Ombosoft/paint-match/blob/deda8861f6372ba73460b45a7b9b217d1c42ce8f/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/GA.js: no Google Analytics
+  - src/Components/App.js: no data-consent dialog (nothing is collected)
+  - src/Music.js: no music (no licence for the tracks)
+  - src/Components/MuteButtons.js: music button hidden
+  - src/Components/App.css: background: colour gradient instead of the unlicensed painting
+  - src/Components/LevelsPanel.js: level list: colour gradient instead of the unlicensed painting
+  - src/Components/HintBox.js: hint helper: emoji instead of the unlicensed portrait
+  - src/Components/ExtraMenu.js: no rating button (app store link)
+  - src/index.css: Google Font https://fonts.googleapis.com/css2?family=Nunito:wght@500 served locally from src/fonts/
+  - src/index.css: font path relative to the stylesheet
+  - built with: npm ci && react-scripts build (no source maps)
+  - (build output) index.html: no PWA manifest
+  - (build output) index.html: own localStorage namespace (other games share the origin)
