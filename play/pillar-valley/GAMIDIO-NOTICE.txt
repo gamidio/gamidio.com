@@ -1,0 +1,14 @@
+Pillar Valley — hosted by Gamidio (gamidio.com)
+
+Original game: Evan Bacon
+Upstream source: https://github.com/EvanBacon/pillar-valley
+Upstream commit: a79316d1614fa95cc51e6aed2264ad8e4b1d9595
+License: MIT License (the repository); Inter font SIL OFL 1.1 (https://github.com/EvanBacon/pillar-valley/blob/a79316d1614fa95cc51e6aed2264ad8e4b1d9595/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - app.json: web build as a single page (one index.html)
+  - app.json: served from /play/pillar-valley/
+  - built with: bun install --frozen-lockfile && expo export -p web
+  - (build output) index.html: own localStorage namespace (other games share the origin)

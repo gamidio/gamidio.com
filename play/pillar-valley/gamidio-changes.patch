@@ -1,0 +1,19 @@
+--- a/app.json
++++ b/app.json
+@@ -83,7 +83,7 @@
+     },
+     "web": {
+       "bundler": "metro",
+-      "output": "static",
++      "output": "single",
+       "favicon": "./icons/pillars/default.png",
+       "config": {
+         "firebase": {
+@@ -131,6 +131,7 @@
+       ]
+     ],
+     "experiments": {
++      "baseUrl": "/play/pillar-valley",
+       "reactCompiler": true,
+       "tsconfigPaths": true,
+       "typedRoutes": true
