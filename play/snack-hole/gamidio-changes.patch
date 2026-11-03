@@ -1,0 +1,7 @@
+--- a/src/main.ts
++++ b/src/main.ts
+@@ -34,4 +34,3 @@
+   }
+ }
+ 
+-registerServiceWorker();

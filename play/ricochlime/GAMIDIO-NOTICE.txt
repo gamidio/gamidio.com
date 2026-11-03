@@ -1,0 +1,16 @@
+Ricochlime — hosted by Gamidio (gamidio.com)
+
+Original game: Adil Hanney
+Upstream source: https://github.com/adil192/ricochlime
+Upstream commit: c85173213f6028af3c5e003d637da70da5fbec2d
+License: GNU AGPL v3 (code); sprites by ArMM1998, music and sounds CC0 (assets/*/LICENSE) (https://github.com/adil192/ricochlime/blob/c85173213f6028af3c5e003d637da70da5fbec2d/LICENSE.md)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - built with: patches/foss.sh && flutter pub get && flutter build web --release --no-web-resources-cdn (Flutter 3.44.0)
+  - removed unused renderer files (skwasm, wimp, experimental_webparagraph) and debug symbols
+  - (build output) index.html: no requests to third-party servers (fallback fonts from Google)
+  - (build output) index.html: relative base address (the game lives in a subfolder)
+  - (build output) index.html: no PWA manifest
+  - (build output) index.html: own localStorage namespace (other games share the origin)

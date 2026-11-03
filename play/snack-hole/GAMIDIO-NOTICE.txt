@@ -1,0 +1,15 @@
+Snack Hole — hosted by Gamidio (gamidio.com)
+
+Original game: SamadiPour
+Upstream source: https://github.com/SamadiPour/snack-hole-game
+Upstream commit: 2f1e5699eb08e19b6e6b76ab1e28055c9295a27b
+License: MIT License (code; art and sound are generated in code); music CC0 (CREDITS.md); Nunito font SIL OFL 1.1 (https://github.com/SamadiPour/snack-hole-game/blob/2f1e5699eb08e19b6e6b76ab1e28055c9295a27b/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - src/main.ts: no service worker (offline install is not needed on our site)
+  - built with: npm ci && vite build --base=./ (as the author's itch build)
+  - (build output) index.html: removed link-preview tags (the game page on gamidio.com has its own)
+  - (build output) index.html: no PWA manifest or home-screen icon
+  - (build output) index.html: keyboard focus on click; arrow keys and Space do not scroll the page around the game

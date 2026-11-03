@@ -1,0 +1,16 @@
+Tower Building — hosted by Gamidio (gamidio.com)
+
+Original game: BMQB, Inc.
+Upstream source: https://github.com/iamkun/tower_game
+Upstream commit: c6fa84afe179b661fa71cf7cc8788d0c47ca2875
+License: MIT License (code, graphics and sounds in the repository); title art by Gamidio; Lilita One font SIL OFL 1.1 (https://github.com/iamkun/tower_game/blob/c6fa84afe179b661fa71cf7cc8788d0c47ca2875/LICENSE)
+
+Corresponding source of this copy = the upstream commit above + gamidio-changes.patch in this folder.
+
+Changes made by Gamidio:
+  - index.html: removed Google Analytics
+  - index.html: English title art (gamidio-title.png) instead of the Chinese logo
+  - index.html: score font: Lilita One (SIL OFL 1.1) instead of the unlicensed wenxue font
+  - index.html: removed the WeChat share button
+  - index.html: removed the WeChat share overlay
+  - index.html: keyboard focus on click; Space does not scroll the page around the game
